@@ -1,0 +1,45 @@
+---
+title: 'v0.7.0-beta.4'
+description: '2026-09-12'
+---
+
+同步版本。0.7 beta 线合入 v0.6.15 至 v0.6.17。beta 上的 DeepSeek Harness 改为派发原生子 agent。
+
+## Synced from main
+
+| 版本    | 内容 |
+| ------- | ---- |
+| v0.6.15 | DeepSeek Harness（`trellis init --dsh`）成为第 22 个平台；稳定版仍内联跑各阶段 |
+| v0.6.16 | 上下文清单闸门；任务生命周期命令；可逆 ablation；恢复 OpenCode mem 读取；hook 与 channel 修复 |
+| v0.6.17 | Devin CLI 会话适配器（`--platform devin`）；SQLite 页懒读；Pi 无头 ask 转发；活动任务会话隔离；archive 子任务 unlink 回滚 |
+
+详见 [v0.6.15](/zh/changelog/v0.6.15)、[v0.6.16](/zh/changelog/v0.6.16) 和 [v0.6.17](/zh/changelog/v0.6.17) 的 changelog。
+
+## Enhancements
+
+### DeepSeek Harness 原生子 agent
+
+在 0.7 beta 线上，`trellis init --dsh` 会安装原生 research / implement / check 子 agent 技能（`trellis-agent-{research,implement,check}`）。稳定版 0.6.15 仍内联跑这些阶段。（#548）
+
+- 仅子会话加载的角色技能；主会话自己不加载
+- 有 companion `dsh-trellis` 时用 `trellis_wait`；否则前台派发。不轮询
+- 嵌套宿主的会话身份优先 `DSH_TRELLIS_CONTEXT_ID`，然后是 `DSH_SHELL=1` 加上 `DSH_SESSION_ID`
+
+## Bug Fixes
+
+### Spec-injection YAML flow list
+
+`trellis_config.py` 的 `parse_simple_yaml` 现在能解析标量 flow sequence，例如 `spec_injection.tools: []` 和 `tools: [Edit, Write]`。嵌套的 `[]` / `{}` 仍会拒绝。
+
+### `task.py workflow`
+
+`task.py workflow` 从 `common.io` 导入 `read_json`，给任务钉 workflow 时不再抛 `NameError`。
+
+## Upgrade
+
+```bash
+npm install -g @mindfoldhq/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

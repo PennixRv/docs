@@ -1,0 +1,45 @@
+---
+title: 'v0.7.0-beta.4'
+description: '2026-09-12'
+---
+
+Sync release. The 0.7 beta line picks up v0.6.15 through v0.6.17. DeepSeek Harness on beta now dispatches native sub-agents.
+
+## Synced from main
+
+| Release | Changes |
+| ------- | ------- |
+| v0.6.15 | DeepSeek Harness (`trellis init --dsh`) as the 22nd platform; phases run inline on stable |
+| v0.6.16 | Context-manifest gate; task lifecycle commands; reversible ablation; OpenCode mem reader restored; hook and channel fixes |
+| v0.6.17 | Devin CLI session adapter (`--platform devin`); lazy SQLite pages; Pi headless ask forward; active-task session isolation; archive child unlink restore |
+
+See the [v0.6.15](/changelog/v0.6.15), [v0.6.16](/changelog/v0.6.16) and [v0.6.17](/changelog/v0.6.17) changelogs for detail.
+
+## Enhancements
+
+### DeepSeek Harness native sub-agents
+
+On the 0.7 beta line, `trellis init --dsh` installs native research / implement / check sub-agent skills (`trellis-agent-{research,implement,check}`). Stable 0.6.15 still runs those phases inline. (#548)
+
+- Child-only role skills; the main session does not load them
+- Uses the companion `dsh-trellis` `trellis_wait` when present; otherwise foreground dispatch. No polling
+- Nested-host session identity prefers `DSH_TRELLIS_CONTEXT_ID`, then `DSH_SHELL=1` plus `DSH_SESSION_ID`
+
+## Bug Fixes
+
+### Spec-injection YAML flow lists
+
+`parse_simple_yaml` in `trellis_config.py` now parses scalar flow sequences such as `spec_injection.tools: []` and `tools: [Edit, Write]`. Nested `[]` / `{}` are still rejected.
+
+### `task.py workflow`
+
+`task.py workflow` imports `read_json` from `common.io`, so pinning a per-task workflow no longer raises `NameError`.
+
+## Upgrade
+
+```bash
+npm install -g @mindfoldhq/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
