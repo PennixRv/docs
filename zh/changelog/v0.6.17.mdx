@@ -1,0 +1,44 @@
+---
+title: 'v0.6.17'
+description: '2026-09-12'
+---
+
+Devin CLI 会话记忆、按需读取 SQLite 页，以及任务/会话绑定修复。
+
+## 功能增强
+
+### Devin CLI 会话适配器
+
+`trellis mem` 通过现有的零依赖解析器读取 Cognition Devin CLI 会话，数据在 `~/.local/share/devin/cli/sessions.db`（WAL SQLite）。这不是 `trellis init --devin`（Desktop/Cascade），也不是 Factory Droid。（#614）
+
+- `list` / `search` / `extract` / `context` / `projects` 支持 `--platform devin`
+- OpenCode、ZCode 与 Devin 共用 `packages/core/src/mem/internal/sqlite-adapter.ts` 和 `packages/core/src/mem/platforms.ts`
+- Devin 会话树要求 `main_chain_id`；缺少 tip 时返回 `devin-main-chain-missing`（不再回退到 `max(node_id)`）
+- 解析前去掉 `CREATE TABLE` 的 `--` 行注释，这样 live `sessions.db` 里的 `parent_node_id` 和 `chat_message` 能被识别
+
+## 问题修复
+
+### SQLite 主文件页懒读
+
+`packages/core/src/mem/internal/sqlite-readonly.ts` 里的零依赖 SQLite 读取器按需加载主文件页，不再把整个数据库读进内存。（#596）
+
+### Pi 无头子代理提示
+
+Pi `trellis_subagent` 把 ask-policy 提示转发到父会话。serving heartbeat 设置 `PI_SUBAGENT_PARENT_SESSION`（不用过期的 `PI_SESSION_ID`），设置 `PI_SUBAGENT_CHILD=1`，并丢掉继承来的 `PI_SESSION_ID`，让子进程自己签发会话 id。（#611）
+
+### 活动任务会话回退
+
+当前会话 id 缺失时，不再回退到项目里仅有的那条会话去解析活动任务。该回退改为显式 opt-in，避免一个会话绑到另一个会话的任务。（#608）
+
+### archive 子任务 unlink 回滚
+
+如果 `task.py archive` 在已经 unlink 部分子任务之后失败，会按清除前的快照把每个子任务的 `parent` 写回去。`children` 里的重复条目只快照一次，避免第二次访问把 `parent: null` 写回去。（#613）
+
+## 升级
+
+```bash
+npm install -g @mindfoldhq/trellis@latest
+trellis update
+```
+
+无需 `--migrate`。

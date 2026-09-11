@@ -1,0 +1,44 @@
+---
+title: 'v0.6.17'
+description: '2026-09-12'
+---
+
+Devin CLI session memory, on-demand SQLite page reads, and task/session binding fixes.
+
+## Enhancements
+
+### Devin CLI session adapter
+
+`trellis mem` reads Cognition Devin CLI sessions from `~/.local/share/devin/cli/sessions.db` (WAL SQLite) through the existing zero-dependency parser. This is not `trellis init --devin` (Desktop/Cascade) and not Factory Droid. (#614)
+
+- `--platform devin` on `list` / `search` / `extract` / `context` / `projects`
+- OpenCode, ZCode, and Devin share `packages/core/src/mem/internal/sqlite-adapter.ts` and `packages/core/src/mem/platforms.ts`
+- Devin forests require `main_chain_id`; a missing tip is `devin-main-chain-missing` (no `max(node_id)` fallback)
+- `CREATE TABLE` `--` line comments are stripped so `parent_node_id` and `chat_message` parse on live `sessions.db` files
+
+## Bug Fixes
+
+### Lazy SQLite main-page reads
+
+The zero-dependency SQLite reader in `packages/core/src/mem/internal/sqlite-readonly.ts` loads main-file pages on demand instead of reading the whole database into memory. (#596)
+
+### Pi headless subagent prompts
+
+Pi `trellis_subagent` forwards ask-policy prompts to the parent session. The serving heartbeat sets `PI_SUBAGENT_PARENT_SESSION` (not a stale `PI_SESSION_ID`), sets `PI_SUBAGENT_CHILD=1`, and drops inherited `PI_SESSION_ID` so the child mints its own. (#611)
+
+### Active-task session fallback
+
+Resolving an active task from a missing session id no longer falls back to the only session in the project. That fallback is explicit opt-in, so one session cannot bind another session's task. (#608)
+
+### Archive child unlink restore
+
+If `task.py archive` fails after unlinking some children, it restores each child's `parent` link from a snapshot taken before the clear. A duplicated `children` entry is snapshotted once so a second visit cannot restore `parent: null`. (#613)
+
+## Upgrade
+
+```bash
+npm install -g @mindfoldhq/trellis@latest
+trellis update
+```
+
+No `--migrate` required.
