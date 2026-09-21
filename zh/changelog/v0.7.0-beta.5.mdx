@@ -1,0 +1,25 @@
+---
+title: 'v0.7.0-beta.5'
+description: '2026-09-21'
+---
+
+Pennix v0.7 beta 查漏补缺版本，收敛 beta 审计中发现的两项缺口。
+
+## Bug Fixes
+
+### 未绑定任务歧义保持可见
+
+当当前会话没有身份、且有多个属于当前开发者的可恢复任务时，Claude 状态栏现在会显示 `unbound_ambiguous` 和候选任务数量，不再把这种状态误报为“没有活动任务”。该投影仍然只读，不会猜测或创建绑定。
+
+### npm 发布预检保持幂等
+
+发布预检现在同时接受 `npm view` 对精确版本返回的两种 JSON 形态。重复执行检查时，会正确识别已经发布的 beta，不再计划重复发布。
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

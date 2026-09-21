@@ -1,0 +1,25 @@
+---
+title: 'v0.7.0-beta.5'
+description: '2026-09-21'
+---
+
+Pennix v0.7 beta completeness release. This release closes two gaps found during the beta audit.
+
+## Bug Fixes
+
+### Ambiguous unbound tasks stay visible
+
+Claude statusline now reports `unbound_ambiguous` and the number of candidate tasks when the current session has no identity and more than one developer-owned task is resumable. It no longer presents that state as “no active task”. The projection remains read-only and does not guess or create a binding.
+
+### Idempotent npm release preflight
+
+The release preflight accepts both JSON shapes returned by `npm view` for an exact version. Re-running the check now recognizes an already-published beta instead of planning a duplicate publish.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
