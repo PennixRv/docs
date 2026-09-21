@@ -1,0 +1,21 @@
+---
+title: 'v0.7.0-beta.7'
+description: '2026-09-21'
+---
+
+Pennix v0.7 beta 发布校验加固版本。
+
+## Bug Fixes
+
+### 统一 npm 版本响应
+
+发布校验现在接受 npm 对精确版本和 dist-tag 返回的单元素 JSON 数组，避免已发布的 beta 被本地校验误报为不存在。
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

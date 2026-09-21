@@ -1,0 +1,21 @@
+---
+title: 'v0.7.0-beta.7'
+description: '2026-09-21'
+---
+
+Pennix v0.7 beta verification hardening.
+
+## Bug Fixes
+
+### Normalize npm version responses
+
+Release verification now accepts npm's single-item JSON array response for exact versions and dist-tags, so a published beta is not reported as missing by local validation.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
