@@ -1,0 +1,21 @@
+---
+title: 'v0.7.0-beta.6'
+description: '2026-09-21'
+---
+
+Pennix v0.7 beta 发布链路加固版本。
+
+## Bug Fixes
+
+### 发布只推送本次标签
+
+`release:beta` 现在只推送发布分支和本次刚创建的标签，不再使用 `git push --tags`。这样不会把无关的本地标签推送出去并触发意外的 npm 发布工作流。
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
