@@ -1,0 +1,25 @@
+---
+title: 'v0.7.0-beta.9'
+description: '2026-09-22'
+---
+
+Pennix v0.7 beta 计划与证据治理发布版本。
+
+## 功能
+
+### 让复杂分析保持在计划阶段
+
+`analysis_only` 现在只适用于有边界的证据交付。仍需要实质决策、实施计划、跨 owner 协调、安全、部署、发布、凭据操作或下游变更的工作，必须走正常复杂计划流程，并在实施前完成 Planning Seal。
+
+### 持久化可恢复的证据
+
+长时间的研究、审计和审查现在使用有边界的证据单元，在继续探索前持久化结论或阻塞。显式 Codex subnode 使用 schema version 2 报告，包含逐 scope 覆盖、关联证据的 finding、类型化记录和 worklog checkpoint；只有协调器可以作出验收决定。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
