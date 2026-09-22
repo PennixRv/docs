@@ -1,0 +1,25 @@
+---
+title: 'v0.7.0-beta.8'
+description: '2026-09-22'
+---
+
+Pennix v0.7 beta decision-chain release.
+
+## Features
+
+### Return material decisions to planning
+
+`task.py replan <task> <reason>` returns an in-progress task to planning with an append-only audit event. Implementation-time material ambiguity now returns through the planning decision gate instead of opening an ad hoc question or silently choosing a product decision.
+
+### Preserve every planning interval in memory
+
+`trellis mem --phase brainstorm` now includes planning intervals reopened by `replan`, while preserving existing `create` and `start` behavior.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.

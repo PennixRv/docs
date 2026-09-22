@@ -1,0 +1,25 @@
+---
+title: 'v0.7.0-beta.8'
+description: '2026-09-22'
+---
+
+Pennix v0.7 beta 决策链发布版本。
+
+## Features
+
+### 将实质决策退回计划阶段
+
+`task.py replan <task> <reason>` 会以追加式审计事件将执行中的任务退回计划阶段。实施期间出现实质性歧义时，流程会回到计划决策门，而不是临时提问或静默替用户选择产品决策。
+
+### 在记忆中保留全部计划区间
+
+`trellis mem --phase brainstorm` 现在会包含由 `replan` 重新打开的计划区间，同时保持既有的 `create` 和 `start` 行为。
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
