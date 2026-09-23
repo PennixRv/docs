@@ -1,0 +1,24 @@
+---
+title: 'v0.7.0-beta.10'
+description: '2026-09-23'
+---
+
+Pennix v0.7 beta 工作流消费者一致性发布版本。
+
+## 改进
+
+### 对齐选定工作流消费者
+
+Codex Subnode Channel Marketplace 工作流现在包含与 Trellis native workflow
+一致的规划与恢复合同：回答持久化和 frontier 重算、实施阶段的
+`task.py replan`、未绑定任务状态，以及不引入重复确认状态的直接 Phase 3.4
+提交语义。Marketplace 消费者现在可以从已发布工作流获取这些规则，不再维护本地行为分叉。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
