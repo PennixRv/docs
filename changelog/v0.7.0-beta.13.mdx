@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.13'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta maintenance release for task lifecycle discoverability.
+
+## Fixes
+
+### Replan command is visible in task help
+
+`task.py replan` already returns an in-progress task to planning and records an
+auditable reason. The standard task help now lists that command as well, so the
+supported planning recovery path is discoverable from the CLI.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
