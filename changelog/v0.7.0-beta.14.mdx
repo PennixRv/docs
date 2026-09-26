@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.14'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta maintenance release for packaged-template consistency.
+
+## Fixes
+
+### Task script copies stay synchronized
+
+The repository dogfood copy of `.trellis/scripts/task.py` now remains byte-identical
+to the packaged template. This keeps release regression checks and newly initialized
+projects on the same user-facing task help, including the `replan` command.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
