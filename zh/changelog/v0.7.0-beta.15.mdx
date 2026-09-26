@@ -1,0 +1,22 @@
+---
+title: 'v0.7.0-beta.15'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta 任务模板同步维护版本。
+
+## 修复
+
+### 发布模板与 dogfood 任务脚本保持一致
+
+beta 版本现在包含同步后的 `.trellis/scripts/task.py` 副本和发布模板，
+因此新项目和升级项目都会获得一致且可发现的任务帮助内容，并包含 `replan` 命令。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
