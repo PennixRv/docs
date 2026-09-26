@@ -1,0 +1,33 @@
+---
+title: 'v0.7.0-beta.11'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta 并行证据工作流合同发布版本。
+
+## 改进
+
+### 可配置的证据画像
+
+Trellis 项目现在会获得可编辑的
+`.trellis/agents/subnode-profiles.json`，用于非实现类证据工作。所有画像
+继续共用 `subnode` 角色和 report v2 验收路径，同时可以按项目画像解析
+model 与 reasoning effort。单次覆盖会记录在 durable `spawned` receipt 中；
+`xhigh` 必须提供与 evidence unit 相关的理由，不支持或不安全的配置会
+fail closed。
+
+### 主协调会话驱动的 FIFO 派发
+
+subnode 工件 helper 现在支持写一次 FIFO 清单、逐项派发 claim 和永久放弃
+标记。Marketplace workflow 要求 native terminal event、完整报告、来源/保护
+目标复核和 coordinator `accepted` disposition 全部满足后才允许补位。恢复
+过程不会静默重试已尝试项目，也不会增加常驻 scheduler、第二 waiter 或轮询循环。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

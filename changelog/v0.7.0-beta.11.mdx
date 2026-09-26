@@ -1,0 +1,36 @@
+---
+title: 'v0.7.0-beta.11'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta parallel evidence workflow contracts release.
+
+## Improvements
+
+### Configurable evidence profiles
+
+Trellis projects now receive an editable
+`.trellis/agents/subnode-profiles.json` for non-implementation evidence work.
+The same `subnode` role and report-v2 acceptance path is retained while each
+dispatch can resolve a project profile, model, and reasoning effort. Explicit
+overrides are recorded in the durable `spawned` receipt; `xhigh` requires a
+reason tied to the evidence unit and unsupported or unsafe configuration fails
+closed.
+
+### Coordinator-driven FIFO dispatch
+
+The subnode artifact helper now supports a write-once FIFO queue, per-item
+dispatch claims, and a permanent queue-abandon marker. The Marketplace workflow
+requires a native terminal event, complete report, source/protected-target
+recheck, and coordinator `accepted` disposition before replacing a slot. Queue
+recovery never silently retries an attempted item and does not add a resident
+scheduler, second waiter, or polling loop.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
