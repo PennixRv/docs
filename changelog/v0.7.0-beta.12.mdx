@@ -1,0 +1,35 @@
+---
+title: 'v0.7.0-beta.12'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta pinned workflow provenance and guarded refresh release.
+
+## Improvements
+
+### Reproducible workflow selection
+
+Trellis now records the selected workflow id, source, immutable ref, template
+path, and content hash in `.trellis/workflow-provenance.json`. Marketplace
+workflow resolution requires an explicit commit ref and verifies the downloaded
+content against the hash published in `index.json`.
+
+`trellis workflow --verify` re-resolves the recorded source and checks both the
+template identity and active `.trellis/workflow.md` bytes. A missing provenance
+record or any source/content drift fails closed instead of silently selecting a
+moving default branch.
+
+### Safer task archiving
+
+Automatic archive commits now stage only the exact destination archive paths,
+so unrelated files beside an archived task are not swept into the commit.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required. Existing projects can establish provenance by selecting
+their intended workflow with an explicit immutable Marketplace source/ref.

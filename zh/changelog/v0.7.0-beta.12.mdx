@@ -1,0 +1,33 @@
+---
+title: 'v0.7.0-beta.12'
+description: '2026-09-26'
+---
+
+Pennix v0.7 beta 工作流来源固定与安全刷新版本。
+
+## 改进
+
+### 可复现的工作流选择
+
+Trellis 现在会在 `.trellis/workflow-provenance.json` 中记录所选工作流的
+id、来源、不可变引用、模板路径和内容哈希。Marketplace 工作流解析必须显式
+使用 commit 引用，并在安装前将下载内容与 `index.json` 发布的哈希进行校验。
+
+`trellis workflow --verify` 会重新解析记录的来源，并同时核对模板身份和活动
+`.trellis/workflow.md` 的实际内容。缺少 provenance 记录或来源/内容发生漂移时会
+fail closed，不会静默选择会变化的默认分支。
+
+### 更安全的任务归档
+
+自动归档提交现在只暂存准确的目标归档路径，不会把归档任务旁边的无关文件一并
+带入提交。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。已有项目可以通过使用显式不可变 Marketplace 来源/引用重新选择
+预期工作流来建立 provenance。
