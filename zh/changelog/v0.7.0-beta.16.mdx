@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.16'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta 记忆边界维护版本。
+
+## 修复
+
+### 子节点不再读写协调器记忆
+
+生成的 `subnode` 角色现在设置 `HINDSIGHT_DISABLED=1`。审查子节点继续只负责受限的研究并向协调器返回结果；协调器仍负责显式的项目记忆写入和会话交接。
+
+内置交接文档和 marketplace 合同也已经从退役的 OpenViking 边界切换为 Hindsight 边界。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
