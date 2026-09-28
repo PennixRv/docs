@@ -1,0 +1,26 @@
+---
+title: 'v0.7.0-beta.19'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta 面向项目资产所有权更新的维护版本。
+
+## 修复
+
+### 避免项目扩展错误生成 `.new`
+
+Trellis 现在按所有权组合生成配置。`.trellis/config.yaml` 中项目自有的
+顶层配置段，以及 `.codex/config.toml` 中模板未声明的键和表，会在模板
+刷新时保留，不需要将项目键硬编码到 Trellis 模板中。
+
+`AGENTS.md` 只有在合法的 `TRELLIS` 管理块发生变化时才会自动更新，管理块
+之外的项目说明保持不变。标记缺失、损坏或重复时仍然进入正常冲突流程。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
