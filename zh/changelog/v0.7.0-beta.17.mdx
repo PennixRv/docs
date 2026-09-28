@@ -1,0 +1,27 @@
+---
+title: 'v0.7.0-beta.17'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta 面向消费者项目更新安全性的维护版本。
+
+## 修复
+
+### 更新过程遵守项目已选 workflow
+
+`trellis update` 现在会解析 `.trellis/workflow-provenance.json` 中记录的
+workflow，并在比较文件前校验不可变来源和内容哈希。使用 Marketplace
+`codex-subnode-channel` workflow 的项目，在正常更新过程中不会再收到错误的
+native `workflow.md.new` 候选。
+
+没有 provenance 且使用未跟踪自定义 workflow 的旧项目仍会受到保护，不会被纳入
+通用更新文件集合。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

@@ -1,0 +1,28 @@
+---
+title: 'v0.7.0-beta.17'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta workflow maintenance release for consumer-safe updates.
+
+## Fixes
+
+### Updates honor the selected workflow
+
+`trellis update` now resolves the workflow recorded in
+`.trellis/workflow-provenance.json` and verifies its immutable source and
+content hash before comparing files. A project using the Marketplace
+`codex-subnode-channel` workflow no longer receives a misleading native
+`workflow.md.new` candidate during a normal update.
+
+Legacy projects with an untracked custom workflow and no provenance remain
+protected and outside the generic update file set.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
