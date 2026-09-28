@@ -1,0 +1,26 @@
+---
+title: 'v0.7.0-beta.18'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta 面向 Hindsight 会话交接证据语义的维护版本。
+
+## 修复
+
+### 区分检索验证与规范内容持久化
+
+Codex subnode workflow 现在将正式 Hindsight 交接描述为“写入操作完成并能检索到同一文档”。
+`retrieval_verified` 不再声称 `canonical_persisted` 或正文内容完全相等；本地交接 capsule
+仍然是内容真相。
+
+本版本同时包含 Marketplace workflow 哈希和 beta 迁移 manifest，消费者项目可以正常更新，
+不会因为内容完整性索引不一致而产生错误候选。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。

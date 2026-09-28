@@ -1,0 +1,27 @@
+---
+title: 'v0.7.0-beta.18'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta workflow maintenance release for clearer Hindsight handoff evidence.
+
+## Fixes
+
+### Distinguish retrieval verification from canonical persistence
+
+The Codex subnode workflow now describes a formal Hindsight handoff as a
+completed write plus same-document retrieval verification. `retrieval_verified`
+does not claim `canonical_persisted` or canonical content equality; the local
+handoff capsule remains the content authority.
+
+The Marketplace workflow hash and the beta migration manifest are included so
+consumer projects can update without a false content-integrity mismatch.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required.
