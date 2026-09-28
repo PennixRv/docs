@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.20'
+description: '2026-09-28'
+---
+
+Pennix v0.7 beta 面向项目资产所有权更新的维护版本。
+
+## 修复
+
+### 更新时保留项目扩展注释
+
+Trellis 组合 `.trellis/config.yaml` 中未声明的项目顶层配置段时，现在会保留
+项目紧邻的注释和原有格式边界。合法项目扩展在更新后保持字节稳定，不再错误
+生成 `.new` 候选文件。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+无需 `--migrate`。
