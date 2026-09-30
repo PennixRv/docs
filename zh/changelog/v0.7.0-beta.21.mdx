@@ -1,0 +1,27 @@
+---
+title: 'v0.7.0-beta.21'
+description: '2026-10-01'
+---
+
+Pennix v0.7 beta 面向 AgentMemory 子节点隔离的维护版本。
+
+## 修复
+
+### 将 AgentMemory 排除在 Trellis 子节点之外
+
+Codex 子节点现在同时关闭内置 AgentMemory 插件和独立 AgentMemory MCP，
+同时保留工作流使用的子节点标记。过时的生成式 `subnode.env` 资产通过哈希
+校验迁移删除；已被用户修改的副本会保留并提示审查。
+
+### 使任务归档测试稳定遵循本地月份
+
+归档集成测试现在使用与归档脚本一致的本地时间语义计算预期月份。
+
+## 升级
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+对于未修改的生成资产无需使用 `--migrate`。

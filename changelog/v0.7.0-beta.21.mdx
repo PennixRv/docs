@@ -1,0 +1,29 @@
+---
+title: 'v0.7.0-beta.21'
+description: '2026-10-01'
+---
+
+Pennix v0.7 beta maintenance release for AgentMemory-aware subnode isolation.
+
+## Fixes
+
+### Keep AgentMemory out of Trellis subnodes
+
+Codex subnodes now disable both the bundled AgentMemory plugin and the
+standalone AgentMemory MCP, while retaining the child marker used by the
+workflow. The obsolete generated `subnode.env` asset is removed by a
+hash-verified migration, preserving modified copies for review.
+
+### Make task archive tests local-time stable
+
+The archive integration test now derives its expected month using the same
+local-time semantics as the archive script.
+
+## Upgrade
+
+```bash
+npm install -g @pennixrv/trellis@beta
+trellis update
+```
+
+No `--migrate` required for unmodified generated assets.
