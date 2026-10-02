@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.23'
+description: '2026-10-02'
+---
+
+The bundled `trellis-channel` worker reference now matches AgentMemory isolation
+implemented by the native Codex adapter and worker environment. Both the plugin
+and standalone MCP are disabled for subnodes; no memory-specific `env_file` is
+generated. Runtime behavior is unchanged. Run `trellis update` after installing
+`@pennixrv/trellis@beta` to refresh the reference.
