@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.22'
+description: '2026-10-02'
+---
+
+Native session identity now survives task completion and archival.
+
+## Fixes
+
+`task.py current --json` adds `session_source` independently of the task-pointer
+`source`. It remains available when `current_task` is null. Existing pointer
+semantics and exit codes stay unchanged, so consumers can distinguish a real
+taskless session from missing session identity.
+
+The Pennix Marketplace workflow now describes AgentMemory's authenticated
+memory-id and exact project/type/content proof. Taskless handoffs seal a session
+boundary; task-bearing handoffs retain native ownership barriers.
+
+## Upgrade
+
+Install `@pennixrv/trellis@beta`, run `trellis update`, and explicitly refresh an
+approved Marketplace workflow commit when updating the selected workflow.
+No migration task is required.

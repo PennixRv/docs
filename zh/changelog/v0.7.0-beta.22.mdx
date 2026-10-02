@@ -1,0 +1,21 @@
+---
+title: 'v0.7.0-beta.22'
+description: '2026-10-02'
+---
+
+任务完成、归档后仍可获得原生会话身份。
+
+## 修复
+
+`task.py current --json` 新增独立于任务指针 `source` 的 `session_source`。
+`current_task` 为 null 时仍可返回真实会话身份；原有指针语义与退出码不变，
+消费者可区分无任务会话与缺失身份。
+
+Pennix Marketplace 工作流改用 AgentMemory 认证写入及 memory id、project、
+type、content 精确读回证明。无任务交接封口会话边界；有任务交接保留原生
+ownership barriers。
+
+## 升级
+
+安装 `@pennixrv/trellis@beta` 后运行 `trellis update`；更新所选 Marketplace
+工作流时显式选择已批准的新 commit。无需创建 migration 任务。
