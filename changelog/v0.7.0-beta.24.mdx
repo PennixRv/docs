@@ -1,0 +1,16 @@
+---
+title: 'v0.7.0-beta.24'
+description: '2026-10-03'
+---
+
+Generated `.trellis/agents/subnode-profiles.json` now uses `gpt-6.1-sol` by
+default and `gpt-5.6-luna/xhigh` for `docs_source`. Six judgment profiles retain
+`high`; `evidence_synthesis` retains `medium`. The `code_path` preset is removed.
+Ordinary code lookup stays in the main session; independent call-chain evidence
+uses an existing correctness, diagnosis, or compatibility profile.
+
+After installing `@pennixrv/trellis@beta`, run `trellis update`. Unmodified
+profiles receive the new defaults; project customizations remain protected.
+Refresh a separately selected `codex-subnode-channel` Marketplace workflow with
+`trellis workflow` and an explicit immutable ref. The resolver, `xhigh` reason
+guard, and supported effort values (`medium`, `high`, `xhigh`) are unchanged.

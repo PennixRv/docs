@@ -1,0 +1,14 @@
+---
+title: 'v0.7.0-beta.24'
+description: '2026-10-03'
+---
+
+生成的 `.trellis/agents/subnode-profiles.json` 默认模型更新为 `gpt-6.1-sol`，
+`docs_source` 使用 `gpt-5.6-luna/xhigh`。六个判断 profile 保持 `high`，
+`evidence_synthesis` 保持 `medium`；移除 `code_path` 默认预设。普通代码定位
+由主会话完成，独立调用链证据使用现有正确性、故障诊断或兼容性 profile。
+
+安装 `@pennixrv/trellis@beta` 后执行 `trellis update`。未定制的 profile 更新为
+新默认，项目自定义继续受保护。独立选择的 `codex-subnode-channel` Marketplace
+workflow 通过 `trellis workflow` 和明确的 immutable ref 刷新。resolver、
+`xhigh` 理由校验及支持的 effort（`medium`、`high`、`xhigh`）保持原合同。
