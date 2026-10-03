@@ -1,0 +1,16 @@
+---
+title: 'v0.7.0-beta.27'
+description: '2026-10-04'
+---
+
+The Codex channel integration now uses the official Cognee plugin contract for
+memory-enabled coordinator sessions. Formal handoffs verify the authenticated
+Cognee dataset and data UUIDs, metadata, and an exact raw-content read.
+
+Codex subnodes receive neither Cognee credentials nor `COGNEE_*` environment
+variables, and the native adapter disables the official Cognee plugin for the
+child process. The integration has no standalone Cognee MCP server.
+
+Run `trellis update` after upgrading to refresh the channel workflow and bundled
+worker guidance. Existing task, channel, and project ownership behavior is
+unchanged.

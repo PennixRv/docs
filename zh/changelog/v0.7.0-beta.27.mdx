@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.27'
+description: '2026-10-04'
+---
+
+Codex Channel 集成现在使用官方 Cognee 插件合同支持主协调会话的记忆能力。正式交接会验证已认证的 Cognee dataset、data UUID、元数据以及精确的原始内容读取。
+
+Codex 子节点不会接收 Cognee 凭据或 `COGNEE_*` 环境变量，原生适配器也会在子进程中禁用官方 Cognee 插件。该集成不提供独立的 Cognee MCP server。
+
+升级后运行 `trellis update`，刷新 Channel 工作流和内置 worker 指引。现有 task、channel 和项目所有权行为保持不变。
