@@ -1,0 +1,19 @@
+---
+title: 'v0.7.0-beta.26'
+description: '2026-10-03'
+---
+
+`trellis channel wait --workers a,b --all` 现在等待持久化 worker 生命周期转入终态，
+包括 supervisor 编写的终态事件。普通 adapter 错误和 peer 单轮完成不会满足这一等待。
+既有 `--from` 事件过滤继续精确匹配作者；worker 模式拒绝事件过滤参数。
+
+派发前捕获 `channel barrier`，等待时传入 `--after-seq`，即可收取快速完成结果。
+worker 等待输出包含 `workerId` 和 `lastSeq` 的终态 worker JSON，不代表 report 或
+disposition 验收。超时退出 124，并列出尚未完成的 worker。
+
+core `watchWorkers` 使用显式 `sinceSeq` 时从 barrier 快照开始，按持久化顺序只应用
+一次后续事件，避免历史重复和同名 worker 重启时的生命周期暂时倒退。不传 `sinceSeq`
+时，首次快照继续表示当前状态。
+
+升级后执行 `trellis update`，刷新随包提供的 Channel 命令参考和 subnode 派发步骤。
+本版不改变事件存储或生命周期 reducer。

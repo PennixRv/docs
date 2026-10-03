@@ -1,0 +1,23 @@
+---
+title: 'v0.7.0-beta.26'
+description: '2026-10-03'
+---
+
+`trellis channel wait --workers a,b --all` now waits for durable worker lifecycle
+transitions, including supervisor-authored terminal events. Ordinary adapter
+errors and peer turn completion do not satisfy this wait. Existing `--from`
+event filters retain exact-author matching; worker mode rejects event filters.
+
+Capture `channel barrier` before dispatch and pass `--after-seq` to collect a fast
+completion. Worker waits emit terminal worker JSON with `workerId` and `lastSeq`;
+they do not accept reports or dispositions. Timeouts exit 124 and identify pending
+workers.
+
+Core `watchWorkers` with explicit `sinceSeq` now begins with the barrier snapshot
+and applies subsequent events once in durable order, preventing duplicate history
+and temporary lifecycle regression across a same-id respawn. Without `sinceSeq`,
+the first snapshot remains current.
+
+Run `trellis update` after upgrading to refresh the bundled channel command
+reference and subnode dispatch procedure. No event store or lifecycle reducer
+change is required.
