@@ -1,0 +1,12 @@
+---
+title: 'v0.7.0-beta.28'
+description: '2026-10-04'
+---
+
+Codex subnodes now disable the official Cognee plugin using the unquoted
+`plugins.cognee@cognee.enabled=false` key accepted by Codex's native `-c`
+parser. Quoting the plugin segment previously targeted a different key and
+left the inherited setting effective.
+
+Upgrade the CLI to apply the adapter fix. Existing environment isolation,
+ordinary worker settings, and task ownership remain unchanged.

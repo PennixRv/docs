@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.28'
+description: '2026-10-04'
+---
+
+Codex 子节点现在使用原生 `-c` 解析器识别的无内嵌引号配置键
+`plugins.cognee@cognee.enabled=false`，真正禁用官方 Cognee 插件。
+此前给插件名加引号会指向另一个键，继承的设置仍然生效。
+
+升级 CLI 即可获得此适配器修复。环境隔离、普通 worker 设置和任务所有权保持不变。
