@@ -1,0 +1,17 @@
+---
+title: 'v0.7.0-beta.25'
+description: '2026-10-03'
+---
+
+Unbound task projections now retain an already resolved direct session identity.
+`task.py current --json` distinguishes available identity from a task binding,
+including when a completed prerequisite leaves one or several backlog candidates.
+
+Formal handoff ownership retirement and claim inspect direct bindings rather than
+read-only candidate paths. Foreign-session isolation and ownership fencing remain
+enforced. Recovery guidance selects the intended existing task and checks its
+planning gates before activation; eligible `analysis_only` tasks remain unstarted.
+
+After upgrading the CLI, run `trellis update`. Refresh a separately selected
+Marketplace workflow through `trellis workflow` with an explicit immutable ref.
+This release adds no automatic task selection or identity injection.

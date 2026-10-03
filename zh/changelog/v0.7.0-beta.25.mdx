@@ -1,0 +1,14 @@
+---
+title: 'v0.7.0-beta.25'
+description: '2026-10-03'
+---
+
+未绑定任务投影现在保留已经解析的直接会话身份。`task.py current --json`
+能够区分身份可用与任务已绑定，包括完成前置任务后剩余一个或多个待办候选的场景。
+
+正式交接的 ownership 退休和认领检查直接绑定，不再把只读候选路径当作当前绑定。
+跨会话隔离和所有权 fencing 继续有效。恢复指引根据明确意图选择已有任务，并先核对
+planning 阶段条件；合格的 `analysis_only` 任务继续保持未启动。
+
+升级 CLI 后执行 `trellis update`。独立选择的 Marketplace workflow 通过
+`trellis workflow` 和明确的 immutable ref 刷新。本版不增加自动选任务或身份注入。
