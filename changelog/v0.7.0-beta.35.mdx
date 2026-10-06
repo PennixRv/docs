@@ -1,0 +1,9 @@
+---
+title: 'v0.7.0-beta.35'
+description: '2026-10-07'
+---
+
+`trellis channel prune` previews removals by default; pass `--yes` to delete.
+The previous `--dry-run` flag was redundant and had no effect, so it has been
+removed. The bundled Channel reference now marks routine author identity as
+optional, using `TRELLIS_CHANNEL_AS` or `main` when omitted.
