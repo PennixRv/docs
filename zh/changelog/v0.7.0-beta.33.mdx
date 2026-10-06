@@ -1,0 +1,21 @@
+---
+title: 'v0.7.0-beta.33'
+description: '2026-10-06'
+---
+
+新独立证据 brief 与 FIFO 队列必须引用本任务的单元计划，说明工作量；
+多 scope 合包还须说明各点简单、明显相关且总工作量可收敛。claim 不得跳过
+更早的未尝试单元。Channel skill 提供单宿主多目标 procedure、验收后滚动补位，
+以及临时任务切换前排空已派工作。inline 仍允许明确授权的 Channel 独立证据，
+缺少独立报告不能替换成主代理的通过结论。
+
+原生 `task.py select` 只绑定上下文，不开始实施。planned/change-bearing
+任务 start 需要当前实质版本封口及后续明确批准，通过原生 plan seal/approve
+记录；replan 使其失效。记录校验结构，不能认证对话批准。旧 planning 任务
+start 前补一次分类，既有 in_progress 与历史报告保留。措辞与进度记录无需重批。
+
+Channel CLI 现在允许 `--profile` 自动采用 subnode 角色并继承其 Codex provider；作者身份的 `--as` 默认采用 `TRELLIS_CHANNEL_AS` 或 `main`，worker ID 与消息目标仍需明确指定。
+
+升级配对 CLI/core 后运行 `trellis update`，再通过 immutable source ref 刷新
+已选择的 Marketplace workflow。不批量迁移历史、不新增调度器，也不让普通
+继续或压缩恢复重新执行全量启动检查。
