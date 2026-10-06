@@ -1,0 +1,24 @@
+---
+title: 'v0.7.0-beta.34'
+description: '2026-10-06'
+---
+
+New independent-evidence briefs and FIFO queues require a task-owned unit plan,
+workload rationale, and grouping rationale for multiple scope items. FIFO claims
+cannot skip earlier unclaimed units. The bundled Channel skill exposes one-host
+multi-target dispatch, acceptance before rolling refill, and drain before a
+temporary task switch. Inline mode still permits explicitly authorized Channel
+evidence; required independent reports cannot be replaced by coordinator claims.
+
+Native `task.py select` binds context without starting. Planned/change-bearing
+start requires a sealed current material revision and later approval recorded
+through native `task.py plan seal/approve`; replan invalidates that approval.
+The record checks structure, not chat authenticity. Classify legacy planning
+tasks once before start; existing in-progress tasks and historical reports stay
+readable. Minor progress or wording edits do not require reapproval.
+
+Channel CLI dispatch now lets `--profile` imply the subnode role and inherits its Codex provider. Author `--as` defaults to `TRELLIS_CHANNEL_AS` or `main`; worker IDs and recipients stay explicit.
+
+Upgrade the paired CLI/core packages, run `trellis update`, and refresh the
+selected Marketplace workflow through its immutable source ref. No bulk history
+migration, new scheduler, or repeated startup on ordinary continue is introduced.
