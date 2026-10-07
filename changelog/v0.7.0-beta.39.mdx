@@ -1,0 +1,11 @@
+---
+title: 'v0.7.0-beta.39'
+description: '2026-10-07'
+---
+
+Release now rejects uninitialized, mismatched or unpublished recursive submodule
+pointers before version changes and tagging. Channel diagnostics redact known
+credential syntax, omit raw worker logs, and keep protocol message delivery intact.
+Shell identity tickets omit the original command and host cwd; evidence artifacts
+reject explicit Bearer tokens and credential assignments. These bounded checks do
+not promise detection of arbitrary secrets or anonymization of private paths.
