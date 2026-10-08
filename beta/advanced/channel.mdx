@@ -23,6 +23,17 @@ Channel state is stored under `~/.trellis/channels/`. The default scope is the c
 
 ## When to use Channel
 
+### Historical billing membership
+
+Run `trellis channel sessions --owner-session <main-session-id> --json` to query
+all unique Codex descendants for an exact main session. The owner defaults to
+actual `CODEX_THREAD_ID` or `CODEX_SESSION_ID`; missing identity fails. No Channel,
+task, project, or scope flag is needed. Results include retries and indirect
+descendants, independently of live workers or Channel cleanup. `trackingSince`
+and `coverage` describe newly recorded bindings after activation; no old history
+is imported. These minimal relationships are retained independently of removable
+Channel logs. A worker can begin a turn only after its binding is persisted.
+
 | Need                             | Channel pattern                                                |
 | -------------------------------- | -------------------------------------------------------------- |
 | A second opinion                 | Run a one-shot worker with `channel run`.                      |

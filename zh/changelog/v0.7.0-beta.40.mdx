@@ -1,0 +1,12 @@
+---
+title: 'v0.7.0-beta.40'
+description: '2026-10-08'
+---
+
+有 owner 的 Codex 会话绑定现在将准确的父子关系保存于可删除的 Channel 目录之外。
+`trellis channel sessions --owner-session <id> --json` 返回跨项目、包含重试和
+Channel 清理之后的去重历史后代，并明确给出开始记录的时间和覆盖范围。
+仅记录启用后的新绑定，不恢复升级前历史。
+
+Codex worker 只有在 supervisor 成功保存会话绑定后才能接收 turn。
+所有权冲突、关系环、记录损坏或写入失败会拒绝绑定，避免放行未记录的工作。

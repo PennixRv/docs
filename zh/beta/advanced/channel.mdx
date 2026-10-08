@@ -23,6 +23,16 @@ Channel 状态保存在 `~/.trellis/channels/`。默认 scope 是当前项目；
 
 ## 什么时候使用 Channel
 
+### 历史计费成员
+
+使用 `trellis channel sessions --owner-session <main-session-id> --json` 查询
+准确主会话的全部去重 Codex 后代。Owner 仅默认读取实际 `CODEX_THREAD_ID` 或
+`CODEX_SESSION_ID`，身份缺失则失败；不需要 Channel、任务、项目或 scope 参数。
+结果包含重试和间接后代，不随活动节点退出或 Channel 清理而消失。
+`trackingSince` 与 `coverage` 明确启用后新绑定的覆盖范围，不导入旧历史。
+最小关系元数据与可删除的 Channel 日志独立保留；worker 只有在绑定保存成功后
+才能开始 turn。
+
 | 需求                     | Channel 模式                                             |
 | ------------------------ | -------------------------------------------------------- |
 | 获取第二意见             | 使用 `channel run` 运行 one-shot worker。                |

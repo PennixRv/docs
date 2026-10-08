@@ -1,0 +1,14 @@
+---
+title: 'v0.7.0-beta.40'
+description: '2026-10-08'
+---
+
+Owned Codex session bindings now persist exact parent/child relationships outside
+removable Channel directories. `trellis channel sessions --owner-session <id>
+--json` returns unique historical descendants across projects, retries, and
+Channel cleanup, with explicit tracking activation and coverage. Tracking starts
+with new bindings; pre-upgrade history is not recovered.
+
+Codex workers become ready for turns only after the supervisor persists their
+session binding. Conflicting ownership, cycles, corruption, and write failures
+reject the binding instead of allowing unrecorded work.
