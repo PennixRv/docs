@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.43'
+description: '2026-10-10'
+---
+
+Init and update now report when a non-empty same-directory `AGENTS.override.md` shadows the generated `AGENTS.md`. Empty overrides fall back normally; user-owned rules and overrides are preserved, including no-op updates.
+
+Planning screens consequential user-owned choices through `pennix-decision-grill`, prioritizes dependency-ready questions, and preserves decision checkpoints during bounded evidence work. Material ambiguity discovered during execution is reported immediately and follows native replan before questioning and renewed approval. This keeps task lifecycle separate from the decision method.
+
+The fork's project-owned guidance makes GitNexus checks conditional on trusted, deployed tools and a usable index. Missing capability is reported as `not_run`; it does not silently install a latest runner or rebuild an index. CLI/core remain synchronized. Prompt contracts are not a claim of live model or graph validation.

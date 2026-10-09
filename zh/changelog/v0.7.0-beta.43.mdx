@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.43'
+description: '2026-10-10'
+---
+
+init/update 现在会提示同目录非空 `AGENTS.override.md` 遮蔽了生成的 `AGENTS.md`；空白 override 正常回落。包括无变更更新在内，用户规则和 override 均保持原样。
+
+规划通过 `pennix-decision-grill` 筛选真正需要用户决定的重要取舍，先满足依赖、再按影响逐轮提问，并在有界证据工作前保存决策断点。执行中出现实质歧义时立即报告影响，先经原生 replan 回规划，再提问并重新批准；任务生命周期与决策方法职责分离。
+
+fork 的项目规则将 GitNexus 检查限定为可信、已部署工具与可用索引。能力缺失记为 `not_run`，不隐式安装 latest runner 或重建索引。CLI/core 同版发布；提示词合同验证不等同真实模型或图执行验证。
