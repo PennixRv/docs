@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.45'
+description: '2026-10-10'
+---
+
+The beta.44 release published package metadata before the synchronized Core memory changes were included. This beta republishes the complete bounded Codex memory query implementation and the release staging fix as a new version.
+
+Codex JSONL queries now decode split UTF-8 sequences safely, preserve compaction recovery and repeated turns, bound retained search excerpts, and enforce context character budgets including truncation markers. These changes reduce retained conversation bodies during query operations without claiming a constant-memory bound for every caller or file format.
+
+Workflow guidance continues to distinguish Trellis-managed assets from project-owned files, route dispatch from the selected workflow, require acceptance before archiving, and record resource limits before bulk session-history extraction.
