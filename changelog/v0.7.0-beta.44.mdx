@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.44'
+description: '2026-10-10'
+---
+
+Memory search and context retrieval now process Codex JSONL rollouts in bounded passes. UTF-8 chunks split across read boundaries are decoded safely, compaction recovery preserves repeated turns, search output keeps a bounded excerpt set, and context output enforces its character budget including truncation markers. These changes reduce retained conversation bodies during query operations without claiming a constant-memory bound for every caller or file format.
+
+Workflow guidance now distinguishes Trellis-managed assets from project-owned files, routes dispatch from the selected workflow rather than platform capability alone, and requires an acceptance check before archiving a task. Bulk session-history research records resource limits and authorized output boundaries before extracting dialogue.
+
+The default inline Codex workflow documents its dispatch and writing boundaries explicitly. Marketplace workflow assets are updated with the same rules, while CLI and core remain synchronized at the published beta version.
