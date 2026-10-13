@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.48'
+description: '2026-10-13'
+---
+
+Workflow-owned resources now have bounded retention and explicit cleanup entry points. Channel pruning fails closed when event history, worker identity, or process state cannot prove that a channel is inactive; it also coordinates discovery and deletion under the project lifecycle lock.
+
+Grok output maintenance, FastCtx background-job storage, and Trellis backups now use owner-defined limits or retention rules. Running work and unknown or incomplete state are preserved, cleanup defaults to a preview, and destructive actions require the owning component's native command.
+
+This release adds no migration of existing project assets or runtime data. The new cleanup behavior is opt-in at the command boundary and keeps resources when ownership or activity cannot be established safely.
