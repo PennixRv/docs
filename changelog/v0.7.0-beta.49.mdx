@@ -1,0 +1,8 @@
+---
+title: 'v0.7.0-beta.49'
+description: '2026-10-13'
+---
+
+Update writes and backup pruning now share an exclusive lock, protecting the rollback snapshot until the update finishes. Unknown or incomplete backups still block deletion, and at least three complete backups remain protected.
+
+Backup previews report candidate names and estimated file bytes separately from actual removals. Execution reports successful and failed names, counts only successfully removed snapshots toward released bytes, and returns a failure exit status for partial failures. No migration or automatic backup deletion is introduced.

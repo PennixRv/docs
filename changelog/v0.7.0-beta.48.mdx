@@ -7,4 +7,4 @@ Workflow-owned resources now have bounded retention and explicit cleanup entry p
 
 Grok output maintenance, FastCtx background-job storage, and Trellis backups now use owner-defined limits or retention rules. Running work and unknown or incomplete state are preserved, cleanup defaults to a preview, and destructive actions require the owning component's native command.
 
-This release adds no migration of existing project assets or runtime data. The new cleanup behavior is opt-in at the command boundary and keeps resources when ownership or activity cannot be established safely.
+This release adds no migration of existing project assets or runtime data. Channel and backup deletion require explicit confirmation. Grok maintains outputs before queries, and FastCtx reclaims terminal history during admission; running or unknown resources remain protected.
