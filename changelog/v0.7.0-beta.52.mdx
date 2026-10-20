@@ -1,0 +1,8 @@
+---
+title: 'v0.7.0-beta.52'
+description: '2026-10-20'
+---
+
+Formal handoff fencing now looks up ownership records by the validated task ID in `task.json`. Tasks created in date-prefixed directories receive the same protection as other tasks: an unrelated session cannot select, start, finish, or archive a fenced task, while the legitimate consumer retains access.
+
+Renaming is refused before any write whenever the task has formal ownership records, including consumed or archived records. This preserves the task identity and path captured by the handoff. Ordinary tasks without ownership records retain their rename behavior. No task schema, ownership record format, or history migration is introduced.
