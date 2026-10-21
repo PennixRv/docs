@@ -1,0 +1,10 @@
+---
+title: 'v0.7.0-beta.53'
+description: '2026-10-21'
+---
+
+The `trellis-idea-to-closed-plan` Skill now guides planned changes from evidence and decisions through solution formation, full-plan review and explicit approval. Before execution, plans include ordered steps, dependencies, actual owners and branches, verification, rollback and one observable stop point. Native task commands record planning stages and bind approval to the reviewed revision.
+
+Changes discovered after approval are classified against that baseline. Minor changes stay in the current phase and are recorded in `execution.md`; major changes use `task.py replan --to` and require a revised, reviewed and approved plan. Direct changes and analysis-only work retain their bounded paths, and independent work does not reopen completed or unrelated tasks.
+
+`trellis update --dry-run` now preserves `.template-hashes.json` when orphan keys are detected. Updating projects installs the new planning Skill and removes an old `trellis-brainstorm/SKILL.md` only when its content matches the migration's recorded hash; modified copies remain protected.
