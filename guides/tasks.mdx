@@ -34,7 +34,7 @@ The directory name follows the pattern: `MM-DD-slug-assignee`.
 Use the task script:
 
 ```bash
-python3 .trellis/scripts/task.py create "user-auth" --assignee taosu
+python3 .trellis/scripts/task.py create "User authentication" --slug user-auth --description "Add email-based user authentication." --assignee taosu
 ```
 
 This creates the task directory with default files. Then edit `prd.md` to define requirements.
@@ -113,11 +113,13 @@ Clear current task when done:
 python3 .trellis/scripts/task.py finish
 ```
 
-Archive completed task:
+Complete the task after the Delivery Review and Closeout phase accepts the closeout result:
 
 ```bash
-python3 .trellis/scripts/task.py archive 01-31-user-auth-taosu
+python3 .trellis/scripts/task.py complete 01-31-user-auth-taosu
 ```
+
+Use `task.py cancel <id> --reason <reason> --evidence-ref <task-relative-file>` to record a cancelled task. `task.py finish` only clears the active-task pointer for the session; it does not complete the task or move its directory.
 
 ## Multiple tasks
 
@@ -131,11 +133,10 @@ python3 .trellis/scripts/task.py start other-task-id
 
 Typical flow:
 
-1. Create task: `task.py create`
-2. Edit `prd.md` with requirements
-3. Set up context files (JSONL)
-4. Set as current: `task.py start`
-5. Work in Claude Code sessions
-6. Archive when complete: `task.py archive <id>`
+1. Create a task with a title and non-empty description.
+2. Confirm requirements and initialize the task's applicable phase route.
+3. Accept the implementation contract and authorize implementation before coding.
+4. Implement and verify the authorized work.
+5. Review delivery and closeout, then complete or cancel the task.
 
-The task system keeps context organized so the AI knows what to focus on.
+The phase route is recorded under `meta.task_workflow`; `task.json.status` records task lifecycle. See [How the workflow works](/start/how-it-works) for the phase and state model.

@@ -13,29 +13,34 @@ Trellis ships a small command surface for session boundaries. Most workflow acti
 
 ### Session boundaries
 
-| Command                   | What it does                                             |
-| ------------------------- | -------------------------------------------------------- |
-| `/trellis:start`          | Manual start workflow for platforms without automatic session injection. Hook / extension platforms load context automatically. |
-| `/trellis:continue`       | Continue the current session task at the next workflow step. |
-| `/trellis:finish-work`    | End a session. Run final checks, update journal, archive completed tasks. |
+| Command                | What it does                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `/trellis:start`       | Manual start workflow for platforms without automatic session injection. Hook / extension platforms load context automatically. |
+| `/trellis:continue`    | Continue the current session task at the next workflow step.                                                                    |
+| `/trellis:finish-work` | Record session progress in the developer journal; does not complete a task.                                                     |
 
 ### Development workflow
 
-| Skill / sub-agent        | What it does                                     |
-| ------------------------ | ------------------------------------------------ |
-| `trellis-brainstorm`     | Discover and clarify requirements interactively. |
-| `trellis-before-dev`     | Load relevant specs before coding.               |
-| `trellis-implement`      | Implement the task in an isolated sub-agent where supported. |
-| `trellis-check`          | Review code against specs and self-fix issues.   |
+| Phase Skill                                       | What it does                                           |
+| ------------------------------------------------- | ------------------------------------------------------ |
+| `trellis-goal-exploration-and-requirements`       | Establish and confirm the task's current requirements. |
+| `trellis-decision-space-construction-and-merging` | Identify and organize material decisions.              |
+| `trellis-solution-design-and-convergence`         | Accept an analysis result or implementation contract.  |
+| `trellis-task-implementation`                     | Implement and verify an authorized contract.           |
+| `trellis-delivery-review-and-closeout`            | Review delivery and determine task disposition.        |
 
 ### Maintenance
 
-| Skill                  | What it does                              |
-| ---------------------- | ----------------------------------------- |
-| `trellis-update-spec`  | Capture learnings into specs.             |
-| `trellis-break-loop`   | Debug when stuck in a loop.               |
+| Supporting Skill          | What it does                                                  |
+| ------------------------- | ------------------------------------------------------------- |
+| `trellis-teamwork`        | Coordinate teammate work when the task benefits from it.      |
+| `trellis-session-insight` | Recall relevant prior decisions or conversation evidence.     |
+| `trellis-spec-bootstrap`  | Draft or refresh specs from the current codebase when useful. |
+| `trellis-meta`            | Understand or customize Trellis project assets.               |
 
-Phase commands such as `/trellis:before-backend-dev`, `/trellis:check-backend`, `/trellis:record-session`, and `/trellis:parallel` were removed in Trellis 0.5. The current flow is task-based: create/plan the task, `continue` through the next step, and finish with `finish-work`.
+The `trellis-research`, `trellis-implement`, and `trellis-check` entries are sub-agent definitions, not Skills.
+
+The phase Skills provide separate procedures and diagrams. Trellis CLI records the selected business-phase route independently from task lifecycle status. `task.py complete` and `task.py cancel` update task lifecycle during closeout; `finish-work` only records session progress. See [How the Trellis Workflow Works](/start/how-it-works).
 
 ## Using commands
 

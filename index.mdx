@@ -29,16 +29,16 @@ Supported platforms: Claude Code, Cursor, OpenCode, Codex, Kiro, Kilo, Gemini CL
 
 ### Core Concepts at a Glance
 
-| Concept       | Description                                                                                                       | Location                                 |
-| ------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Spec**      | Your coding standards, written in Markdown. AI reads specs before writing code                                    | `.trellis/spec/`                         |
-| **Workspace** | Each developer's session logs, letting AI remember what was done last time                                        | `.trellis/workspace/`                    |
-| **Task**      | A work unit containing requirements docs and context configuration                                                | `.trellis/tasks/`                        |
-| **Skill**     | Auto-triggered workflow modules: brainstorm, before-dev, check, update-spec, break-loop                           | platform-specific skills dir             |
-| **Sub-agent** | Specialized AI sub-process: `trellis-research`, `trellis-implement`, `trellis-check`                              | platform-specific agents dir             |
-| **Command**   | Explicit session entries: `finish-work`, `continue`, and manual `start` where needed                              | platform-specific commands dir           |
-| **Hook**      | Auto-triggered scripts that inject context at session start, sub-agent launch, etc. (platforms with hook support) | `.claude/hooks/`, etc.                   |
-| **Journal**   | Session log files recording what was done in each development session                                             | `.trellis/workspace/{name}/journal-N.md` |
+| Concept       | Description                                                                                                                              | Location                                 |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Spec**      | Your coding standards, written in Markdown. AI reads specs before writing code                                                           | `.trellis/spec/`                         |
+| **Workspace** | Each developer's session logs, letting AI remember what was done last time                                                               | `.trellis/workspace/`                    |
+| **Task**      | A work unit containing requirements docs and context configuration                                                                       | `.trellis/tasks/`                        |
+| **Skill**     | Phase guidance for requirements, decisions, design, implementation, and closeout; support for specs, memory, teamwork, and customization | platform-specific skills dir             |
+| **Sub-agent** | Specialized AI sub-process: `trellis-research`, `trellis-implement`, `trellis-check`                                                     | platform-specific agents dir             |
+| **Command**   | Explicit session entries: `finish-work`, `continue`, and manual `start` where needed                                                     | platform-specific commands dir           |
+| **Hook**      | Auto-triggered scripts that inject context at session start, sub-agent launch, etc. (platforms with hook support)                        | `.claude/hooks/`, etc.                   |
+| **Journal**   | Session log files recording what was done in each development session                                                                    | `.trellis/workspace/{name}/journal-N.md` |
 
 ---
 
@@ -48,7 +48,7 @@ Supported platforms: Claude Code, Cursor, OpenCode, Codex, Kiro, Kilo, Gemini CL
 | ----------------------------- | ------------------------------------------------------------------------------------------- |
 | **Auto-Injection**            | Required specs and workflows auto-inject into every conversation. Write once, apply forever |
 | **Auto-updated Spec Library** | Best practices live in auto-updated spec files. The more you use it, the better it gets     |
-| **Skill-first Workflow**      | Most operations are auto-trigger skills. AI picks the right one without manual commands     |
+| **Task workflow**             | The route in `workflow.md` selects relevant phases; phase and support Skills guide the work |
 | **Team Sync**                 | Share specs across your team. One person's best practice benefits everyone                  |
 | **Session Persistence**       | Work traces persist in your repo. AI remembers project context across sessions              |
 
@@ -63,6 +63,6 @@ Supported platforms: Claude Code, Cursor, OpenCode, Codex, Kiro, Kilo, Gemini CL
     Reference for slash commands (`/start`, `/finish-work`) and auto-trigger skills.
   </Card>
   <Card title="Writing Specs" icon="file-lines" href="/start/everyday-use">
-    Turn blank templates into executable contracts with `trellis-update-spec`.
+    Use `trellis-spec-bootstrap` when code-informed spec drafting is useful.
   </Card>
 </CardGroup>

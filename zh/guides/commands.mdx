@@ -13,29 +13,34 @@ Trellis 只保留少量会话边界命令。大部分工作流动作现在由 au
 
 ### 会话边界
 
-| 命令                      | 做什么                                   |
-| ------------------------- | ---------------------------------------- |
-| `/trellis:start`          | 给没有自动会话注入的平台手动加载上下文；有 hook / extension 的平台会自动加载。 |
-| `/trellis:continue`       | 把当前会话任务推进到 workflow 的下一步。 |
-| `/trellis:finish-work`    | 结束会话。做最终检查，更新 journal，归档完成任务。 |
+| 命令                   | 做什么                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `/trellis:start`       | 给没有自动会话注入的平台手动加载上下文；有 hook / extension 的平台会自动加载。 |
+| `/trellis:continue`    | 把当前会话任务推进到 workflow 的下一步。                                       |
+| `/trellis:finish-work` | 将会话进度写入开发者日志；不会完成任务。                                       |
 
 ### 开发工作流
 
-| Skill / sub-agent       | 做什么                    |
-| ----------------------- | ------------------------- |
-| `trellis-brainstorm`    | 交互式发现和澄清需求。    |
-| `trellis-before-dev`    | 编码前加载相关规范。      |
-| `trellis-implement`     | 在支持的平台上用隔离 sub-agent 实现任务。 |
-| `trellis-check`         | 按规范审查代码并自修复问题。 |
+| 阶段 Skill                                        | 做什么                       |
+| ------------------------------------------------- | ---------------------------- |
+| `trellis-goal-exploration-and-requirements`       | 建立并核对当前任务需求。     |
+| `trellis-decision-space-construction-and-merging` | 识别并整理实质决策。         |
+| `trellis-solution-design-and-convergence`         | 接受分析结论或实施合同。     |
+| `trellis-task-implementation`                     | 实施并验证已获授权的合同。   |
+| `trellis-delivery-review-and-closeout`            | 审查交付并确定任务处置结果。 |
 
 ### 维护
 
-| Skill                  | 做什么                 |
-| ---------------------- | ---------------------- |
-| `trellis-update-spec`  | 把学到的东西写进规范。 |
-| `trellis-break-loop`   | 卡在循环里时调试。     |
+| 支持性 Skill              | 做什么                                   |
+| ------------------------- | ---------------------------------------- |
+| `trellis-teamwork`        | 任务适合协作时协调 teammate 工作。       |
+| `trellis-session-insight` | 回顾相关的既有决策或会话证据。           |
+| `trellis-spec-bootstrap`  | 需要时根据当前代码库起草或更新项目规范。 |
+| `trellis-meta`            | 了解或定制 Trellis 项目资产。            |
 
-`/trellis:before-backend-dev`、`/trellis:check-backend`、`/trellis:record-session`、`/trellis:parallel` 这类阶段命令已经在 Trellis 0.5 移除。现在的流程是 task-based：创建/规划任务，用 `continue` 推进下一步，最后用 `finish-work` 收尾。
+`trellis-research`、`trellis-implement` 和 `trellis-check` 是子代理定义，不是 Skill。
+
+阶段 Skill 分别提供流程和图示。Trellis CLI 独立记录所选业务阶段路线与任务生命周期状态。收尾时通过 `task.py complete` 或 `task.py cancel` 更新任务状态；`finish-work` 仅记录会话进度。详见[工作流如何运行](/zh/start/how-it-works)。
 
 ## 使用命令
 

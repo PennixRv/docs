@@ -4,16 +4,16 @@ title: 'Custom Skills'
 
 ## Custom Skills
 
-Skills are the primary extension point in Trellis. Most of the shipped workflow (brainstorm, before-dev, check, update-spec, break-loop) is delivered as auto-trigger skills. This chapter explains how to add your own.
+Skills are the primary extension point in Trellis. Phase Skills guide the task route from requirements through delivery closeout; support Skills cover capabilities such as spec bootstrapping, session insight, teamwork, and Trellis customization. A Skill's presence does not make every step mandatory. This chapter explains how to add your own.
 
 ### Commands vs. sub-agents vs. skills
 
-|                    | Command                   | Sub-agent                       | Skill                                    |
-| ------------------ | ------------------------- | ------------------------------- | ---------------------------------------- |
-| **Purpose**        | Explicit user entry point | Isolated sub-process for a role | Reusable workflow module                 |
-| **Trigger**        | `/trellis:xxx`            | Spawned via Task tool           | Platform auto-matches on user intent     |
-| **Granularity**    | Session boundary          | Role-level                      | Capability or phase level                |
-| **Cross-platform** | One file per platform     | One file per platform           | One folder per platform (same structure) |
+|                    | Command                   | Sub-agent                       | Skill                                                                    |
+| ------------------ | ------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| **Purpose**        | Explicit user entry point | Isolated sub-process for a role | Reusable workflow module                                                 |
+| **Trigger**        | `/trellis:xxx`            | Spawned via Task tool           | Platform auto-matches on user intent                                     |
+| **Granularity**    | Session boundary          | Role-level                      | Capability or phase level                                                |
+| **Cross-platform** | One file per platform     | One file per platform           | Shared skill content is written to each platform's recognized skill path |
 
 Use a skill when the AI should trigger it automatically based on context; use a command when the user should decide; use a sub-agent when the work needs isolation with its own prompt and restrictions.
 

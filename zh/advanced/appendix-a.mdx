@@ -37,15 +37,19 @@ title: '附录 A：关键文件路径速查'
 | `.claude/agents/trellis-check.md`     | `trellis-check`     | 验证 + 自修复           |
 | `.claude/agents/trellis-research.md`  | `trellis-research`  | 只读代码搜索            |
 
-### 原生 skill（Claude Code）
+### 原生 Skill（Claude Code）
 
-| 文件                                          | Skill                 | 触发时机                  |
-| --------------------------------------------- | --------------------- | ------------------------- |
-| `.claude/skills/trellis-brainstorm/SKILL.md`  | `trellis-brainstorm`  | 用户描述功能 / bug / 请求 |
-| `.claude/skills/trellis-before-dev/SKILL.md`  | `trellis-before-dev`  | 活跃任务中即将写代码      |
-| `.claude/skills/trellis-check/SKILL.md`       | `trellis-check`       | 实现完成                  |
-| `.claude/skills/trellis-update-spec/SKILL.md` | `trellis-update-spec` | 有值得沉淀的知识          |
-| `.claude/skills/trellis-break-loop/SKILL.md`  | `trellis-break-loop`  | 刚修完棘手 bug            |
+| 文件                                                                      | Skill                                             | 用途                        |
+| ------------------------------------------------------------------------- | ------------------------------------------------- | --------------------------- |
+| `.claude/skills/trellis-goal-exploration-and-requirements/SKILL.md`       | `trellis-goal-exploration-and-requirements`       | 对齐目标并确认需求          |
+| `.claude/skills/trellis-decision-space-construction-and-merging/SKILL.md` | `trellis-decision-space-construction-and-merging` | 识别并解决实质决策          |
+| `.claude/skills/trellis-solution-design-and-convergence/SKILL.md`         | `trellis-solution-design-and-convergence`         | 形成并审查实施方案          |
+| `.claude/skills/trellis-task-implementation/SKILL.md`                     | `trellis-task-implementation`                     | 实施并验证已授权任务        |
+| `.claude/skills/trellis-delivery-review-and-closeout/SKILL.md`            | `trellis-delivery-review-and-closeout`            | 审查交付并完成任务收尾      |
+| `.claude/skills/trellis-teamwork/SKILL.md`                                | `trellis-teamwork`                                | 协调受支持的多智能体工作    |
+| `.claude/skills/trellis-session-insight/SKILL.md`                         | `trellis-session-insight`                         | 检索本地历史 AI 会话        |
+| `.claude/skills/trellis-spec-bootstrap/SKILL.md`                          | `trellis-spec-bootstrap`                          | 创建或更新项目编码规范      |
+| `.claude/skills/trellis-meta/SKILL.md`                                    | `trellis-meta`                                    | 了解或定制项目 Trellis 资产 |
 
 ### Hook 脚本（Claude Code）
 

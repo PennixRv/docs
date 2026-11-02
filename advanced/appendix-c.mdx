@@ -11,8 +11,8 @@ Matches `task.py create` in `.trellis/scripts/common/task_store.py`:
   "id": "string", // Task ID (= slug, e.g., 02-27-user-login)
   "name": "string", // Slug name (same as id in single-repo; monorepo may differ)
   "title": "string", // Task title
-  "description": "string", // Description ("" if --description omitted)
-  "status": "string", // planning (default) | in_progress | completed; task.py list --status also accepts review
+  "description": "string", // Required, non-empty task description
+  "status": "string", // Task lifecycle: planning (initial) | in_progress | completed | cancelled
   "dev_type": "string", // backend | frontend | fullstack | test | docs (null until set manually or by a custom hook; see note below)
   "scope": "string", // Commit scope, e.g. "auth" (null until set-scope)
   "package": "string", // Monorepo package name (null in single-repo)
@@ -31,7 +31,8 @@ Matches `task.py create` in `.trellis/scripts/common/task_store.py`:
   "parent": "string", // Parent task directory name (null if top-level)
   "relatedFiles": [], // Related files list
   "notes": "string", // Notes ("" by default)
-  "meta": {} // Arbitrary per-project metadata (e.g. Linear issue id)
+  "meta": {}, // Arbitrary project metadata; task_workflow stores the business-phase route
+  "workflow": "string" // Optional workflow-variant id, present when selected
 }
 ```
 
@@ -39,9 +40,12 @@ Field order above matches `.trellis/scripts/common/task_store.py` verbatim — `
 
 <Note>
   `worktree_path` / `commit` / `pr_url` are schema placeholders — written as null on create, and no
-  Trellis script updates them afterward. Store commit hashes / PR URLs under `meta: {}` as custom
-  keys, or write them back from an `after_archive` hook.
+  built-in task command updates them. Store commit hashes / PR URLs under `meta: {}` as custom keys.
 </Note>
+
+`meta.task_workflow`, when present, records the business-phase route and current phase. It is
+independent of the top-level `status`, which records task lifecycle. The `review` filter accepted by
+`task.py list --status` is a list view, not a task lifecycle status.
 
 Older tasks may be missing newer fields (e.g., pre-`package` tasks have no `"package"` key); `task.py` treats missing keys as null.
 

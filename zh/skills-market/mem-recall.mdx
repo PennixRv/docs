@@ -11,14 +11,14 @@ mem-recall 让 AI 在用户提到过往对话时自动调用 `trellis mem`，从
 
 ## 前置条件
 
-| 工具                                                                    | 用途                    | 必需     |
-| ----------------------------------------------------------------------- | ----------------------- | -------- |
-| [Trellis CLI](https://github.com/mindfold-ai/Trellis) **0.6.0-beta.0+** | 提供 `trellis mem` 命令 | 必需     |
-| Claude Code、Codex CLI、Devin CLI、Grok、OpenCode、Pi、ZCode            | 历史会话来源            | 至少一个 |
+| 工具                                                          | 用途                    | 必需     |
+| ------------------------------------------------------------- | ----------------------- | -------- |
+| [Trellis CLI](https://github.com/PennixRv/Trellis) **0.7.1+** | 提供 `trellis mem` 命令 | 必需     |
+| Claude Code、Codex CLI、Devin CLI、Grok、OpenCode、Pi、ZCode  | 历史会话来源            | 至少一个 |
 
 ```bash
-npm install -g @mindfoldhq/trellis@beta
-trellis --version   # ≥ 0.6.0-beta.0
+npm install -g @pennixrv/trellis@latest
+trellis --version   # ≥ 0.7.1
 ```
 
 ## 安装
@@ -83,14 +83,14 @@ trellis mem context <session-id> --grep <关键词> --turns 3 --around 1
 
 直接读取本地文件，无 daemon、无索引、不上传。
 
-| 平台        | 存储                                                              |
-| ----------- | ----------------------------------------------------------------- |
-| Claude Code | `~/.claude/projects/<sanitized-cwd>/*.jsonl`                      |
-| Codex       | `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`                    |
+| 平台        | 存储                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| Claude Code | `~/.claude/projects/<sanitized-cwd>/*.jsonl`                                                      |
+| Codex       | `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`                                                    |
 | Devin CLI   | `~/.local/share/devin/cli/sessions.db`（`--platform devin`；不是 `trellis init --devin` Desktop） |
-| OpenCode    | `~/.local/share/opencode/opencode.db`                             |
-| Pi          | `~/.pi/agent/sessions/<encoded-cwd>/<timestamp>_<id>.jsonl`       |
-| Grok        | `~/.grok/sessions/<url编码的cwd>/<session-id>/chat_history.jsonl` |
+| OpenCode    | `~/.local/share/opencode/opencode.db`                                                             |
+| Pi          | `~/.pi/agent/sessions/<encoded-cwd>/<timestamp>_<id>.jsonl`                                       |
+| Grok        | `~/.grok/sessions/<url编码的cwd>/<session-id>/chat_history.jsonl`                                 |
 
 ## 不适用场景
 

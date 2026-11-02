@@ -20,18 +20,18 @@ SessionStart hooks or extensions. Codex uses `AGENTS.md` plus the
 `UserPromptSubmit` breadcrumb; when no task is active, the breadcrumb can direct
 the AI to read `trellis-start` once.
 
-When you want to re-orient the AI mid-session or push it to the next workflow
-step, type `/trellis:continue`. It reads task state, artifact presence, and
-`workflow.md`, then decides what to do.
+When you want to re-orient the AI mid-session, type `/trellis:continue`. It
+resumes the active task from the route recorded by Trellis CLI; task status and
+artifact presence do not determine the current phase.
 
 On platforms without a SessionStart hook (Kilo, Antigravity, Devin), still run `/trellis:start` or the platform's start workflow at session start.
 
 ### Q2: How do I migrate an existing project to Trellis?
 
-1. `npm install -g @mindfoldhq/trellis@latest`
+1. `npm install -g @pennixrv/trellis@latest`
 2. `trellis init -u your-name` in the project root (auto-creates a bootstrap task).
-3. Open a Trellis-enabled AI session, or run the platform's start workflow if it has no automatic session injection; the brainstorm skill helps fill initial specs.
-4. Manually supplement core specs based on your conventions.
+3. Open a Trellis-enabled AI session, or run the platform's start workflow if it has no automatic session injection. For an existing codebase, the bundled `trellis-spec-bootstrap` skill can help draft evidence-based specs for review.
+4. Add only the project specs useful for current work, based on confirmed decisions or code evidence.
 5. Add `.trellis/` and whichever `.{platform}/` directories you use to git and commit.
 6. Teammates pull, then run `trellis init -u their-name`.
 
@@ -46,7 +46,7 @@ All Trellis scripts are Python, cross-platform:
 ```bash
 # 1. Install Node.js 18+ and Python 3.9+
 # 2. Install Trellis
-npm install -g @mindfoldhq/trellis@latest
+npm install -g @pennixrv/trellis@latest
 # 3. Initialize
 cd your-project
 trellis init -u your-name
@@ -60,7 +60,7 @@ Upgrade the global CLI first:
 
 ```bash
 trellis upgrade                              # CLI 0.6.0+
-npm install -g @mindfoldhq/trellis@latest    # CLI 0.5.x or older (no `upgrade` command yet)
+npm install -g @pennixrv/trellis@latest      # CLI 0.5.x or older (no `upgrade` command yet)
 ```
 
 Then sync the project files:
@@ -95,9 +95,9 @@ trellis upgrade                           # 1. upgrade the CLI itself (CLI 0.6.0
 trellis update --migrate                  # 2. sync the project to the CLI's current version
 ```
 
-`trellis update` only brings the project up to the CLI's version. If the CLI is still 0.4.0, the project can only reach 0.4.0. Bump the global CLI to `@latest` first, then run `trellis update --migrate`.
+`trellis update` only brings the project up to the CLI's version. If the CLI is still 0.4.0, the project can only reach 0.4.0. Join the beta channel first, then run `trellis update --migrate`.
 
-If your CLI predates 0.6.0 the `trellis upgrade` command does not exist — do step 1 with `npm install -g @mindfoldhq/trellis@latest` instead, then `trellis upgrade` works for later bumps.
+If your CLI predates 0.6.0, it has no `trellis upgrade` command. Install the current CLI with `npm install -g @pennixrv/trellis@latest`, then use `trellis upgrade` for later updates.
 
 ## Core concepts
 
@@ -113,19 +113,19 @@ If your CLI predates 0.6.0 the `trellis upgrade` command does not exist — do s
 
 ### Q9: How detailed should specs be?
 
-Aim for 200-500 lines per file, 20-50 lines per section. Concrete code examples beat abstract rules. Update specs as soon as something is out of date.
+Write enough to make a project convention clear and usable. Keep examples tied to the codebase, and revise a spec when its underlying evidence or rule changes.
 
 ### Q10: What's the role of `index.md` in `.trellis/spec/`? Is it just a directory listing?
 
-Roughly yes — `index.md` per spec layer is a one-line catalogue of what specs exist plus a short reason for each. The brainstorm/research phase reads only the `index.md` (paths + reasons), then writes the relevant entries into `implement.jsonl` / `check.jsonl`. The actual spec body files (`error-handling.md`, etc.) are loaded only when the JSONL lists them. So `index.md` is the discovery surface — keep it short, one line per spec, and put the body in the spec file itself.
+`index.md` is a discovery page for the specs in that layer. It helps the AI locate guidance relevant to the current task; the task route and context-loading path determine which spec bodies or task manifests are useful. Keep the index concise and the spec content in its own file.
 
 ### Q11: What's the difference between a command, a skill, and a sub-agent?
 
-| Primitive | Triggered by          | Typical use                                                                    |
-| --------- | --------------------- | ------------------------------------------------------------------------------ |
-| Command   | User (`/trellis:*`)   | Session boundaries (start, finish-work, continue)                              |
-| Skill     | Platform (auto-match) | Phase-level workflows (brainstorm, before-dev, check, update-spec, break-loop) |
-| Sub-agent | Main session (spawn)  | Isolated roles (implement, check, research)                                    |
+| Primitive | Triggered by          | Typical use                                                                                          |
+| --------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| Command   | User (`/trellis:*`)   | Session boundaries (start, finish-work, continue)                                                    |
+| Skill     | Platform (auto-match) | Phase guidance and capabilities such as spec bootstrap, session insight, teamwork, and customization |
+| Sub-agent | Main session (spawn)  | Isolated roles (implement, check, research)                                                          |
 
 See chapters 9–12 for guidance on picking the right primitive.
 
@@ -138,7 +138,8 @@ prompt-hook bootstrap, you usually don't need it.
 
 `/trellis:continue` is for advancing the active task to the next workflow step.
 Use it at any phase boundary, or when you don't know what to do next — the AI
-reads task state, artifact presence, and `workflow.md`, then picks the next step.
+uses the route recorded by Trellis CLI to resume the active task. Task status and
+artifact presence do not determine the current phase.
 
 Mental model: `start` opens a window onto the project; `continue` moves the cursor forward inside that window.
 
@@ -159,6 +160,8 @@ For the full list, read the 0.5.0 breaking-change changelog.
 ### Q14: `/trellis:record-session` is gone. What replaces it?
 
 Absorbed into `/trellis:finish-work` in 0.5.0 — same journal-writing behavior, plus task archive and quality-gate reminders. Update aliases or external scripts that referenced `record-session`. Other commands removed in 0.5.0 with similar replacements: `/parallel` (use platform-native worktree), `/onboard` / `/create-command` / `/integrate-skill` (low usage; replaced by skill routing or `cc-codex-spec-bootstrap`), `/check-cross-layer` (merged into `check`).
+
+In the current workflow, `/trellis:finish-work` records session progress only. Task completion is a separate Trellis CLI operation after Delivery Review and Closeout accepts the result.
 
 ### Q15: Aren't sub-agents expensive in tokens? Is this architecture more wasteful?
 
@@ -188,11 +191,11 @@ If you don't want to type flags, just run `trellis init` to enter the interactiv
 
 ### Q18: On a huge legacy repo, won't injecting specs blow up the context window?
 
-No, because Trellis doesn't inject all specs every turn. Each spec covers one topic (`error-handling.md`, `database.md`, `testing.md`) so files stay small. During brainstorm / research, the AI picks only the specs relevant to the current task and writes their paths into `implement.jsonl` / `check.jsonl`; the hook injects only those when dispatching `trellis-implement` / `trellis-check`. The main session reads spec **index** pages (paths only). A 500K-line repo with 50 spec files but 4 loaded per task behaves like a 4-file repo to the AI. If specs still bloat context, the spec files themselves are too long — split them.
+Trellis uses task context and spec indexes to locate relevant guidance instead of requiring every spec body in every turn. Keep indexes useful and include references when they help the current route or agent; there is no fixed number of specs to load. Task-specific implementation details can be inspected when needed rather than prelisted as spec entries.
 
 ### Q19: I finished a task but the result is wrong / I want to add scope. What now?
 
-Tell the AI in plain language: `task X doesn't meet the requirement, redo it` or `extend X to also cover Y`. You don't need to recreate the task unless the scope shift is huge. If it is, run `task.py create` to start a new one and reference the old `prd.md` as background. Don't repair a task by editing files manually mid-flight — let the AI re-read the PRD and produce a new diff under the same task.
+Tell the AI which accepted requirement or outcome needs to change. Revisit the affected task decision or phase result, then update the current task or create a separate task if the new work has an independent goal. The route and task artifacts should reflect the revised scope.
 
 ### Q20: When I run multiple tasks in parallel, can their files contaminate each other?
 
@@ -200,28 +203,21 @@ Each task has its own directory under `.trellis/tasks/<MM-DD-slug>/` with its ow
 
 What's NOT isolated: dead-end exploration notes left inside one task's `research/` will mislead a future re-read of that same task. Recommended habit: when a research file turns out to be wrong, mark it `## DEPRECATED` at the top instead of leaving it ambiguous.
 
-### Q21: Do I have to commit code before running `/trellis:finish-work` to archive / record?
+### Q21: Do I have to commit code before running `/trellis:finish-work`?
 
-`/trellis:finish-work` writes a session journal that includes the commit hash, so commit comes first. If you only want to archive a task without recording a journal, run `task.py archive <task-name>` directly — no commit required.
+`/trellis:finish-work` records the session journal; it does not complete or archive the task. Pass `--commit` only for hashes created during this session. If there are no relevant commits, omit that option. Task completion is separate: after Delivery Review and Closeout accepts `delivery_ready` or `no_go`, use `task.py complete <task-dir>`.
 
-Recommended sequence: Phase 3.4 commit → `/trellis:finish-work` (archives + writes journal).
+### Q22: Does Trellis create separate work, task-archive, and journal commits?
 
-### Q22: Each task creates three commits (work + archive + journal). Isn't that redundant?
-
-The three commits come from different layers: your own work commit (Phase 3.4); `task.py archive` writes a `chore(task): archive ...` commit; `add_session.py` writes a `chore: record journal` commit. Squash on merge is the recommended way to collapse them into one PR commit. If you'd rather keep them as separate history entries, the work commit is the meaningful one — archive and journal are housekeeping and trivial to filter via `git log --invert-grep -E '^chore'`.
+No. `task.py complete` updates the task lifecycle and runtime records; it does not create an archive commit. `/trellis:finish-work` records the session journal, and `session_auto_commit` controls whether that journal is committed. Work commits follow the project's Git practices; Trellis does not require a fixed number of commits.
 
 ### Q23: AI sometimes skips the Trellis flow and just writes code. How do I pull it back?
 
-Two pressure points:
-
-1. **Re-state the rule explicitly.** `Stop. We use Trellis. Classify the request and ask for task-creation consent before entering planning.` AI calibrates to the boundary you actually enforce, not the one you wished for.
-2. **Strengthen the workflow-state hook.** `inject-workflow-state.py` injects a per-turn breadcrumb based on current task status. If your team sees frequent skipping, fork `workflow.md` to add stricter `[workflow-state:no_task]` text that refuses Execute without an approved PRD.
-
-This is a known cross-model failure — Claude, GPT, DeepSeek all do it. The framework reduces it but doesn't eliminate it. Phase boundaries still need a human in the loop.
+State the intended scope and ask the AI to resume the task from the route recorded by Trellis CLI. Hooks and platform Skills can provide context, while `workflow.md` describes the task route; they do not replace user decisions or need blanket refusal rules. If the task's accepted scope changes, update the affected task decisions and route.
 
 ### Q24: How do I use Trellis on a monorepo (frontend + backend in the same repo)?
 
-`trellis init` detects monorepo and creates per-package spec directories. By default, init writes one `frontend/` and one `backend/` spec block. For more granular packages, organize specs as `.trellis/spec/<package>/backend/` etc. and reference them from the parent `index.md`. The brainstorm/research phase picks the relevant package's specs into `implement.jsonl` based on the paths the task touches.
+`trellis init` can create per-package spec directories for a detected monorepo. Organize additional package guidance only where it helps, and link it from the relevant parent `index.md`. The task route and context-loading path can then use guidance relevant to the packages in scope.
 
 Reverse case: pure-frontend or pure-backend single-repo projects — `trellis init` detects via language signals (`go.mod` / `package.json` / `*.csproj` / etc.) and only creates the matching directory; it won't force-create both.
 
@@ -229,15 +225,15 @@ Reverse case: pure-frontend or pure-backend single-repo projects — `trellis in
 
 Three layers:
 
-- **Spec** — when task A teaches you something durable about the codebase or conventions, run `/trellis:update-spec` to write it into `.trellis/spec/`. Future tasks pick it up automatically when their `implement.jsonl` lists it.
+- **Spec** — when task A establishes a durable codebase convention, record it in the relevant `.trellis/spec/` file and keep its index entry current. Later tasks can use that guidance when it applies.
 - **Workspace journal** — `.trellis/workspace/<name>/journal-*.md` carries session-level context across tasks for the same developer. SessionStart surfaces recent journals to the AI.
-- **Task PRD reference** — task B's `prd.md` can explicitly link to task A's `prd.md` or `research/` files; the brainstorm phase pulls them as context.
+- **Task reference** — task B can link to task A's `prd.md` or `research/` files when those details remain relevant; the AI can read them as task context.
 
 What does NOT flow automatically: research notes inside `task-A/research/` are NOT auto-injected into task B. Durable findings → lift to spec. Task-specific findings → leave them in the source task, reference explicitly.
 
 ### Q26: Is there TDD support?
 
-Not as a built-in workflow yet. The current default is implement → check (post-hoc), not test-first. A TDD skill template is on the roadmap for a future 0.5.x release. In the meantime, write TDD instructions into your project's `.trellis/spec/<package>/testing.md` so the implement / check sub-agents follow the right test patterns.
+Trellis does not require a test-first sequence. Describe the validation needed for the task and record durable project testing conventions in the relevant spec; choose a test-first or implementation-first sequence to fit the change.
 
 ### Q27: Can Trellis be used for non-code work — writing, legal docs, research?
 
@@ -245,7 +241,7 @@ Yes. Several users have moved Trellis to long-form writing by treating prose lik
 
 ### Q28: How do I disable auto-commit when `.trellis/` is in `.gitignore`?
 
-When `.gitignore` excludes `.trellis/`, scripts respect it — they print a warning and skip `git add` / `git commit`. The journal and task-archive files still write to disk; they just don't enter git.
+When `.gitignore` excludes `.trellis/`, the journal auto-commit skips `git add` / `git commit`; task and journal data can still be written locally but remain untracked by Git.
 
 To turn auto-commit off explicitly (regardless of `.gitignore`), set in `.trellis/config.yaml`:
 
@@ -253,7 +249,7 @@ To turn auto-commit off explicitly (regardless of `.gitignore`), set in `.trelli
 session_auto_commit: false
 ```
 
-Default `true`. Accepts `true / false / yes / no / 1 / 0 / on / off`. Affects `add_session.py` (journal) and `task.py archive` (task archival).
+Default `true`. Accepts `true / false / yes / no / 1 / 0 / on / off`. It controls journal commits by `add_session.py`; it does not control task lifecycle updates.
 
 ## Team collaboration & cross-project
 
@@ -289,7 +285,7 @@ If teammates don't want Trellis content at all:
 You don't. Maintain your team's shared rules as your own spec template repo, then pull them when starting new projects:
 
 ```bash
-trellis init -r git@github.com:your-org/trellis-spec-template.git
+trellis init --registry git@github.com:your-org/trellis-spec-template.git
 ```
 
 Supports GitHub / GitLab / Bitbucket / self-hosted GitLab (HTTPS / SSH). Coding conventions live in one place, distributed via your git infrastructure — no copy-pasting per project.

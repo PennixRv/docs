@@ -6,15 +6,15 @@ title: 'Roadmap'
 
 ### 跨会话记忆底座（`trellis mem`）
 
-本地 CLI，索引机器上已有的 Claude Code / Codex 会话日志，提供结构化检索。`trellis mem list`、`search`、`context`、`extract`、`projects` 覆盖 session 列表、关键词搜索、上下文窗口下钻、清洗后对话导出、按项目路由。`extract --phase brainstorm|implement|all` 按 `task.py create` / `task.py start` 边界切分一次 session，AI 据此可恢复任意历史 task 的 brainstorm 段。可复用检索 / 阶段切片逻辑封装在 `@mindfoldhq/trellis-core/mem`；纯本地，不上传任何内容。
+本地 CLI，索引当前支持的 AI 会话日志并提供结构化检索。`trellis mem list`、`search`、`context`、`extract`、`projects` 分别用于发现会话、关键词搜索、上下文窗口查询、清洗后对话导出和按项目路由。`extract --phase brainstorm|implement|all` 按任务创建与实施开始边界切分会话。可复用检索 / 阶段切片逻辑封装在 `@pennixrv/trellis-core/mem`；纯本地，不上传任何内容。
 
 ### Session insight（以能力 skill 形式交付）
 
-最终以 bundled skill `trellis-session-insight` 形式交付，而不是硬编码一条 workflow 步骤。这条 skill 教 AI 何时该伸手调 `trellis mem`（过往解法回忆、决策回溯、跨会话续作、似曾相识 bug、自身模式识别、finish-work 回顾），同时**明确**不做的事：不固定写回某个文件。`mem` 返回的内容怎么用 —— 是行内引用、是更新 `prd.md` / `design.md`、是追加到 task notes、是只在脑里参考、还是交棒给 `trellis-update-spec` —— 由 AI 根据当下对话情境自行判断。
+最终以内置 `trellis-session-insight` Skill 形式交付，而不是硬编码为工作流步骤。这条 Skill 说明 AI 何时查询 `trellis mem`（过往解法、决策、跨会话进度、相似 Bug 和会话回顾），以及如何按当前情境使用结果：行内引用、更新任务产物或相关 spec、追加任务记录，或仅作为背景信息。它不规定固定的写回文件。
 
 ### 可配置 Hooks
 
-Hook 行为由 `.trellis/config.yaml` 驱动。当前可调项：`session_commit_message`、`max_journal_lines`、`session_auto_commit`、`hooks.after_create` / `after_start` / `after_finish` / `after_archive` 这套 task 生命周期触发命令、`channel.worker_guard.idle_timeout` 与 `max_live_workers`，以及 `codex.dispatch_mode: inline | sub-agent`（控制 Codex 主 agent 是直接编辑代码还是派发到 `trellis-implement` / `trellis-check` 子 agent 的开关）。
+Hook 行为由 `.trellis/config.yaml` 驱动。当前设置包括 `session_commit_message`、`max_journal_lines`、`session_auto_commit`、`hooks.after_create`、`after_start`、`after_finish` 和 `after_complete` 任务生命周期命令、`channel.worker_guard.idle_timeout` 与 `max_live_workers`，以及 `codex.dispatch_mode`（`auto` 或 `inline`；`sub-agent` 仍是 `auto` 的兼容别名）。
 
 ### Auto runner —— 已被替代
 
@@ -32,22 +32,14 @@ Hook 行为由 `.trellis/config.yaml` 驱动。当前可调项：`session_commit
 
 ---
 
-## v0.7
+## 后续设想
 
-### 团队级 memory
+早期的 v0.7 提案不代表当前发布承诺。当前 native workflow 由五个阶段专用 Skill
+协作，并将任务生命周期与阶段路由分开。团队级记忆和更广泛的项目知识管理仍可作为
+未来方向，但不属于 0.7.1 发布内容。
 
-跨开发者、跨 task 的 memory 检索，超出今天的个人 journal 边界。目标是把"找上下文"的成本在老仓库 / 大代码库上显著降下来。这是用户访谈里反复出现的最强信号。具体形态取决于 Wiki 是否先做（带链接的丰富记忆）还是继续延期（在 `trellis mem` 之上做更松散的聚合）。
-
-### TDD 模板
-
-Optional test-first 工作流模板，把 `implement → check` 改为 `test → implement → check`。当前 `trellis-check` 是事后检查；TDD 切换通过 `trellis-meta` skill 提供，不替换默认轻量工作流。
-
-### Brainstorm 加强
-
-让 brainstorm 在问业务问题之前先做更深入的代码 / 历史调研，把问题留给真正不能从代码推断的部分。当前 brainstorm 容易"问得太浅"。
-
-### 中文本地化
-
-CLI 输出、内置 skill / sub-agent prompt、默认模板的中文版本。`.trellis/spec/` 和 `workflow.md` 本身已经是模型无关 markdown，写中文工作正常 —— 这次补的是 Trellis 自带的英文文案。
+此前关于加强 brainstorm 的设想，已由目标探索、决策和方案设计阶段承接，不再作为
+独立 brainstorm Skill。当前 native workflow 和阶段 Skill 已包含中文内容；本次发布
+不宣称所有 CLI 消息和各平台模板都已完成中文本地化。
 
 ---

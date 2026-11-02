@@ -73,25 +73,23 @@ Trellis treats AI coding as a workflow and knowledge-management problem, not a s
 | Team convention memory             | Spec module             | `.trellis/spec/**/index.md`, guideline files                                                                                   |
 | Developer memory                   | Workspace module        | `.trellis/workspace/<developer>/journal-*.md`                                                                                  |
 | Platform support                   | Platform adapter module | `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kiro/`, `.gemini/`, `.qoder/`, `.github/`, `.pi/`, and related settings     |
-| Finish and archive                 | Finish module           | `/trellis:finish-work`, `.trellis/scripts/add_session.py`, task archive scripts                                                |
+| Delivery closeout and session log  | Closeout module         | Delivery Review and Closeout Skill, `task.py complete`, `/trellis:finish-work`, `add_session.py`                               |
 
 ## Workflow module
 
-`.trellis/workflow.md` is the source of truth for Trellis's Plan -> Execute -> Finish contract.
+`.trellis/workflow.md` routes each task through its selected business phases and supporting components. Trellis CLI stores the selected route and phase records in `task.json` under `meta.task_workflow`.
 
-```text
-Phase 1: Plan    -> classify the turn, get task-creation consent, write planning artifacts
-Phase 2: Execute -> implement, check, and repeat until green
-Phase 3: Finish  -> final verification, spec update, work commit, archive
-```
+The available business phases have distinct purposes and transition conditions:
 
-The file owns three things:
+- Goal Exploration and Requirements Confirmation
+- Decision Space Construction and Consolidation
+- Solution Design and Convergence
+- Task Implementation and Test Verification
+- Delivery Review and Closeout
 
-- phase definitions and numbered steps
-- skill / sub-agent routing by platform capability
-- `[workflow-state:STATUS]` blocks used by the per-turn breadcrumb hook
+Each phase Skill owns its detailed procedure and diagram. A task route may omit phases when the evidence shows they add no value. A user-confirmed requirements baseline is required before the route advances beyond Goal Exploration and Requirements Confirmation. Implementation requires an accepted implementation contract and separate authorization. Delivery Review and Closeout reviews the result and determines whether to complete, cancel, or return to an affected earlier phase.
 
-Changing workflow behavior starts here. Platform commands, skills, and agent files may also need wording updates if they describe the same flow, but the workflow contract itself belongs in `.trellis/workflow.md`.
+The workflow document also routes platform and component Skills as needed. Trellis Teamwork and Paseo may support collaboration, while Trellis CLI remains the authority for task and phase state.
 
 ## Workflow-state module
 
@@ -99,11 +97,10 @@ On hook-capable platforms, `inject-workflow-state.py` or the equivalent plugin r
 
 The runtime contract is:
 
-1. Resolve the Trellis root from `cwd`.
-2. Resolve the active task for the current session.
-3. Read `task.json.status`, or synthesize `no_task` when no task is active.
-4. Parse `.trellis/workflow.md`.
-5. Inject the matching `[workflow-state:STATUS]` body into `<workflow-state>...</workflow-state>`.
+1. Resolve the Trellis root and active task for the current session.
+2. Read the task lifecycle status and selected phase route.
+3. Parse the applicable `[workflow-state:...]` blocks from `.trellis/workflow.md`.
+4. Inject the matching workflow guidance into the host context.
 
 Marker syntax:
 
@@ -115,16 +112,9 @@ Marker syntax:
 
 The hook scripts are parser-only. They do not contain fallback copies of the breadcrumb text. If a matching block is missing, the hook emits `Refer to workflow.md for current step.`
 
-Default statuses:
+Task status describes lifecycle, not the current business phase. The active phase comes from `meta.task_workflow.current_phase_id`; use `task.py phase show <task>` to inspect the selected route. Workflow-state blocks are context prompts, not a second state store.
 
-| Status        | Writer                  | Notes                                                                                                                                                    |
-| ------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `no_task`     | Synthesized by the hook | No active task pointer for the current session.                                                                                                          |
-| `planning`    | `task.py create`        | Requirements and planning artifacts are active; lightweight tasks can be PRD-only, while complex tasks need `design.md` and `implement.md` before start. |
-| `in_progress` | `task.py start`         | Implementation, checking, and finish steps are active.                                                                                                   |
-| `completed`   | `task.py archive`       | Written immediately before archive move; not normally visible as a live breadcrumb.                                                                      |
-
-`task.py create` best-effort sets the current session's active-task pointer, so `planning` is reachable during brainstorm and JSONL curation.
+The `no_task`, `planning`, and `in_progress` blocks provide broad lifecycle guidance. `task.py create` may set the session's active-task pointer; `task.py start` enters implementation only when the route and authorization permit it. `task.py complete` completes a task after closeout acceptance and leaves its directory in place.
 
 ## Task store module
 
@@ -143,24 +133,23 @@ Each task is one directory:
 
 Important files:
 
-| File              | Purpose                                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `task.json`       | Status, priority, assignee, branch, PR URL, parent/child relationships, and extension metadata.          |
-| `prd.md`          | Requirements, constraints, acceptance criteria, and out-of-scope items.                                  |
-| `design.md`       | Technical design for complex tasks: boundaries, contracts, data flow, compatibility, tradeoffs.          |
-| `implement.md`    | Execution plan for complex tasks: ordered checklist, validation commands, review gates, rollback points. |
-| `implement.jsonl` | Spec and research manifest for implementation context.                                                   |
-| `check.jsonl`     | Spec and research manifest for review and verification context.                                          |
-| `research/`       | Research artifacts written by `trellis-research` or the main planning flow.                              |
+| File              | Purpose                                                                                                               |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `task.json`       | Lifecycle status, phase route and records under `meta.task_workflow`, ownership, branch, relationships, and metadata. |
+| `prd.md`          | Requirements, constraints, acceptance criteria, and out-of-scope items.                                               |
+| `design.md`       | Technical design for complex tasks: boundaries, contracts, data flow, compatibility, tradeoffs.                       |
+| `implement.md`    | Execution plan for complex tasks: ordered checklist, validation commands, review gates, rollback points.              |
+| `implement.jsonl` | Spec and research manifest for implementation context.                                                                |
+| `check.jsonl`     | Spec and research manifest for review and verification context.                                                       |
+| `research/`       | Research artifacts written by `trellis-research` or the main planning flow.                                           |
 
 Task lifecycle hooks are command events, not generic status watchers:
 
 | Lifecycle event | Fires when                                  | Meaning                                                                                |
 | --------------- | ------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `after_create`  | `task.py create` finishes                   | A task directory exists.                                                               |
-| `after_start`   | `task.py start` finishes                    | The task entered `in_progress`.                                                        |
+| `after_start`   | `task.py start` finishes                    | The task becomes active for the current session.                                       |
 | `after_finish`  | `task.py finish` clears the session pointer | The current AI session detached from the task; the task may still be active elsewhere. |
-| `after_archive` | `task.py archive` finishes                  | The task is archived; use this for external "done" sync.                               |
 
 ## Active-task runtime module
 
@@ -220,7 +209,7 @@ Trellis ships three sub-agent roles when the platform supports sub-agents:
 | `trellis-implement` | Write the change against the planning artifacts and relevant specs.               | `implement.jsonl`, `prd.md`, optional `design.md`, optional `implement.md`.            |
 | `trellis-check`     | Review, run checks, and self-fix findings.                                        | `check.jsonl`, `prd.md`, optional `design.md`, optional `implement.md`, changed files. |
 
-Skills cover phases where the main session needs guidance: brainstorm, before-dev, check, update-spec, finish-work, and meta customization. On platforms without sub-agents, skills carry more of the execution path directly in the main session.
+Phase Skills guide Goal Exploration and Requirements Confirmation, Decision Space Construction and Consolidation, Solution Design and Convergence, Task Implementation and Test Verification, and Delivery Review and Closeout. Support Skills provide spec bootstrapping, session insight, teamwork, and Trellis customization. On platforms without sub-agents, phase work stays in the main session; a separate sub-agent is not required.
 
 Removed 0.4 mechanisms:
 
@@ -244,14 +233,9 @@ Stable team rules belong in `.trellis/spec/`. Task-specific facts belong in the 
 
 ## Finish module
 
-Trellis separates implementation, work commits, and bookkeeping:
+Delivery Review and Closeout compares the current delivery with the accepted task result, resolves material gaps or records remaining work, and accepts a completion or cancellation disposition. `task.py complete` marks the task complete after closeout acceptance; the task remains under `.trellis/tasks/`.
 
-1. Implement/check agents produce a clean diff.
-2. The main session runs final verification and `trellis-update-spec`.
-3. Phase 3.4 proposes a batched commit plan, waits for one user confirmation, stages the listed files, and runs `git commit`. It does not amend and does not push.
-4. `/trellis:finish-work` classifies dirty paths, stops if current-task work is still uncommitted, archives the task, and writes the workspace journal.
-
-`/trellis:finish-work` is not the command that commits feature code. Work commits happen first; archive and journal commits are bookkeeping after that.
+`/trellis:finish-work` records session progress in the workspace journal. It does not complete or archive the task. Session journaling and formal session handoff are separate from the task's phase route and lifecycle.
 
 ## Generated and protected files
 
@@ -270,11 +254,11 @@ For local customization, use the bundled `trellis-meta` skill as the map. It tel
 
 ## Customization map
 
-| Goal                                                       | First file to inspect                                                                           |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Change phase order, required steps, or next-action wording | `.trellis/workflow.md`                                                                          |
-| Change task creation, status, archive, or lifecycle sync   | `.trellis/scripts/common/task_store.py`, `.trellis/scripts/task.py`, `.trellis/config.yaml`     |
-| Change spec loading or JSONL rules                         | `.trellis/workflow.md`, `.trellis/scripts/common/task_context.py`, platform agent/prelude files |
-| Change hook behavior                                       | Platform hook settings plus `.trellis/scripts/` hook implementations                            |
-| Change implement/check agent behavior                      | Platform agent files and task JSONL context rules                                               |
-| Add team-specific coding rules                             | `.trellis/spec/` or a project-local skill                                                       |
+| Goal                                                       | First file to inspect                                                                                           |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Change phase order, required steps, or next-action wording | `.trellis/workflow.md`                                                                                          |
+| Change task lifecycle or phase state                       | `.trellis/scripts/common/task_store.py`, `.trellis/scripts/common/task_workflow.py`, `.trellis/scripts/task.py` |
+| Change spec loading or JSONL rules                         | `.trellis/workflow.md`, `.trellis/scripts/common/task_context.py`, platform agent/prelude files                 |
+| Change hook behavior                                       | Platform hook settings plus `.trellis/scripts/` hook implementations                                            |
+| Change implement/check agent behavior                      | Platform agent files and task JSONL context rules                                                               |
+| Add team-specific coding rules                             | `.trellis/spec/` or a project-local skill                                                                       |

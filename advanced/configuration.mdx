@@ -31,16 +31,16 @@ When a key is absent, Trellis uses its built-in default. Keep indentation consis
 
 ## Current keys
 
-| Key                      | Default                   | What it controls                                                                                                  |
-| ------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `session_commit_message` | `"chore: record journal"` | Commit message used by `add_session.py` when it auto-commits journal and index changes.                           |
-| `max_journal_lines`      | `2000`                    | Maximum lines per journal file before Trellis rotates to the next journal file.                                   |
-| `session_auto_commit`    | `true`                    | Whether `add_session.py` and `task.py archive` auto-stage and auto-commit Trellis journal / task archive changes. |
-| `hooks`                  | unset                     | Shell commands that run after task lifecycle events.                                                              |
-| `packages`               | unset                     | Package declarations for monorepos, submodules, and polyrepo-style directories.                                   |
-| `default_package`        | unset                     | Fallback package when a command or task does not specify one.                                                     |
-| `update.skip`            | unset                     | Legacy update exclusion list that `trellis update` still honors during normal updates.                            |
-| `codex.dispatch_mode`    | `inline`                  | Codex-only choice between main-agent implementation and legacy `trellis-*` sub-agent dispatch.                    |
+| Key                      | Default                   | What it controls                                                                               |
+| ------------------------ | ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `session_commit_message` | `"chore: record journal"` | Commit message used by `add_session.py` when it auto-commits journal and index changes.        |
+| `max_journal_lines`      | `2000`                    | Maximum lines per journal file before Trellis rotates to the next journal file.                |
+| `session_auto_commit`    | `true`                    | Whether `add_session.py` auto-stages and auto-commits session journal and index changes.       |
+| `hooks`                  | unset                     | Shell commands that run after task lifecycle events.                                           |
+| `packages`               | unset                     | Package declarations for monorepos, submodules, and polyrepo-style directories.                |
+| `default_package`        | unset                     | Fallback package when a command or task does not specify one.                                  |
+| `update.skip`            | unset                     | Legacy update exclusion list that `trellis update` still honors during normal updates.         |
+| `codex.dispatch_mode`    | `inline`                  | Codex-only choice between main-agent implementation and legacy `trellis-*` sub-agent dispatch. |
 
 ### Session recording
 
@@ -55,13 +55,13 @@ Use `session_commit_message` if your repo has a conventional commit style for Tr
 
 ### Session auto-commit
 
-`session_auto_commit` controls whether Trellis scripts touch git for journal and task archive bookkeeping:
+`session_auto_commit` controls whether `add_session.py` touches git while recording a session:
 
 ```yaml
 session_auto_commit: false
 ```
 
-Default `true` preserves the normal behavior: `add_session.py` and `task.py archive` write files, stage the Trellis changes, and create bookkeeping commits. Set it to `false` when `.trellis/` is intentionally gitignored or when your team wants to review and commit Trellis bookkeeping manually.
+Default `true` lets `add_session.py` write the journal, stage the journal and index changes, and create a bookkeeping commit. Set it to `false` when `.trellis/` is intentionally gitignored or when your team wants to review and commit session records manually.
 
 Accepted values are `true`, `false`, `yes`, `no`, `1`, `0`, `on`, and `off` (case-insensitive). Invalid values fall back to `true` and print a warning.
 
@@ -77,11 +77,11 @@ hooks:
     - "echo 'Task started'"
   after_finish:
     - "echo 'Task finished'"
-  after_archive:
-    - "echo 'Task archived'"
+  after_complete:
+    - "echo 'Task completed'"
 ```
 
-Supported events are `after_create`, `after_start`, `after_finish`, and `after_archive`. Hook failures print a warning but do not block the main task operation.
+Supported events are `after_create`, `after_start`, `after_finish`, and `after_complete`. Hook failures print a warning but do not block the main task operation.
 
 ### Packages and default package
 

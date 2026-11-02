@@ -1,11 +1,11 @@
 ---
-title: '定制 Spec Template Marketplace'
+title: '自定义 Spec 模板仓库'
 ---
 
-## 定制 Spec Template Marketplace
+## 自定义 Spec 模板仓库
 
-Spec template marketplace 是一个 Git source，`trellis init --registry` 可以从
-里面拉取一套 `.trellis/spec/` 起点。团队有很多仓库、但希望它们从同一套工程约定开始时，就该用这个。
+Spec 模板仓库是供 `trellis init --registry` 读取的 Git source，可为多个仓库提供
+统一的 `.trellis/spec/` 起点。它只提供项目 spec；Trellis CLI 的默认工作流由 CLI 自身提供。
 
 它适合放可复用的工程规范：框架目录、API 模式、测试规则、发布规则、review checklist，以及 agent
 写代码前应该看到的真实示例。它不是远程任务库，也不应该放项目运行态。

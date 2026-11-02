@@ -40,13 +40,17 @@ On platforms where SessionStart is automatic, `start` is not installed as a user
 
 ### Shipped skills (Claude Code)
 
-| File                                          | Skill                 | Triggers when…                           |
-| --------------------------------------------- | --------------------- | ---------------------------------------- |
-| `.claude/skills/trellis-brainstorm/SKILL.md`  | `trellis-brainstorm`  | User describes a feature / bug / request |
-| `.claude/skills/trellis-before-dev/SKILL.md`  | `trellis-before-dev`  | About to write code in an active task    |
-| `.claude/skills/trellis-check/SKILL.md`       | `trellis-check`       | Implementation finished                  |
-| `.claude/skills/trellis-update-spec/SKILL.md` | `trellis-update-spec` | Worth capturing a learning               |
-| `.claude/skills/trellis-break-loop/SKILL.md`  | `trellis-break-loop`  | A tricky bug was just resolved           |
+| File                                                                      | Skill                                             | Use for                                      |
+| ------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------- |
+| `.claude/skills/trellis-goal-exploration-and-requirements/SKILL.md`       | `trellis-goal-exploration-and-requirements`       | Align goals and confirm requirements         |
+| `.claude/skills/trellis-decision-space-construction-and-merging/SKILL.md` | `trellis-decision-space-construction-and-merging` | Identify and resolve material decisions      |
+| `.claude/skills/trellis-solution-design-and-convergence/SKILL.md`         | `trellis-solution-design-and-convergence`         | Form and review the implementation solution  |
+| `.claude/skills/trellis-task-implementation/SKILL.md`                     | `trellis-task-implementation`                     | Implement and verify an authorized task      |
+| `.claude/skills/trellis-delivery-review-and-closeout/SKILL.md`            | `trellis-delivery-review-and-closeout`            | Review delivery and close out the task       |
+| `.claude/skills/trellis-teamwork/SKILL.md`                                | `trellis-teamwork`                                | Coordinate supported multi-agent work        |
+| `.claude/skills/trellis-session-insight/SKILL.md`                         | `trellis-session-insight`                         | Search prior local AI sessions               |
+| `.claude/skills/trellis-spec-bootstrap/SKILL.md`                          | `trellis-spec-bootstrap`                          | Create or refresh project coding guidance    |
+| `.claude/skills/trellis-meta/SKILL.md`                                    | `trellis-meta`                                    | Understand or customize local Trellis assets |
 
 ### Hook scripts (Claude Code)
 

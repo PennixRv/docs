@@ -1,144 +1,193 @@
 ---
-title: '定制 Workflow'
+title: '自定义 Workflow 格式'
+description: '创建 workflow 变体，并保留 SessionStart、每轮注入、phase 查询和 sub-agent 运行时依赖的 Markdown 契约。'
 ---
 
-## 定制 Workflow
+Workflow 文件既是说明文档，也是运行时输入。Trellis 会解析里面的标题和 marker
+block，用来生成 SessionStart 上下文、每轮指引和 step 级说明。
 
-`.trellis/workflow.md` 定义 Trellis 的开发流程：Phase 定义、skill 路由、每轮提醒、`task.py` 命令参考都在这一个文件里。Fork 工作流 = 改一个 markdown 文件，不用动 Python、不用改 hook、不用重发包。
+## 从生成的脚手架开始
 
-0.5 之前，工作流行为分散在三处：hook Python 脚本、configurator TypeScript、命令 markdown；想 fork 一份"自己的工作流"得同时改三处才能自洽。0.5 把这三处收敛到 `workflow.md` 一个文件。
-
-### workflow.md 控制了哪些东西
-
-| `workflow.md` 里的段落                             | 谁来读                                                    | 效果                                                                                 |
-| -------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `## Phase Index` + `## Phase 1/2/3`                | AI 在会话开始时读（通过 `SessionStart` hook）             | 定义三阶段流程和每个阶段的 step 级 how-to                                            |
-| `### Skill Routing`                                | AI 在会话开始时读                                         | 把用户意图映射到要加载的 skill（例如"想做新功能"→ `trellis-brainstorm`）             |
-| `### DO NOT skip skills`                           | AI 在会话开始时读                                         | 列出 AI 想跳过 skill 时常见的借口以及为什么不对                                      |
-| `## Phase Index` 下的 `[workflow-state:STATUS]` 块 | `inject-workflow-state.py` 在每次 `UserPromptSubmit` 触发 | 每轮用 `<workflow-state>…</workflow-state>` 注入一段面包屑，内容按当前任务 status 变 |
-| `### Task System`（task.py 命令表）                | AI 在会话开始时读                                         | 16 个 `task.py` 子命令按用途分组的参考                                               |
-
-所有注入路径都在运行时读 `workflow.md`——改完不用重 build。
-
-### 改每轮面包屑
-
-每轮注入的 `<workflow-state>` 块根据当前任务 `status` 提醒 AI 下一步该做什么。块本身和每个 phase 一起放在 `## Phase Index` 下面，原地改即可。Hook 脚本只解析、不嵌内容，没有"内置兜底文案"可以漂移。
-
-```markdown
-## Phase Index
-
-[workflow-state:no_task]
-No active task. First classify the current turn and ask for task-creation consent before creating any Trellis task.
-[/workflow-state:no_task]
-
-### Phase 1: Plan
-
-[workflow-state:planning]
-Load trellis-brainstorm; stay in planning.
-Lightweight: prd.md can be enough. Complex: finish prd.md, design.md, and implement.md; ask for review before task.py start.
-[/workflow-state:planning]
-
-### Phase 2: Execute
-
-[workflow-state:in_progress]
-Flow: implement → check → update-spec → finish
-Check conversation history + git status to determine current step; do NOT skip check.
-[/workflow-state:in_progress]
-
-### Phase 3: Finish
-
-[workflow-state:completed]
-User commits changes; then run task.py archive.
-[/workflow-state:completed]
-```
-
-规则：
-
-- 标签 `STATUS` 对应 `task.json.status`。默认：`planning` / `in_progress` / `completed`，没活跃任务时走 `no_task`。
-- 标签名短横线和下划线都支持（`blocked` / `in-review` / `needs_qa` 等）。
-- 某个状态没有匹配标签块时，hook 输出固定一行 `Refer to workflow.md for current step.`，AI 自己回去读 workflow 契约。用不到的块可以删。
-- `task.py create` 在写 `status=planning` 的同时也设置当前 session 的 active-task pointer，所以 `[workflow-state:planning]` 从下一轮就开始生效——brainstorm 和 planning artifact 阶段就能看到，不必等到 `task.py start`。
-- 每个块保持简短（≈200 字节）。这是每轮都注入的，写长了 AI 每条消息都要付注意力代价。
-
-### 加一个自定义状态
-
-想要一个 `blocked` 状态，提醒 AI 不要硬猜而是先上报？
-
-```markdown
-[workflow-state:blocked]
-Task is blocked waiting on external input. Don't start new implementation —
-surface the blocker to the user or spawn `trellis-research` if more investigation helps.
-[/workflow-state:blocked]
-```
-
-然后直接改 `task.json` 把状态设成 `blocked`：
+创建一个本地 workflow：
 
 ```bash
-# 改成自定义状态
-jq '.status = "blocked"' "$TASK_DIR/task.json" > "$TASK_DIR/task.json.tmp" && mv "$TASK_DIR/task.json.tmp" "$TASK_DIR/task.json"
+trellis workflow create review-first
 ```
 
-从下一条消息起，AI 每轮看到 `blocked` 面包屑。改回 `in_progress` 就恢复正常流。
+命令会从完整的内置 native workflow 生成
+`.trellis/workflows/review-first.md`。与空白文件相比，从 native 开始更安全，
+因为所有 parser 依赖的结构都已经存在。
 
-`task.py` 的子命令只做默认状态流转（`start` → `in_progress`、`archive` → `completed`）。自定义状态在 `task.json.status` 里就是普通字符串——面包屑系统不要求预注册，`task.py list --status <name>` 也能按任意字符串过滤。
+创建后，命令会依次询问是否把它设为项目默认值和个人默认值。只想生成文件时使用
+`--skip-defaults`。
 
-### 改 skill 路由表
+<Note>这个命令不会替换或删除 `.trellis/workflow.md`。该文件始终是零配置的全局 回退。</Note>
 
-`### Skill Routing` 下面的表是 AI 决定要不要加载 auto-trigger skill 时查的。
+## 理解文件布局
+
+```text
+.trellis/
+├── workflow.md
+├── workflows/
+│   └── review-first.md
+├── config.yaml
+└── .developer
+```
+
+运行时按下面的顺序选择文件：
+
+1. 当前任务：`task.json` 的 `workflow`
+2. 当前开发者：`.developer` 的 `workflow=`
+3. 项目：`config.yaml` 的 `default_workflow`
+4. 全局回退：`.trellis/workflow.md`
+
+选择命令和当前平台限制见
+[动态 Workflow 切换](/zh/advanced/dynamic-workflow-switching)。
+
+## 保留运行时契约
+
+生成的脚手架是最完整的参考。你可以把 workflow 改得更短，但要保留运行时读取的
+标题和标记。解析器接受 `## Phase Index` 和 `## 阶段索引`；同一文件应统一使用
+一种标题语言。
 
 ```markdown
-| User intent                               | Skill               |
-| ----------------------------------------- | ------------------- |
-| Wants a new feature / requirement unclear | trellis-brainstorm  |
-| About to write code / start implementing  | trellis-before-dev  |
-| Finished writing / want to verify         | trellis-check       |
-| Stuck / fixed same bug several times      | trellis-break-loop  |
-| Spec needs update                         | trellis-update-spec |
+## 阶段索引
+
+- 目标探索与需求核对阶段
+- 决策空间构造与归并阶段
+- 解决方案设计与收敛阶段
+- 任务实施与测试验证阶段
+- 交付审查与现场收尾阶段
+
+[workflow-state:no_task]
+Explain what the agent should do when no task is active.
+[/workflow-state:no_task]
+
+[workflow-state:planning]
+Explain the planning requirements.
+[/workflow-state:planning]
+
+[workflow-state:planning-inline]
+Explain the Codex inline planning requirements.
+[/workflow-state:planning-inline]
+
+[workflow-state:in_progress]
+Explain the implementation, verification, and finish flow.
+[/workflow-state:in_progress]
+
+[workflow-state:in_progress-inline]
+Explain the Codex inline implementation flow.
+[/workflow-state:in_progress-inline]
+
+### 目标探索与需求核对阶段
+
+#### 1.1 对齐需求
+
+填写本步骤的工作内容。
+
+### 决策空间构造与归并阶段
+
+#### 2.1 收敛决策
+
+填写本步骤的工作内容。
+
+### 解决方案设计与收敛阶段
+
+#### 3.1 收敛方案
+
+填写本步骤的工作内容。
+
+### 任务实施与测试验证阶段
+
+#### 4.1 实施与验证
+
+填写本步骤的工作内容。
+
+### 交付审查与现场收尾阶段
+
+#### 5.1 审查与收尾
+
+填写本步骤的工作内容。
 ```
 
-自己写了个 skill（见[定制 Skill](./custom-skills)），在这里加一行就够：
+Parser 依赖的部分如下：
+
+| 结构                              | 消费方                               | 要求                                                                      |
+| --------------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| `## Phase Index` 或 `## 阶段索引` | SessionStart 和 phase 查询           | 使用其中一个精确标题；内容到下一个二级或三级标题为止。                    |
+| `#### X.Y`                        | `get_context.py --mode phase --step` | 使用 `4.1` 这样的数字步骤标识。                                           |
+| `[workflow-state:STATUS]` 配对    | 每轮 hook                            | 开始和结束标识必须相同；hook 按标识选择任务生命周期或当前业务阶段的指引。 |
+| 平台 marker 配对                  | Phase renderer                       | 开始和结束的平台列表必须相同。                                            |
+
+内置 workflow 包含 `no_task`、`task_error`、任务生命周期指引，以及分别对应各业务阶段
+标识的内容块。Hook 从 `meta.task_workflow` 读取当前业务阶段，并单独显示阶段状态。
+阶段路由与记录任务生命周期的 `task.json.status` 是两个不同的数据。运行时没有选择到
+对应标识的内容块时，该内容块不会生效，也不会改变这两类状态。
+
+步骤提取会在下一个 `####` 标题、`##` 标题或水平分隔线处结束。三级阶段标题本身
+不会结束当前步骤；如果步骤需要在没有后续步骤标题的其他章节前结束，应使用 `---`。
+
+## 按平台路由指引
+
+平台 block 是可选的。当同一个 step 在不同 harness 中需要不同操作时使用：
 
 ```markdown
-| 写代码前想先要一份测试计划 | trellis-test-plan |
+[Claude Code, Cursor, OpenCode, codex-sub-agent]
+Dispatch the implementation agent with the active task context.
+[/Claude Code, Cursor, OpenCode, codex-sub-agent]
+
+[codex-inline, Kilo, Antigravity, Devin]
+Load the project specs and implement in the main session.
+[/codex-inline, Kilo, Antigravity, Devin]
 ```
 
-不用改代码——下一个会话，AI 读到更新后的表就会按新路由选 skill。
+平台匹配忽略大小写、空格、短横线和下划线。Marker 所在行只能包含方括号中的
+平台列表。
 
-### 加 / 改 Phase
+## 理解 hook 的读取边界
 
-Phase 段落都是普通 markdown。你可以：
+Hook 由 `trellis init` 和 `trellis update` 安装。不要在 workflow 文件里声明
+hook 事件名或脚本命令。
 
-- **加一个 Phase 4: Review** —— 定义 4.1、4.2 … step 和 how-to；再从面包屑引用（`[workflow-state:in_review]`）。
-- **把 Plan 拆成 A/B 两条分支** —— 把 step 编号改成 1A.1 / 1B.1；AI 按正文内容走。
-- **压缩 Finish** —— 删你不关心的 step（比如去掉 3.2 debug retrospective）。
+| 运行时路径                    | 从选中的 workflow 读取什么             |
+| ----------------------------- | -------------------------------------- |
+| SessionStart                  | `## Phase Index` 或 `## 阶段索引` 概览 |
+| 每轮 workflow-state hook      | 与当前任务 status 对应的 block         |
+| `get_context.py --mode phase` | Phase Index 或某一个 `#### X.Y` step   |
+| 父会话派发                    | 选中 step 里的 agent 路由指引          |
 
-改完保持 Phase Index 和详细 Phase 段落同步——SessionStart 把两者都内联进去，AI 得看到一致内容。
+Sub-agent hook 是另一条独立通道。它依次注入 `implement.jsonl` 或
+`check.jsonl`，然后注入 `prd.md`、存在时的 `design.md` 和存在时的
+`implement.md`，不会解析 workflow Markdown。选中的 workflow 决定父会话何时、
+如何派发；sub-agent hook 提供具体任务材料。
 
-<Note>
-  `get_context.py --mode phase --step X.Y` 解析 `## Phase X` 标题 + `#### X.Y` step
-  标题来提取正文。改名或改结构时，确保 step 锚点仍可解析（标题层级有语义）。
-</Note>
+## 修改后验证
 
-### 哪些东西**不要**改
+运行真实的 phase parser：
 
-有几处约定被脚本依赖，改了会坏：
+```bash
+python3 ./.trellis/scripts/get_context.py --mode phase
+python3 ./.trellis/scripts/get_context.py --mode phase --step 2.1
+python3 ./.trellis/scripts/get_context.py --mode phase --step 2.1 --platform claude
+python3 ./.trellis/scripts/get_context.py --mode phase --step 2.1 --platform codex
+```
 
-| 不要改                                                      | 原因                                              |
-| ----------------------------------------------------------- | ------------------------------------------------- |
-| 标签格式 `[workflow-state:STATUS]…[/workflow-state:STATUS]` | `inject-workflow-state.py` 按字面解析             |
-| Phase / step 的标题层级（`## Phase X` + `#### X.Y`）        | `get_context.py --mode phase --step X.Y` 依赖这个 |
-| 任务生命周期里的 `task.py` 子命令名                         | 必须和实际 CLI 一致；文档里改名不会改脚本         |
+Windows 上使用 `python`，其他平台使用 `python3`。
 
-其他——措辞、顺序、加段、重写 how-to 正文——都可以随便改。
+`trellis workflow --save` 会在 marketplace 模板缺少标准 phase、step 或
+workflow-state marker 时发出警告。警告不会阻止保存，因此上面的 parser 命令仍然
+是自定义内容的最终检查。
 
-### 改动什么时候生效
+## 安全修改范围
 
-| 改动              | AI 什么时候看到                                |
-| ----------------- | ---------------------------------------------- |
-| 面包屑文本        | 下一条用户消息（每次 `UserPromptSubmit` 重读） |
-| Phase / step 正文 | 下一个会话（`SessionStart` 重读）              |
-| Skill 路由表      | 下一个会话                                     |
+你可以修改正文和路由指引。只有任务模型和路由支持相应流程时，才增加或调整阶段。
+保留解析器语法；只有运行时会选择某个标识时，对应的 workflow-state 内容块才会生效。
 
-Fork 不用重发包。把改过的 `workflow.md` commit 进仓库，团队下个会话就自动拿到新版。
+Workflow-state 文本会在下一轮用户消息生效；SessionStart 概览会在新会话生效；
+step 内容会在下一次 `get_context.py --mode phase` 查询时生效。
 
----
+## 相关页面
+
+- [动态 Workflow 切换](/zh/advanced/dynamic-workflow-switching)
+- [动态 Spec 加载](/zh/advanced/dynamic-spec-loading)
+- [日常使用](/zh/start/everyday-use)

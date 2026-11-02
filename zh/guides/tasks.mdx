@@ -34,7 +34,7 @@ description: '用任务系统追踪工作'
 用任务脚本：
 
 ```bash
-python3 .trellis/scripts/task.py create "user-auth" --assignee taosu
+python3 .trellis/scripts/task.py create "用户身份验证" --slug user-auth --description "实现基于电子邮件的用户身份验证。" --assignee taosu
 ```
 
 这会创建任务目录和默认文件。然后编辑 `prd.md` 写需求。
@@ -113,11 +113,13 @@ python3 .trellis/scripts/task.py list
 python3 .trellis/scripts/task.py finish
 ```
 
-归档已完成的任务：
+交付审查与现场收尾阶段接受收尾结果后，完成任务：
 
 ```bash
-python3 .trellis/scripts/task.py archive 01-31-user-auth-taosu
+python3 .trellis/scripts/task.py complete 01-31-user-auth-taosu
 ```
+
+使用 `task.py cancel <id> --reason <原因> --evidence-ref <任务相对文件>` 记录已取消的任务。`task.py finish` 只清除当前会话的活动任务指针，不会完成任务，也不会移动任务目录。
 
 ## 多个任务
 
@@ -131,11 +133,10 @@ python3 .trellis/scripts/task.py start other-task-id
 
 典型流程：
 
-1. 创建任务：`task.py create`
-2. 编辑 `prd.md` 写需求
-3. 设置上下文文件（JSONL）
-4. 设为当前：`task.py start`
-5. 在 Claude Code 会话里工作
-6. 归档：`task.py archive <id>`
+1. 创建任务，并提供标题和非空描述。
+2. 核对需求，初始化适用的阶段路线。
+3. 接受实施合同并授权实施，然后开始编码。
+4. 按授权范围实施并验证。
+5. 审查交付并收尾，然后完成或取消任务。
 
-任务系统把上下文组织好，让 AI 知道该关注什么。
+阶段路线记录在 `meta.task_workflow` 中，`task.json.status` 记录任务生命周期状态。阶段路线与状态模型见[工作流如何运行](/zh/start/how-it-works)。

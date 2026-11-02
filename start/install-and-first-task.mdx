@@ -7,8 +7,8 @@ title: 'Install & First Task'
 ### Installation
 
 ```bash
-# Global install (beta channel)
-npm install -g @mindfoldhq/trellis@latest
+# Global install (stable channel)
+npm install -g @pennixrv/trellis@latest
 
 # Navigate to your project directory
 cd your-project
@@ -63,7 +63,7 @@ See [Commands §1.2](/start/everyday-use#1-2-commands) for the full `upgrade` / 
 | --------------- | ---------------------------------------------------------------------------- |
 | **Claude Code** | `.claude/commands/trellis/`, `agents/`, `skills/`, `hooks/`                  |
 | **Cursor**      | `.cursor/commands/`, `agents/`, `skills/`, `hooks/`                          |
-| **OpenCode**    | `.opencode/commands/trellis/`, `agents/`, `skills/`, `plugins/`              |
+| **OpenCode**    | `.opencode/commands/trellis/`, `agents/`, `skills/`, `plugins/`, `hooks/`    |
 | **Codex**       | `.codex/agents/`, `skills/`, `hooks/` + root `AGENTS.md`                     |
 | **Kiro**        | `.kiro/agents/`, `skills/`, `hooks/`                                         |
 | **Gemini CLI**  | `.gemini/commands/trellis/`, `agents/`, `skills/`, `hooks/`                  |
@@ -88,7 +88,7 @@ See [Commands §1.2](/start/everyday-use#1-2-commands) for the full `upgrade` / 
 | **First-time project init**                   | `trellis init -u your-name --claude`                                              | Creates `.trellis/` + bootstrap task `00-bootstrap-guidelines` that walks you through filling project spec                              |
 | **Add a new platform to an existing project** | `trellis init --cursor` (or no-arg interactive — it lists unconfigured platforms) | Writes the new platform's config dir on top of the existing `.trellis/`; no task generated                                              |
 | **New developer joining an existing project** | `trellis init -u their-name`                                                      | Generates the joiner onboarding task `00-join-<slug>` and guides reading workflow + spec; start it in the current AI session when ready |
-| **Same developer on a new machine**           | Same as above                                                                     | Also generates a joiner task (because `.developer` isn't committed). Archive it if you don't need the refresher.                        |
+| **Same developer on a new machine**           | Same as above                                                                     | Also generates a joiner task because `.developer` is per-checkout and isn't committed.                                                  |
 | **Same dev, same machine, re-run init**       | `trellis init -u your-name`                                                       | No-op — both `.trellis/` and `.developer` already exist                                                                                 |
 
 `--force` / `--skip-existing` only affect **how file conflicts are resolved** (overwrite vs skip); they don't change the dispatch logic itself.
@@ -99,20 +99,22 @@ See [Commands §1.2](/start/everyday-use#1-2-commands) for the full `upgrade` / 
 
 ### Basic Flow
 
-Describe what you want to do. The AI first classifies the turn. Simple
-conversation and small inline tasks do not automatically create Trellis tasks;
-the AI asks whether this turn should create a task. Complex work gets a separate
-consent question before Trellis creates a task and enters planning.
+Describe the request. The AI checks whether the work needs a Trellis task.
+Small, clear, low-risk work may be handled directly; broader work uses a task
+route. The AI confirms before creating a task when that choice needs your
+approval. See [How the Trellis Workflow Works](/start/how-it-works) for the
+route and phase responsibilities.
 
 ```text
 # 1. Describe what you want
 "Add user login feature"
 
-# 2. AI classifies the turn and asks for task-creation consent when needed
+# 2. AI checks the scope and selects a proportionate route
 
-# 3. If this is a Trellis task, AI runs Plan → Execute → Finish per workflow.md
+# 3. A Trellis task starts by confirming its requirements with you; later phases
+#    are selected according to the work and its evidence
 
-# 4. After the work commit exists
+# 4. finish-work records session progress; task completion is handled separately
 /trellis:finish-work
 ```
 
@@ -181,19 +183,23 @@ your-project/
 │   │   ├── trellis-implement.md
 │   │   ├── trellis-check.md
 │   │   └── trellis-research.md
-│   ├── skills/                        #   Auto-trigger skills
-│   │   ├── trellis-brainstorm/
-│   │   ├── trellis-before-dev/
-│   │   ├── trellis-check/
-│   │   ├── trellis-update-spec/
-│   │   └── trellis-break-loop/
+│   ├── skills/                        #   Bundled workflow and support skills
+│   │   ├── trellis-goal-exploration-and-requirements/
+│   │   ├── trellis-decision-space-construction-and-merging/
+│   │   ├── trellis-solution-design-and-convergence/
+│   │   ├── trellis-task-implementation/
+│   │   ├── trellis-delivery-review-and-closeout/
+│   │   ├── trellis-spec-bootstrap/
+│   │   ├── trellis-session-insight/
+│   │   ├── trellis-teamwork/
+│   │   └── trellis-meta/
 │   └── hooks/                         #   Hook scripts
 │       ├── session-start.py
 │       ├── inject-subagent-context.py
 │       └── inject-workflow-state.py
 │
 ├── .cursor/           # Cursor: commands/ + rules/
-├── .opencode/         # OpenCode: commands/trellis/, agents/, skills/, plugins/
+├── .opencode/         # OpenCode: commands/trellis/, agents/, skills/, plugins/, hooks/
 ├── .codex/            # Codex: prompts/, skills/ + AGENTS.md at repo root
 ├── .kiro/             # Kiro: steering/, prompts/, skills/
 ├── .gemini/           # Gemini CLI: commands/trellis/
@@ -274,51 +280,50 @@ First, ask for the missing product and tech-stack decisions. Then create a small
 
 Workflow:
 
-1. After project initialization, run `trellis init`. It writes default spec templates under `.trellis/spec/` (about 17 placeholder files across `backend/`, `frontend/`, and `guides`, covering directory structure, error handling, logging, component guidelines, cross-layer thinking, and similar rules), and creates the `00-bootstrap-guidelines` task.
-2. Use the bootstrap task to discuss product requirements and the project tech stack with AI, so the AI has enough context before writing code.
-3. Optional: use the bundled `trellis-spec-bootstrap` skill so AI can draft first-pass specs from the real codebase. It is installed with Trellis, so there is no extra marketplace download step.
-4. Fill the default specs produced by `trellis init` first, based on what you know now. Do not design the entire project upfront.
-5. Review the generated spec quality by hand.
-6. Create the smallest task that can run end to end.
-7. Continue with `/trellis:continue`; Trellis will move the task through check, update-spec, commit, and finish.
+`trellis init` creates starter specs and the `00-bootstrap-guidelines` task.
+Treat the specs as placeholders: keep or write guidance that is relevant to the
+project and supported by decisions or code evidence; there is no need to fill
+every file before starting useful work. For an existing codebase, the bundled
+`trellis-spec-bootstrap` skill can help identify established patterns and draft
+specs for review. For a new project, record only the decisions needed to begin.
+
+Continue the task through the route in `workflow.md`. Decision Space
+Construction and Consolidation and Solution Design and Convergence apply when
+they add value; implementation requires an accepted implementation contract
+and separate authorization. After validating the delivery, use Trellis CLI to
+complete the task. `/trellis:finish-work` records session progress and does not
+complete the task.
 
 ### AI Creates the Task and Develops
 
-You say: "Add user login feature". The AI first decides this is complex enough
-for a Trellis task and asks whether it may create a task and enter planning. If
-you agree, it walks the three phases from `workflow.md`:
+You say: "Add user login feature". The AI checks whether the request needs a
+Trellis task and asks before creating one when your approval is needed. For a
+task, it confirms the requirements with you, then selects the relevant phases
+from the route in `workflow.md`:
 
 ```text
-Phase 1 — Plan (interactive)
- 1.0 task.py create creates the task directory and default prd.md
- 1.1 AI activates the trellis-brainstorm skill and walks through the requirement
-     one question at a time, iterating prd.md
- 1.2 For complex tasks, AI writes design.md and implement.md before implementation
- 1.3 When research is needed, findings land in research/
- 1.4 Sub-agent mode curates implement.jsonl / check.jsonl with spec + research
-     paths only, not source paths
- 1.5 After review, task.py start flips status to in_progress
+Goal Exploration and Requirements Confirmation
+  Confirm the goal, scope, acceptance conditions, constraints, and evidence.
 
-Phase 2 — Execute
- 2.1 AI implements against prd.md, design.md if present, implement.md if present,
-     and relevant specs. Depending on platform/mode, this may be a sub-agent
-     or inline main-session work.
- 2.2 AI runs trellis-check → reviews diff vs artifacts + specs and runs
-     lint / typecheck / test, self-fixing when possible
+Decision Space Construction and Consolidation (when useful)
+  Compare choices and resolve material decisions with you.
 
-Phase 3 — Finish
- 3.1 AI activates the trellis-check skill for final verification
- 3.2 (on demand) AI activates the trellis-break-loop skill for debug retrospective
- 3.3 AI activates the trellis-update-spec skill and writes new learnings to
-     .trellis/spec/
- 3.4 AI proposes the work commit plan, commits approved batches, then runs
-     /trellis:finish-work for archive and journal bookkeeping
+Solution Design and Convergence (when needed)
+  Accept an analysis result or a complete implementation contract.
+  Implementation requires separate authorization.
+
+Task Implementation and Test Verification (when authorized)
+  Follow the accepted contract and verify the changes.
+
+Delivery Review and Closeout
+  Review the delivery, resolve gaps or record remaining work, then complete
+  or cancel the task through Trellis CLI.
 ```
 
-**When AI stalls or is skipping ahead**: run `/trellis:continue`. AI uses the
-active task's status, artifact presence, and the per-turn workflow-state
-breadcrumb to figure out the next step, then loads the relevant workflow detail
-before continuing.
+`/trellis:continue` resumes the active task from the phase route recorded by
+Trellis CLI. Task status and artifact presence do not determine the current
+phase. The route may omit phases when the task's evidence shows they add no
+value.
 
 ### Finishing the Session
 
@@ -326,7 +331,10 @@ before continuing.
 /trellis:finish-work
 ```
 
-`finish-work` calls `add_session.py` to append a journal entry and update your personal index. If the task is actually done (code merged, acceptance criteria met), it also archives the task via `task.py archive`.
+`finish-work` records the session in your workspace journal. It does not
+complete or archive the task. After Delivery Review and Closeout accepts
+the result, Trellis CLI can complete the task with `task.py complete <task>`;
+the task record remains under `.trellis/tasks/`.
 
 ### Cross-Session Memory
 
@@ -346,7 +354,7 @@ Journals live under `.trellis/workspace/{name}/journal-N.md`; every `/trellis:fi
 
 Instead of writing specs from scratch, pull pre-built spec templates during init.
 
-### Official Marketplace
+### Default Spec Template Registry
 
 ```bash
 # Interactive: browse and pick from available templates
@@ -356,7 +364,10 @@ trellis init -u your-name
 trellis init -u your-name --template electron-fullstack
 ```
 
-The interactive picker shows all templates from the [official marketplace](https://github.com/mindfold-ai/Trellis/tree/main/marketplace). Choose one or start with blank specs.
+The interactive picker reads the default spec template registry at
+[mindfold-ai/marketplace](https://github.com/mindfold-ai/marketplace). Choose a
+template or start with blank specs. These templates provide project spec
+starting points; Trellis CLI supplies the default workflow separately.
 
 ### Custom Registry (`--registry`)
 

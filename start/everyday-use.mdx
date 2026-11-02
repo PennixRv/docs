@@ -4,26 +4,24 @@ title: 'Commands, Upgrades, Tasks & Specs'
 
 ## 1. Commands & Skills Reference
 
-Since 0.5.0, Trellis is **skill-first**: most capabilities are auto-trigger skills that the platform fires based on context — you don't have to remember them. Only session-boundary entries remain. Agent-capable platforms expose `finish-work` and `continue`; platforms without automatic session injection also expose `start`.
+Trellis CLI routes a task through the applicable business phases. Each phase Skill supplies its own procedure and diagram; the task record stores the selected route and accepted results. Session commands, when available on the host, remain separate from task completion.
 
 ### 1.1 Surface at a Glance
 
-| Kind          | Name                   | Trigger                                                    | Purpose                                                                                  |
-| ------------- | ---------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| **Command**   | `/trellis:start`       | Manual where no SessionStart hook / extension is available | Open a session, load context, classify work                                              |
-| **Command**   | `/trellis:finish-work` | Manual, after Phase 3.4 commits land                       | Archive task + record session in journal                                                 |
-| **Command**   | `/trellis:continue`    | Manual                                                     | Advance the current task to its next step — you don't memorize the workflow (see §1.2.6) |
-| **CLI**       | `trellis upgrade`      | Manual, when the global CLI package is stale               | Upgrade the installed Trellis CLI package                                                |
-| **Skill**     | `trellis-brainstorm`   | Planning after task-creation consent                       | Clarify requirements, inspect evidence, draft planning artifacts                         |
-| **Skill**     | `trellis-before-dev`   | Auto before touching code in a task                        | Read relevant spec before writing                                                        |
-| **Skill**     | `trellis-check`        | Auto after implementation; also via sub-agent              | Verify + self-fix loop                                                                   |
-| **Skill**     | `trellis-update-spec`  | Auto when a learning is worth capturing                    | Promote knowledge into `.trellis/spec/`                                                  |
-| **Skill**     | `trellis-break-loop`   | Auto after a tricky bug                                    | Root-cause + prevention analysis                                                         |
-| **Sub-agent** | `trellis-research`     | Spawned by main session for investigation                  | Read-only codebase search                                                                |
-| **Sub-agent** | `trellis-implement`    | Spawned by main session for coding                         | Writes code, no git commit                                                               |
-| **Sub-agent** | `trellis-check`        | Spawned by main session for verification                   | Runs verify + self-fix, has its own loop                                                 |
+| Surface         | Name                                              | Purpose                                                                                  |
+| --------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Session command | `/trellis:start`                                  | Manually load task context where the host does not inject it automatically.              |
+| Session command | `/trellis:continue`                               | Resume the current task from its recorded route and next applicable action.              |
+| Session command | `/trellis:finish-work`                            | Record session progress; it does not complete or archive a task.                         |
+| Task CLI        | `task.py phase`                                   | Inspect and update the task's business-phase route and phase records.                    |
+| Task CLI        | `task.py complete` / `task.py cancel`             | Complete an accepted task or record its cancellation during closeout.                    |
+| Phase Skill     | `trellis-goal-exploration-and-requirements`       | Goal Exploration and Requirements Confirmation: establish the user-confirmed baseline.   |
+| Phase Skill     | `trellis-decision-space-construction-and-merging` | Decision Space Construction and Consolidation: identify and organize material decisions. |
+| Phase Skill     | `trellis-solution-design-and-convergence`         | Solution Design and Convergence: accept an analysis result or implementation contract.   |
+| Phase Skill     | `trellis-task-implementation`                     | Task Implementation and Test Verification: implement and verify an authorized contract.  |
+| Phase Skill     | `trellis-delivery-review-and-closeout`            | Delivery Review and Closeout: review the delivery and determine task disposition.        |
 
-The user-facing command set is deliberately small: `finish-work` and `continue` everywhere they are useful, plus `start` on platforms that need a manual session entry point. Everything that used to be a phase command (`/before-backend-dev`, `/check-backend`, `/record-session`, `/onboard`, …) has either been folded into a skill/sub-agent or removed.
+The host may expose different session commands. The five business phases are selected for the task route, not represented by separate lifecycle statuses. See [How the Trellis Workflow Works](/start/how-it-works) for route selection and component responsibilities.
 
 ### 1.2 Commands
 
@@ -46,14 +44,14 @@ Use this when your globally installed Trellis CLI is behind the published packag
 
 ```bash
 trellis upgrade              # follows your current channel: latest / beta / rc
+trellis upgrade --tag beta   # switch from stable to the latest beta
 trellis upgrade --tag latest # explicitly install the latest stable release
 trellis upgrade --dry-run    # print the npm command without running it
 ```
 
 <Note>
-  `trellis upgrade` was added in CLI 0.6.0. If your installed CLI is 0.5.x or older the command does
-  not exist yet — raise the local CLI directly with `npm install -g @mindfoldhq/trellis@latest`,
-  then `trellis upgrade` is available for every future bump.
+  `trellis upgrade` may not exist in older installations. Install the current package directly with
+  `npm install -g @pennixrv/trellis@latest`, then use `trellis upgrade` for later updates.
 </Note>
 
 `trellis upgrade` updates the global CLI package. It does not change files in the current project. After upgrading the CLI, run `trellis update` inside each Trellis project that needs its bundled workflow, hooks, skills, or platform files synced to the new CLI version.
@@ -99,89 +97,30 @@ Task classification the AI will apply:
 If the user rejects task creation for complex work, the AI should clarify scope
 or suggest a smaller split instead of doing broad inline implementation.
 
-#### 1.2.5 `/trellis:finish-work`: Wrap up + archive
+#### 1.2.5 `/trellis:finish-work`: Record session progress
 
-Prerequisite: code is already committed. The AI drives a batched commit step in workflow Phase 3.4 (see `.trellis/workflow.md`) where it drafts commits from this session's edits, learns the repo's commit-message style from `git log --oneline -5`, presents the plan once for one-shot user confirmation, and runs `git commit` per batch. `/finish-work` itself focuses on archive + journal and **refuses to run on a dirty working tree** to keep bookkeeping commits ordered after work commits.
-
-Steps:
-
-1. Run `get_context.py --mode record` to print active tasks, git status, and recent commits. Use this to spot completed-but-unarchived tasks beyond the current one and to grab work-commit hashes for Step 4.
-2. `git status --porcelain`, excluding paths under `.trellis/workspace/` and `.trellis/tasks/` (managed by the script auto-commits). Bail out if anything else is dirty, redirecting the user back to Phase 3.4.
-3. Archive the active task with `task.py archive <name>` (produces a `chore(task): archive ...` commit). If Step 1 surfaced other completed tasks and the user confirmed cleanup, archive those too in the same round.
-4. Append a session entry with `add_session.py --title … --commit …` (produces a `chore: record journal` commit).
-
-Final git log order: `<work commits from 3.4>` → `chore(task): archive ...` (one or more) → `chore: record journal`. Spec sync (route a non-trivial learning to `trellis-update-spec`) belongs in workflow Phase 3.3 before commits, not in this skill.
+This session command writes a progress entry to `.trellis/workspace/`. It does not change task status, business-phase state, or implementation authorization. Complete or cancel a task through Trellis CLI during Delivery Review and Closeout; this operation does not move task records to an archive directory.
 
 #### 1.2.6 `/trellis:continue`: Advance within the current task
 
-`continue` is a **within-task** continue — not a cross-task one. The AI picks up where the active task left off using its `task.json.status` plus the workflow-state breadcrumb the hook injects each turn, consults `workflow.md` to locate the current phase/step, and advances to the next one.
+`continue` resumes the current task. Trellis CLI reads the task lifecycle status separately from `task.json.meta.task_workflow`, which stores the selected business-phase route and its records. The active phase Skill provides the procedure.
 
 A typical task conversation:
 
-1. Describe the work in natural language → the AI classifies the request and asks for task-creation consent when Trellis is useful. After you agree, `trellis-brainstorm` creates the task and drafts `prd.md`.
-2. Once `prd.md` looks right, type `continue` → it decides whether the task is lightweight or needs `design.md` and `implement.md`.
-3. After planning artifacts are reviewed, type `continue` → it starts the task and moves into implement/check. Sub-agent mode also curates `implement.jsonl` / `check.jsonl`; inline mode reads artifacts/specs directly.
-4. When the sub-agents finish, type `continue` → it routes to `trellis-update-spec`, and finally `finish-work`.
+1. Describe the work. When a Trellis task is useful, establish the goal and confirm the current requirements with the user.
+2. Select the applicable ordered phase route. Record why an optional phase is omitted; proceed to solution design only when needed.
+3. Start implementation only after the implementation contract is accepted and implementation is separately authorized. Use relevant project specs and verification tools.
+4. Review the current delivery, resolve or record material gaps, then complete or cancel the task through Trellis CLI. Record session progress separately when needed.
 
-Previously you had to learn the workflow yourself and remember which slash command belonged to each phase. With `continue`, the whole workflow falls out of an ordinary conversation — type `continue` to move on, and Trellis keeps the phases straight on your behalf.
+The route is task-specific. `continue` can resume it, while the task record keeps business-phase progress distinct from task lifecycle status.
 
 ### 1.3 Auto-trigger Skills
 
-Skills run without an explicit command; the platform matches on the user's intent. You can always trigger them manually (`/skill trellis-brainstorm`, etc.) if the auto-match misses.
+### 1.3 Phase Skills and supporting components
 
-#### 1.3.1 `trellis-brainstorm`
+The five phase Skills are `trellis-goal-exploration-and-requirements`, `trellis-decision-space-construction-and-merging`, `trellis-solution-design-and-convergence`, `trellis-task-implementation`, and `trellis-delivery-review-and-closeout`. Each Skill contains its own phase flow and diagram. Use supporting Skills, Trellis Teamwork, Paseo, and host tools when their responsibilities fit the task; the route does not require every component on every task. See [How the Trellis Workflow Works](/start/how-it-works) and [Architecture Overview](/advanced/architecture).
 
-Turns an approved planning request into concrete artifacts:
-
-- Inspects code, tests, configs, docs, existing specs, and task history before asking questions.
-- Proposes a task name and slug, then creates the task via `task.py create` when needed.
-- Drafts and iterates `prd.md` with requirements and acceptance criteria.
-- Asks one question at a time, including the recommended answer.
-- For complex tasks, adds `design.md` and `implement.md` before implementation starts.
-
-#### 1.3.2 `trellis-before-dev`
-
-Runs before coding starts on a task. Reads the spec index for the affected package(s), then the specific guideline files referenced in the pre-development checklist. Ensures the AI knows the conventions _before_ writing code, not after.
-
-#### 1.3.3 `trellis-check`
-
-Runs after implementation:
-
-1. `git diff --name-only HEAD` to find what changed.
-2. Discover which spec layers apply.
-3. Compare the diff against the quality checklist in each layer's index.
-4. Run `pnpm lint` / `pnpm typecheck` / `pnpm test` (or equivalent) for affected packages.
-5. Self-fix violations in a bounded loop, then report what was fixed and what's left.
-
-The `trellis-check` **sub-agent** wraps the skill — the main session just hands verification off to it. The sub-agent has its own retry loop, so there's no need for an external `Ralph Loop` anymore.
-
-#### 1.3.4 `trellis-update-spec`
-
-Captures a learning as an executable contract in `.trellis/spec/`. Used after debugging sessions, after hitting a gotcha, or after making a non-obvious design decision. Picks the right spec file, adds a focused update (decision / convention / pattern / anti-pattern / gotcha), updates the index if needed.
-
-#### 1.3.5 `trellis-break-loop`
-
-Invoked after resolving a hard bug. Produces a 5-dimension analysis:
-
-1. Root-cause classification (missing spec / contract violation / change propagation / test gap / implicit assumption).
-2. Why earlier fix attempts failed.
-3. Prevention mechanisms (spec update, type constraints, lint rule, test, review checklist, doc).
-4. Systematic expansion: other places with the same pattern.
-5. Knowledge capture: route findings into `trellis-update-spec`.
-
-> The value of debugging is not fixing _this_ bug; it's making sure this class of bugs never happens again.
-
-### 1.4 Sub-agents
-
-Sub-agents are isolated AI sub-processes with their own prompt and (platform-specific) their own tool / hook wiring. Implementation and check agents receive stable spec/research context via JSONL files per task; research agents write findings into the task's `research/` directory.
-
-| Sub-agent           | Restriction            | When main session spawns it                          |
-| ------------------- | ---------------------- | ---------------------------------------------------- |
-| `trellis-research`  | Read-only              | Codebase search / pattern discovery / doc lookup     |
-| `trellis-implement` | Writes code, no commit | Once requirements + plan exist, for the coding phase |
-| `trellis-check`     | Writes code (fixes)    | Verification phase; runs self-fix loop internally    |
-
-On Claude Code, Cursor, OpenCode, CodeBuddy, Droid, and Pi Agent, implementation and check sub-agents get the right JSONL context (`implement.jsonl`, `check.jsonl`) injected automatically before they start. Pi uses its extension rather than a Python hook. On the rest, the main session reads the JSONL files itself and passes the relevant content into sub-agent prompts. Research agents write durable findings under the task's `research/` directory.
+Supporting Skills include `trellis-teamwork`, `trellis-session-insight`, `trellis-spec-bootstrap`, and `trellis-meta`. Use them when their responsibilities fit the task; none owns the task's phase state. The `trellis-research`, `trellis-implement`, and `trellis-check` entries are sub-agent definitions, not Skills.
 
 ---
 
@@ -190,18 +129,12 @@ On Claude Code, Cursor, OpenCode, CodeBuddy, Droid, and Pi Agent, implementation
 ### 2.1 Task Lifecycle
 
 ```
-create → plan artifacts → optional jsonl context → start → implement/check → finish → archive
-
-create:                task directory + task.json + default prd.md
-plan artifacts:        prd.md for every task; design.md + implement.md before complex work starts
-optional jsonl context: AI fills implement/check context when stable spec or research files must be injected
-start:                 marks the task in_progress for this AI session/window
-implement/check:       development and verification loop
-finish:                clears this AI session/window's current task
-archive:               moves completed task to archive/
+create task → confirm requirements → select applicable phase route →
+accept result and authorize implementation when needed → implement and verify →
+review delivery → complete or cancel task
 ```
 
-`task.py create` starts the task in `planning`, creates a default `prd.md`, and best-effort points the current AI session at the new task. It also auto-seeds `implement.jsonl` + `check.jsonl` when a sub-agent-capable platform is installed (Claude / Cursor / Codex / Kiro / Pi / etc.); agent-less platforms (Kilo / Antigravity / Devin) skip this and load specs via the `trellis-before-dev` skill in Phase 2.
+`task.py create` creates a task directory, `task.json`, and a default `prd.md`; a non-empty description is required. Task lifecycle status and business-phase state are separate. `task.py start` sets the task active; it does not by itself authorize implementation. The selected route and phase records are stored under `task.json.meta.task_workflow`.
 
 ### 2.2 `task.py` Subcommands
 
@@ -213,7 +146,7 @@ TASK_DIR=$(./.trellis/scripts/task.py create "Add user login" \
   --slug user-login \          # Directory name suffix (optional, auto-slugifies otherwise)
   --assignee alice \           # Assignee (optional)
   --priority P1 \              # Priority: P0/P1/P2/P3 (optional, default P2)
-  --description "Implement JWT login")  # Description (optional)
+  --description "Implement JWT login")  # Required
 
 # Created directory: .trellis/tasks/02-27-user-login/
 # Created files: task.json, prd.md
@@ -237,7 +170,7 @@ TASK_DIR=$(./.trellis/scripts/task.py create "Add user login" \
 #
 # What to put in the jsonl: spec files (.trellis/spec/**/*.md) and research files
 # ($TASK_DIR/research/*.md) relevant to this task. Do NOT add code paths — code
-# is read during Phase 2 implementation, not pre-registered here.
+# is read during implementation, not pre-registered here.
 
 # Discover what specs exist
 ./.trellis/scripts/get_context.py --mode packages
@@ -315,13 +248,11 @@ Effects on `task.json`:
 ./.trellis/scripts/task.py list --mine            # Only your own
 ./.trellis/scripts/task.py list --status review   # Filter by status
 
-# Archive completed tasks
-./.trellis/scripts/task.py archive user-login
-# Moves to archive/2026-02/
+# Complete after Delivery Review and Closeout accepts the outcome
+./.trellis/scripts/task.py complete user-login
 
-# List archived tasks
-./.trellis/scripts/task.py list-archive
-./.trellis/scripts/task.py list-archive 2026-02  # Filter by month
+# Cancel a task that will not proceed; provide the required reason and evidence reference
+./.trellis/scripts/task.py cancel user-login --reason "Superseded" --evidence-ref "task decision"
 ```
 
 ### 2.3 `task.json` Schema
@@ -361,30 +292,31 @@ Fields get populated over time:
 
 - `dev_type` / `scope` / `package` → set via `task.py set-scope` or by editing `task.json` directly; no automatic setter exists
 - `branch` → set via `task.py set-branch`
-- `status` → transitions `planning → in_progress → completed`
-- `completedAt` → set by `task.py archive` (archive does NOT write the commit hash back)
+- `status` → task lifecycle status; it does not identify the current business phase
+- `completedAt` → set by `task.py complete` after closeout acceptance
 - `parent` / `children` → set via `task.py create --parent` / `add-subtask`
 
 <Note>
-  `worktree_path` / `commit` / `pr_url` are schema placeholders only; no 0.5 script populates them.
-  Store commit hashes or PR URLs under `meta: {}`, or write them back from an `after_archive` hook.
+  Task fields and metadata vary with task type and lifecycle. Use the current task CLI and task
+  workflow records as the source of truth instead of treating this example as a complete schema.
 </Note>
 
 Older tasks created before a field existed may be missing some keys (e.g. tasks created pre-`package` support won't have `"package"`); `task.py` treats missing fields as null, so nothing breaks.
 
-**Status transitions**:
+**Task lifecycle and business-phase state**:
 
 ```
-task.py create        →  status: "planning"
-task.py start         →  flips planning to in_progress (other statuses preserved)
-task.py archive       →  status: "completed" + move to archive/
+task.py create   →  status: "planning"
+task.py start    →  sets the current task; implementation status follows authorized admission
+task.py complete →  status: "completed" after accepted closeout
+task.py cancel   →  status: "cancelled" with a reason and evidence reference
 ```
 
-`planning` / `in_progress` / `completed` align with the three phases in `workflow.md`. `task.py start` rewrites `planning` to `in_progress` automatically; non-planning statuses (`in_progress`, `review`, `completed`) are left untouched, so re-starting a task in `review` doesn't clobber its state. `task.py list --status` also accepts `review` as a filter — add any custom statuses you need by writing a matching `[workflow-state:<name>]` block in `workflow.md`.
+The selected business phase and its status are stored under `meta.task_workflow`; they are not encoded by `task.json.status`. Use `task.py phase show <task>` and `task.py --help` to inspect current phase records and supported operations. Completing a task does not move it to an archive directory.
 
 ### 2.4 JSONL Context Configuration in Practice
 
-#### 2.4.1 Seeded on Create, AI Curates in Phase 1.3
+#### 2.4.1 Seeded on Create, AI Curates During Context Preparation
 
 On sub-agent-capable platforms, `task.py create` writes a **single seed line** into each jsonl:
 
@@ -393,7 +325,7 @@ On sub-agent-capable platforms, `task.py create` writes a **single seed line** i
 {"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line when done."}
 ```
 
-This line is a fill-in hint for the AI. It has no `file` field, so every downstream consumer (hook, prelude, validate, list-context) skips it; the AI reads it, understands the format, then replaces it with real entries in Phase 1.3.
+This line is a fill-in hint for the AI. It has no `file` field, so every downstream consumer (hook, prelude, validate, list-context) skips it; the AI reads it, understands the format, then replaces it with real entries when task context is prepared.
 
 **Example curated `implement.jsonl` after AI review** (`dev_type=backend` monorepo):
 
@@ -414,7 +346,7 @@ This line is a fill-in hint for the AI. It has no `file` field, so every downstr
 - Code files (`src/**`, `packages/**/*.ts`, etc.) — those are read by the sub-agent during implementation, not pre-registered here
 - Files you're about to modify — same reason
 
-On agent-less platforms (Kilo / Antigravity / Devin), `task.py create` skips seeding. Those platforms load specs via the `trellis-before-dev` skill in Phase 2.1 instead.
+When JSONL context is not used, the main session or a relevant Skill can read the applicable project specs directly.
 
 #### 2.4.2 Adding Custom Context
 
@@ -448,8 +380,8 @@ hooks:
     - 'python3 .trellis/scripts/hooks/linear_sync.py start'
   after_finish:
     - "echo 'Task finished'"
-  after_archive:
-    - 'python3 .trellis/scripts/hooks/linear_sync.py archive'
+  after_complete:
+    - 'python3 .trellis/scripts/hooks/linear_sync.py complete'
 ```
 
 <Note>
@@ -459,12 +391,12 @@ hooks:
 
 #### 2.5.2 Supported Events
 
-| Event           | Fires When                                       | Use Case                               |
-| --------------- | ------------------------------------------------ | -------------------------------------- |
-| `after_create`  | `task.py create` completes                       | Create linked issue in project tracker |
-| `after_start`   | `task.py start` sets the current session task    | Update issue status to "In Progress"   |
-| `after_finish`  | `task.py finish` clears the current session task | Notify team, trigger review            |
-| `after_archive` | `task.py archive` moves the task                 | Mark issue as "Done"                   |
+| Event            | Fires When                                       | Use Case                               |
+| ---------------- | ------------------------------------------------ | -------------------------------------- |
+| `after_create`   | `task.py create` completes                       | Create linked issue in project tracker |
+| `after_start`    | `task.py start` sets the current session task    | Update issue status to "In Progress"   |
+| `after_finish`   | `task.py finish` clears the current session task | Notify team, trigger review            |
+| `after_complete` | `task.py complete` completes the task            | Mark issue as "Done"                   |
 
 #### 2.5.3 Environment Variables
 
@@ -484,23 +416,18 @@ All other environment variables from the parent process are inherited.
 - **Sequential**: Multiple hooks per event execute in list order; a failure in one does not skip the rest
 - **stdout captured**: Hook stdout is not displayed to the user; use stderr for diagnostic output
 
-<Warning>
-  The `after_archive` hook receives `TASK_JSON_PATH` pointing to the **archived** location (e.g.,
-  `.trellis/tasks/archive/2026-03/task-name/task.json`), not the original path.
-</Warning>
-
 #### 2.5.5 Example: Linear Sync Hook
 
 Trellis ships with an example hook at `.trellis/scripts/hooks/linear_sync.py` that syncs task lifecycle events to [Linear](https://linear.app).
 
 **What it does**:
 
-| Action    | Trigger         | Effect                                                                    |
-| --------- | --------------- | ------------------------------------------------------------------------- |
-| `create`  | `after_create`  | Creates a Linear issue from task.json (title, priority, assignee, parent) |
-| `start`   | `after_start`   | Updates the linked issue to "In Progress"                                 |
-| `archive` | `after_archive` | Updates the linked issue to "Done"                                        |
-| `sync`    | Manual          | Pushes `prd.md` content to the Linear issue description                   |
+| Action     | Trigger          | Effect                                                                    |
+| ---------- | ---------------- | ------------------------------------------------------------------------- |
+| `create`   | `after_create`   | Creates a Linear issue from task.json (title, priority, assignee, parent) |
+| `start`    | `after_start`    | Updates the linked issue to "In Progress"                                 |
+| `complete` | `after_complete` | Updates the linked issue to "Done"                                        |
+| `sync`     | Manual           | Pushes `prd.md` content to the Linear issue description                   |
 
 **Prerequisites**:
 
@@ -556,7 +483,7 @@ The hook writes the Linear issue identifier back to `task.json` under `meta.line
     └── code-reuse-thinking-guide.md
 ```
 
-Running `trellis init` also creates a **bootstrap task** (`00-bootstrap-guidelines`). In the first Trellis session, AI detects it, runs `trellis-research` to read your actual codebase, then fills the placeholders with specs grounded in the real project (tech stack, conventions, directory shape). Skip this task and you'll be handing empty scaffolds to every sub-agent — don't.
+On first initialization, `trellis init` creates a **bootstrap task** (`00-bootstrap-guidelines`) to organize project setup. Use it to capture the context and specs the project needs; `trellis-spec-bootstrap` can help draft code-informed specs. Adapt the work to the project instead of filling every placeholder by default.
 
 #### 3.1.2 The layout is only a convention
 
@@ -661,7 +588,7 @@ export default function UserProfile(props: any) {
 
 ### 3.3 What a Spec Should Look Like
 
-The `trellis-update-spec` skill writes specs as **executable contracts**, not principle text. Every entry sub-agents read at `trellis-implement` / `trellis-check` time has to tell them _how to implement safely_ — concrete signatures, contracts, cases, tests. If what you're writing is really "what to think about before coding", it belongs in `guides/`.
+Write specs as concise, code-backed guidance. Include the signatures, behavior, validation, examples, or tests that readers need for the topic. Put broader questions and decision prompts in `guides/`. `trellis-spec-bootstrap` can help analyze the codebase and draft or refresh these documents; review the result against the source.
 
 #### 3.3.1 Code-Spec vs Guide
 
@@ -674,7 +601,7 @@ If you're writing "don't forget to check X", put it in a guide. If you're writin
 
 #### 3.3.2 Pick the right update shape
 
-`trellis-update-spec` ships several templates; pick the one that matches what you learned:
+Choose a format that fits the information being captured. These common shapes can help, but no fixed template is required:
 
 | You learned…                               | Template                        | Key fields                                                    |
 | ------------------------------------------ | ------------------------------- | ------------------------------------------------------------- |
@@ -685,19 +612,9 @@ If you're writing "don't forget to check X", put it in a guide. If you're writin
 | An easy-to-make error                      | **Common Mistake**              | Symptom, Cause, Fix, Prevention                               |
 | Non-obvious behavior                       | **Gotcha**                      | `> Warning:` blockquote with when/how                         |
 
-#### 3.3.3 Mandatory 7-section form for infra / cross-layer work
+#### 3.3.3 Cover the contracts that matter
 
-When the change touches a **command / API signature**, a **cross-layer request-response contract**, a **DB schema**, or **infra wiring** (storage, queue, cache, secrets, env), the skill requires all seven sections:
-
-1. **Scope / Trigger** — why this demands code-spec depth
-2. **Signatures** — command / API / DB signature(s)
-3. **Contracts** — request fields, response fields, env keys (name, type, constraint)
-4. **Validation & Error Matrix** — `<condition> → <error>` table
-5. **Good / Base / Bad Cases** — example inputs with expected outcome
-6. **Tests Required** — unit / integration / e2e with assertion points
-7. **Wrong vs Correct** — at least one explicit pair
-
-Skip any of these and the skill prompts you to fill them; that's the "executable contract" bar.
+For commands, APIs, data schemas, or cross-layer behavior, describe the relevant inputs, outputs, validation, and failure behavior. Add examples or test references when they clarify the contract. Include only the details needed to apply the rule safely; a fixed section count or a full error matrix is not required for every spec.
 
 #### 3.3.4 Concrete contrast
 
@@ -755,6 +672,6 @@ The bar: specific, actionable, with a code example, with a stated _why_, and —
 
 ### 3.4 Bootstrap Guided Initial Fill
 
-`trellis init` also creates a bootstrap task (`00-bootstrap-guidelines`). In the first Trellis session, the AI recognizes it, runs `trellis-research` across your code, and fills the empty templates under `frontend/` / `backend/` / `guides/` with specs grounded in your actual project — tech stack, conventions, directory shape, all pulled from the code.
+`trellis init` creates a bootstrap task (`00-bootstrap-guidelines`) for first-time project setup. Use it to organize useful initial context and spec work. When a code-informed pass would help, `trellis-spec-bootstrap` can analyze the repository, draft the relevant guidance, and verify it against source; remove template sections that do not apply.
 
 ---

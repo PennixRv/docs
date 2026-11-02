@@ -11,8 +11,8 @@ title: '附录 C：task.json Schema 参考'
   "id": "string", // 任务 ID（= slug，如 02-27-user-login）
   "name": "string", // Slug 名（单仓库下和 id 相同；monorepo 可能不同）
   "title": "string", // 任务标题
-  "description": "string", // 描述（不传 --description 时为 ""）
-  "status": "string", // planning（默认）| in_progress | completed；task.py list --status 还接受 review
+  "description": "string", // 必填的非空任务描述
+  "status": "string", // 任务生命周期：planning（初始值）| in_progress | completed | cancelled
   "dev_type": "string", // backend | frontend | fullstack | test | docs（默认 null，由手工编辑或自定义 hook 填入）
   "scope": "string", // Commit scope，如 "auth"（set-scope 前为 null）
   "package": "string", // Monorepo 包名（单仓库为 null）
@@ -31,17 +31,20 @@ title: '附录 C：task.json Schema 参考'
   "parent": "string", // 父任务目录名（顶层任务为 null）
   "relatedFiles": [], // 相关文件列表
   "notes": "string", // 备注（默认 ""）
-  "meta": {} // 项目级元数据（如 Linear issue id）
+  "meta": {}, // 项目级元数据；task_workflow 保存业务阶段路由
+  "workflow": "string" // 可选的 workflow 变体标识，选择后才存在
 }
 ```
 
 字段顺序与 `.trellis/scripts/common/task_store.py` 里 `task_data` 一致——`task.py` 就按这个顺序写入。
 
 <Note>
-  `worktree_path` / `commit` / `pr_url` 是 schema 占位字段，创建时写 null 之后没有 Trellis
-  脚本再动它们。想记 commit hash 或 PR URL 请用 `meta: {}` 自定义键，或写个 `after_archive` hook
-  自己回写。
+  `worktree_path` / `commit` / `pr_url` 是 schema 占位字段，创建时写
+  null，内置任务命令不会更新它们。 如需记录 commit hash 或 PR URL，可使用 `meta: {}` 中的自定义键。
 </Note>
+
+`meta.task_workflow` 存在时，记录业务阶段路由和当前阶段。它与顶层 `status` 相互独立；
+顶层字段记录任务生命周期。`task.py list --status` 接受的 `review` 是列表视图，不是任务生命周期状态。
 
 早期版本创建的老任务可能少某些新字段（如 `package` 支持前的任务没有 `"package"` 键），`task.py` 把缺失字段按 null 处理，不会出错。
 

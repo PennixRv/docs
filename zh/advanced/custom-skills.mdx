@@ -4,16 +4,16 @@ title: '定制 Skill'
 
 ## 定制 Skill
 
-Skill 是 Trellis 的主要扩展点。原生带有的大部分工作流（brainstorm、before-dev、check、update-spec、break-loop）都以 auto-trigger skill 的形式交付。本章说明如何添加自己的 skill。
+Skill 是 Trellis 的主要扩展点。阶段 Skill 为从需求到交付收尾的任务路线提供指引；支持 Skill 用于 spec bootstrap、会话记忆、Teamwork 和 Trellis 定制等能力。Skill 存在不代表每一步都必须执行。本章说明如何添加自己的 Skill。
 
 ### Command vs. Sub-agent vs. Skill
 
-|            | Command        | Sub-agent              | Skill                        |
-| ---------- | -------------- | ---------------------- | ---------------------------- |
-| **用途**   | 用户显式入口   | 有自己角色的隔离子进程 | 可复用的工作流模块           |
-| **触发**   | `/trellis:xxx` | 通过 Task 工具 spawn   | 平台根据用户意图自动匹配     |
-| **粒度**   | 会话边界       | 角色级                 | 能力或阶段级                 |
-| **跨平台** | 每平台一份文件 | 每平台一份文件         | 每平台一个文件夹（结构一致） |
+|            | Command        | Sub-agent              | Skill                                          |
+| ---------- | -------------- | ---------------------- | ---------------------------------------------- |
+| **用途**   | 用户显式入口   | 有自己角色的隔离子进程 | 可复用的工作流模块                             |
+| **触发**   | `/trellis:xxx` | 通过 Task 工具 spawn   | 平台根据用户意图自动匹配                       |
+| **粒度**   | 会话边界       | 角色级                 | 能力或阶段级                                   |
+| **跨平台** | 每平台一份文件 | 每平台一份文件         | 共用 Skill 内容，并写入各平台识别的 Skill 路径 |
 
 AI 应该基于上下文自动触发时用 skill；由用户决定时用 command；需要隔离 prompt 和约束时用 sub-agent。
 

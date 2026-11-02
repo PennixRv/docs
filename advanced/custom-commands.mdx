@@ -43,12 +43,12 @@ Command files are Markdown; Gemini uses TOML (with a `prompt = """..."""` field)
 
 ### When to use a command vs. a skill
 
-| Use a slash command when…                                   | Use a skill when…                                           |
-| ----------------------------------------------------------- | ----------------------------------------------------------- |
-| The user should decide when to run it                       | The AI should trigger it automatically based on intent      |
-| It marks a session boundary (start, finish, resume)         | It's a phase inside a task (before-dev, check, update-spec) |
-| There's no natural trigger phrase that would match reliably | There's a predictable user intent you can match on          |
-| You need it available even when no task is active           | It only makes sense in the context of an active task        |
+| Use a slash command when…                                   | Use a skill when…                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------- |
+| The user should decide when to run it                       | The AI should trigger it automatically based on intent  |
+| It marks a session boundary (start, finish, resume)         | It guides work within a task's selected business phases |
+| There's no natural trigger phrase that would match reliably | There's a predictable user intent you can match on      |
+| You need it available even when no task is active           | It only makes sense in the context of an active task    |
 
 If the answer is "both", ship a skill and expose a command that manually triggers the skill.
 

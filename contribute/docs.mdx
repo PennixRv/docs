@@ -1,6 +1,6 @@
 ---
 title: 'Contribute to Docs'
-description: 'How to contribute to Trellis documentation (mindfold-ai/docs)'
+description: 'How to contribute to Trellis documentation (PennixRv/docs)'
 ---
 
 ## Contribute with AI assistance
@@ -49,7 +49,7 @@ Review the changes, test with `pnpm dev`, push to your fork, then open a PR to t
 
 Found a problem with the docs? Open an issue:
 
-https://github.com/mindfold-ai/docs/issues
+https://github.com/PennixRv/docs/issues
 
 Include:
 
@@ -61,16 +61,16 @@ Include:
 
 Have an idea for better docs? Open a discussion:
 
-https://github.com/mindfold-ai/docs/discussions
+https://github.com/PennixRv/docs/discussions
 
 ### Contribute a Skill
 
 Skills extend AI capabilities. To add a new skill:
 
-1. Fork the [Trellis repo](https://github.com/mindfold-ai/Trellis)
+1. Fork the [Trellis repo](https://github.com/PennixRv/Trellis)
 2. Create skill directory:
    ```
-   marketplace/skills/your-skill/
+   packages/cli/src/templates/common/bundled-skills/your-skill/
    └── SKILL.md
    ```
 3. Open a PR to the Trellis repo
@@ -78,14 +78,18 @@ Skills extend AI capabilities. To add a new skill:
 
 See [Claude Code Skills documentation](https://code.claude.com/docs/en/skills) for SKILL.md format.
 
-<Note>Skills are hosted in the [Trellis main repo](https://github.com/mindfold-ai/Trellis), not in docs.</Note>
+<Note>
+  Bundled skills live in the [Trellis CLI
+  source](https://github.com/PennixRv/Trellis/tree/v0.7.1/packages/cli/src/templates/common/bundled-skills),
+  not in the docs repository.
+</Note>
 
 ### Contribute a Spec Template
 
 Spec templates are Trellis project guidelines (not Claude features). To add one:
 
 1. Fork the repo
-2. Create `marketplace/specs/your-template/` with guideline files
+2. Add or update the relevant files under `packages/cli/src/templates/markdown/spec/`
 3. Create documentation pages (`templates/specs-your-template.mdx` + Chinese version)
 4. Update `docs.json` navigation
 5. Open a PR

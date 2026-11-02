@@ -1,6 +1,6 @@
 ---
 title: '文档'
-description: '如何为 Trellis 文档做贡献 (mindfold-ai/docs)'
+description: '如何为 Trellis 文档（PennixRv/docs）做贡献'
 ---
 
 ## 用 AI 辅助贡献
@@ -46,7 +46,7 @@ Claude 会读取 `contribute` skill 并引导你：
 
 发现文档有问题？开一个 issue：
 
-https://github.com/mindfold-ai/docs/issues
+https://github.com/PennixRv/docs/issues
 
 包含：
 
@@ -58,16 +58,16 @@ https://github.com/mindfold-ai/docs/issues
 
 有改进文档的想法？开一个 discussion：
 
-https://github.com/mindfold-ai/docs/discussions
+https://github.com/PennixRv/docs/discussions
 
 ### 贡献 Skill
 
 Skill 扩展 AI 的能力。添加新 skill：
 
-1. Fork [Trellis 主仓库](https://github.com/mindfold-ai/Trellis)
+1. Fork [Trellis 主仓库](https://github.com/PennixRv/Trellis)
 2. 创建 skill 目录：
    ```
-   marketplace/skills/your-skill/
+   packages/cli/src/templates/common/bundled-skills/your-skill/
    └── SKILL.md
    ```
 3. 向 Trellis 主仓库提 PR
@@ -75,14 +75,17 @@ Skill 扩展 AI 的能力。添加新 skill：
 
 SKILL.md 格式参考 [Claude Code Skills 文档](https://code.claude.com/docs/en/skills)。
 
-<Note>Skill 托管在 [Trellis 主仓库](https://github.com/mindfold-ai/Trellis)，不在 docs 仓库。</Note>
+<Note>
+  内置 Skill 位于 [Trellis CLI
+  源码](https://github.com/PennixRv/Trellis/tree/v0.7.1/packages/cli/src/templates/common/bundled-skills)，不在文档仓库中。
+</Note>
 
 ### 贡献 Spec 模板
 
 Spec 模板是 Trellis 项目规范（不是 Claude 功能）。添加新模板：
 
 1. Fork 仓库
-2. 创建 `marketplace/specs/your-template/` 目录和规范文件
+2. 在 `packages/cli/src/templates/markdown/spec/` 中添加或修改对应文件
 3. 创建文档页面（`templates/specs-your-template.mdx` + 中文版）
 4. 更新 `docs.json` 导航
 5. 开 PR

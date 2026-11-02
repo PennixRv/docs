@@ -29,16 +29,16 @@ AI 的能力像藤蔓一样生长，充满活力但四处蔓延。Trellis 是 AI
 
 ### 核心概念速览
 
-| 概念                    | 说明                                                                                | 存放位置                                 |
-| ----------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Spec（规范）**        | 你的编码标准，用 Markdown 写成。AI 写代码前先读规范                                 | `.trellis/spec/`                         |
-| **Workspace（工作区）** | 每个开发者的会话日志，让 AI 记住上次做了什么                                        | `.trellis/workspace/`                    |
-| **Task（任务）**        | 工作单元，包含需求文档和上下文配置                                                  | `.trellis/tasks/`                        |
-| **Skill（技能）**       | Auto-trigger 工作流模块：brainstorm / before-dev / check / update-spec / break-loop | 各平台的 skills 目录                     |
-| **Sub-agent（子代理）** | 专门角色的 AI 子进程：`trellis-research`、`trellis-implement`、`trellis-check`      | 各平台的 agents 目录                     |
-| **Command（命令）**     | 显式会话入口：`finish-work`、`continue`，以及需要手动入口的平台上的 `start`         | 各平台的 commands 目录                   |
-| **Hook（钩子）**        | 自动触发的脚本，在会话启动、sub-agent 调用等时机注入上下文（支持 hook 的平台）      | `.claude/hooks/` 等                      |
-| **Journal（日志）**     | 会话记录文件，记录每次开发做了什么                                                  | `.trellis/workspace/{name}/journal-N.md` |
+| 概念                    | 说明                                                                           | 存放位置                                 |
+| ----------------------- | ------------------------------------------------------------------------------ | ---------------------------------------- |
+| **Spec（规范）**        | 你的编码标准，用 Markdown 写成。AI 写代码前先读规范                            | `.trellis/spec/`                         |
+| **Workspace（工作区）** | 每个开发者的会话日志，让 AI 记住上次做了什么                                   | `.trellis/workspace/`                    |
+| **Task（任务）**        | 工作单元，包含需求文档和上下文配置                                             | `.trellis/tasks/`                        |
+| **Skill（技能）**       | 为需求、决策、方案、实施和收尾阶段提供指引，并支持 spec、记忆、协作与定制      | 各平台的 skills 目录                     |
+| **Sub-agent（子代理）** | 专门角色的 AI 子进程：`trellis-research`、`trellis-implement`、`trellis-check` | 各平台的 agents 目录                     |
+| **Command（命令）**     | 显式会话入口：`finish-work`、`continue`，以及需要手动入口的平台上的 `start`    | 各平台的 commands 目录                   |
+| **Hook（钩子）**        | 自动触发的脚本，在会话启动、sub-agent 调用等时机注入上下文（支持 hook 的平台） | `.claude/hooks/` 等                      |
+| **Journal（日志）**     | 会话记录文件，记录每次开发做了什么                                             | `.trellis/workspace/{name}/journal-N.md` |
 
 ## 为什么用 Trellis？
 
@@ -46,7 +46,7 @@ AI 的能力像藤蔓一样生长，充满活力但四处蔓延。Trellis 是 AI
 | ---------------- | --------------------------------------------------------------------------------------- |
 | **自动注入**     | 规范和工作流自动注入每次对话，写一次，永久生效                                          |
 | **自更新规范库** | 最佳实践存在自更新的 spec 文件中，用得越多，AI 越懂你                                   |
-| **Skill 优先**   | 大部分操作是 auto-trigger 的 skill，AI 自己挑正确的那个，不用手动敲命令                 |
+| **任务工作流**   | `workflow.md` 按任务选择适用阶段，由阶段 Skill 和支持组件提供指引                       |
 | **团队共享**     | 团队共享规范，团队里有一个高人搞一版好的规范，拉高全员的 AI coding 水平                 |
 | **会话持久化**   | 工作记录持久化到仓库，AI 跨会话记住项目上下文，不用每次再费劲告诉 AI 你的项目情况是什么 |
 
@@ -61,6 +61,6 @@ AI 的能力像藤蔓一样生长，充满活力但四处蔓延。Trellis 是 AI
     Slash 命令（`/start`、`/finish-work`）和 auto-trigger skill 参考。
   </Card>
   <Card title="规范编写" icon="file-lines" href="/zh/start/everyday-use">
-    用 `trellis-update-spec` 把空模板变成可执行契约。
+    需要结合代码起草项目规范时，可使用 `trellis-spec-bootstrap`。
   </Card>
 </CardGroup>
