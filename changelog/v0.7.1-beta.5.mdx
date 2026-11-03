@@ -1,0 +1,12 @@
+---
+title: 'Trellis 0.7.1-beta.5'
+description: '2026-11-03'
+---
+
+## Bug Fixes
+
+`trellis update` now refreshes the bundled Linear lifecycle hook as well as the other Python scripts. `init` already installed the hook, but its omission from the update registry left existing projects using the old `archive` action after task completion changed to `complete`.
+
+Pristine hook copies now update through the existing template hash checks. Locally customized hooks remain protected by the normal conflict handling. Linear synchronization still requires explicit project configuration; updating the script does not enable it.
+
+This release includes all beta.4 workflow, template baseline, and teammate role corrections. Install `0.7.1-beta.5` and run `trellis update` to refresh existing projects. Existing task records are preserved.

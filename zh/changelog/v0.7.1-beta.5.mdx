@@ -1,0 +1,12 @@
+---
+title: 'Trellis 0.7.1-beta.5'
+description: '2026-11-03'
+---
+
+## 问题修复
+
+`trellis update` 现在会与其他 Python 脚本一同刷新随包提供的 Linear 生命周期 hook。`init` 原本已经安装该脚本，但更新清单漏记了它，导致任务完成动作改为 `complete` 后，已有项目仍保留旧 `archive` 动作。
+
+未修改的 hook 副本现通过已有模板哈希核验更新；本地定制的 hook 继续受正常冲突处理保护。Linear 同步仍须由项目显式配置，更新脚本不会启用集成。
+
+本版包含 beta.4 的全部工作流、模板基线和 teammate 角色修复。安装 `0.7.1-beta.5` 后运行 `trellis update`，即可刷新已有项目；已有任务记录保持原样。
