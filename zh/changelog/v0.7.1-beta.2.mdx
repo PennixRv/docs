@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.2'
+description: '2026-11-03'
+---
+
+## 问题修复
+
+Teamwork 迁移现会清理 Claude、Cursor、OpenCode 和 Pi 中退役的 `trellis-channel` Skill 与架构参考。旧资产中仍有用的会话、论坛、消息、等待、进程保护、恢复和诊断指导已保留在 `trellis-teamwork` Skill 及其 references 中；旧的写入型 worker 角色和 subnode 派发合同继续退役。
+
+Pi 旧 `.pi/skills` 输出路径也会清理：当前 Pi Skill 安装在共享 `.agents/skills` 目录中，旧副本不再承载独有能力。Oh My Pi 仍受支持，并继续生成当前 `.omp` 资产。迁移只删除匹配批准历史哈希的文件，保留不匹配的本地修改，并原样保留已有任务记录。安装 `0.7.1-beta.2` 后运行 `trellis update` 即可应用清理。

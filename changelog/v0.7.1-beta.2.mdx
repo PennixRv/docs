@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.2'
+description: '2026-11-03'
+---
+
+## Bug Fixes
+
+Teamwork migration now removes the retired `trellis-channel` Skill and architecture references from Claude, Cursor, OpenCode, and Pi. The useful session, forum, messaging, wait, process-guard, recovery, and diagnostic guidance is retained in the `trellis-teamwork` Skill and its references; old write-enabled worker roles and subnode dispatch contracts remain retired.
+
+Pi's old `.pi/skills` output is also removed: current Pi Skills are installed in the shared `.agents/skills` directory, so the duplicate copies do not carry unique capability. Oh My Pi remains supported and continues to receive its own current `.omp` assets. The migration preserves modified files that do not match the approved historical hashes and leaves existing task records untouched. Install `0.7.1-beta.2` and run `trellis update` to apply the cleanup.
