@@ -1,0 +1,14 @@
+---
+title: 'Trellis 0.7.1-beta.12'
+description: '2026-11-04'
+---
+
+本版本按已批准设计、上游 beta4 和旧 fork 核对原生工作流，补回重构时遗漏的有效修复。
+
+Teamwork 清理现在先核验 supervisor 身份再发送信号，并核验 Linux 孤儿进程的启动身份；无法确认身份或退出结果时保留恢复文件。prune 与启动共用保护锁，等待事件写入锁，重新核对完整事件内容并报告实际删除数。诊断会脱敏已知凭据格式，不再记录原始 provider 流和启动参数；用户消息内容保持原样。
+
+一次性 `run` 从 spawn 前的序号开始读取事件，避免漏掉提前完成或失败。mem JSONL 读取器保留跨 UTF-8 分块的中文和 emoji。SessionStart 从子目录发现最近项目，安全处理无效输入，将损坏的任务记录明确报告为 `TASK_ERROR`，不创建替代任务。
+
+消费一次交接后，当前 owner 可以在新的明确交接授权下，使用新包和当前 ownership generation 将同一任务交给另一会话。普通任务工作固定代数，旧交接包保持封存。原生任务级只读状态查询、Pennix handoff Skill 和开发合同已统一到这一行为。
+
+Teamwork 继续按角色约束职责。managed batch 派发仍要求已核验的 host adapter，交互式 `run` 和 `spawn` 不替代该适配器。无法核验的活动进程保留供恢复；本版本不宣称支持 Linux 以外的孤儿进程终止。

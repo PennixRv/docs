@@ -1,0 +1,14 @@
+---
+title: 'Trellis 0.7.1-beta.12'
+description: '2026-11-04'
+---
+
+This release checks the native workflow against its approved design, upstream beta4, and the previous fork, and restores useful fixes that were lost during the refactor.
+
+Teamwork cleanup now verifies supervisor identity before signalling, verifies Linux orphan process birth identity, and preserves recovery files when identity or shutdown cannot be confirmed. Prune shares the launch guard, waits for event writers, rechecks complete event content, and reports actual removals. Known credential formats are redacted from diagnostics; raw provider streams and launch arguments are no longer logged. User message content is preserved.
+
+One-shot `run` observes events from before spawn so an early completion or failure is not missed. Memory JSONL readers preserve Chinese text and emoji across UTF-8 chunk boundaries. SessionStart finds the nearest project from a child directory, handles invalid input safely, and reports damaged task records as `TASK_ERROR` without creating replacement tasks.
+
+After consuming a handoff, the current owner can explicitly hand the same task to another session using a new package and the current ownership generation. Ordinary task work keeps the generation fixed and leaves previous handoff packages sealed. The native task-only status query, Pennix handoff Skill, and development contracts now describe the same behavior.
+
+Teamwork's role-based obligations remain unchanged. Managed batch dispatch still requires a verified host adapter; interactive `run` and `spawn` do not substitute for that adapter. Unverifiable live processes are preserved for recovery, and this release does not claim orphan termination support outside Linux.
