@@ -1,0 +1,8 @@
+---
+title: 'Trellis 0.7.1-beta.7'
+description: '2026-11-03'
+---
+
+The updater now checks every lifecycle directory before creating a migration task. Repeating an upgrade after its migration task moved out of `planning` preserves the existing task instead of creating a duplicate. The check also covers the flat legacy layout and monthly archives before explicit layout migration.
+
+This release includes the task directory governance introduced in beta.6. Existing beta.6 projects need only the normal `trellis update`; earlier projects must follow [the task layout migration guide](/beta/guides/task-layout). Task contents and lifecycle authorization remain unchanged.

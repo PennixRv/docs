@@ -18,7 +18,7 @@ Use the returned task path, including its status directory and month where appli
 
 ## Upgrade an existing project
 
-Review customized template conflicts during the normal update. The update installs the scripts and workflow; **task moves are a separate, explicit operation**.
+Review customized template conflicts during the normal update. The update installs the scripts and workflow; **task moves are a separate, explicit operation**. From beta.7, automatic migration task creation also checks every lifecycle directory and the legacy layout, so an existing task that has moved out of `planning` is preserved without creating a duplicate.
 
 ```bash
 trellis update --migrate
