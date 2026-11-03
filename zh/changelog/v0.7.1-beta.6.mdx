@@ -1,0 +1,12 @@
+---
+title: 'Trellis 0.7.1-beta.6'
+description: '2026-11-03'
+---
+
+任务现在分别位于 `planning/`、`in_progress/`、`completed/YYYY-MM/` 和 `cancelled/`。原生生命周期操作在同一可恢复事务中移动任务目录并更新机器引用，现有四种状态和阶段授权规则保持有效。
+
+这是一次不兼容的目录布局变更。先运行 `trellis update --migrate` 并审查自定义文件，再通过 `python3 .trellis/scripts/task.py migrate-layout` 预览并显式应用。仅更新模板不会移动任务。旧已完成归档保留原月份，历史正文、附件与不可变交接包保持不变。
+
+任务发现、上下文查找、父子进度、初始化、状态显示和平台模板统一使用有限层级布局。无效输入和未完成的事务会产生明确诊断。迁移不会授予实施权限，也不会重启历史工作。
+
+命令、验收、恢复和会话连续性要求见 [beta 任务布局指南](/zh/beta/guides/task-layout)。本版包含 beta.5 的全部修复。

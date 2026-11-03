@@ -1,0 +1,12 @@
+---
+title: 'Trellis 0.7.1-beta.6'
+description: '2026-11-03'
+---
+
+Tasks now live under `planning/`, `in_progress/`, `completed/YYYY-MM/` and `cancelled/`. Native lifecycle operations move task directories and update machine references in one recoverable transaction. The four existing states and phase authorization rules remain authoritative.
+
+This is a breaking layout change. Run `trellis update --migrate`, review customized files, then preview and apply `python3 .trellis/scripts/task.py migrate-layout`. Updating templates alone does not move tasks. Legacy completed archives retain their original months; historical prose, attachments and immutable handoff packages are preserved.
+
+Task discovery, context lookup, parent/child progress, initialization, status displays and platform templates now share the bounded layout. Invalid inputs and unfinished moves produce explicit diagnostics. A migration does not grant implementation permission or restart historical work.
+
+See [the beta task layout guide](/beta/guides/task-layout) for commands, validation, recovery and session continuity requirements. Includes all beta.5 fixes.

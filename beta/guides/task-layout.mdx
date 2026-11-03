@@ -1,0 +1,51 @@
+---
+title: 'Task directories by status'
+description: 'The task layout and explicit migration contract in 0.7.1-beta.6'
+---
+
+Starting with **0.7.1-beta.6**, native task commands keep directories aligned with the four existing task states. `task.json.status` remains authoritative; a directory is its projection, not a second lifecycle state.
+
+| Status        | Directory                                 | Native operation                                     |
+| ------------- | ----------------------------------------- | ---------------------------------------------------- |
+| `planning`    | `.trellis/tasks/planning/<task>`          | `task.py create`                                     |
+| `in_progress` | `.trellis/tasks/in_progress/<task>`       | `task.py start`, after implementation authorization  |
+| `completed`   | `.trellis/tasks/completed/YYYY-MM/<task>` | `task.py complete`, after accepted closeout          |
+| `cancelled`   | `.trellis/tasks/cancelled/<task>`         | `task.py cancel`, after accepted cancellation review |
+
+Completion uses the actual completion month. Rename keeps the current status and completion month. Completion and cancellation clear the current task pointer in the same transaction as the move. Phase acceptance and implementation authorization still use the existing native workflow; moving a directory grants neither. Parent and child identities are preserved, and only completed children count as done.
+
+Use the returned task path, including its status directory and month where applicable, in subsequent commands. Task names are resolved across all four states; ambiguous names fail. `task.py list --json` reports real relative paths. Context readers, session lookup, initialization, status displays and platform integrations use the same bounded layout. A misplaced record, invalid JSON, duplicate name, unsafe symlink or unfinished transaction produces a diagnostic or partial result rather than a false empty project.
+
+## Upgrade an existing project
+
+Review customized template conflicts during the normal update. The update installs the scripts and workflow; **task moves are a separate, explicit operation**.
+
+```bash
+trellis update --migrate
+python3 .trellis/scripts/task.py migrate-layout
+python3 .trellis/scripts/task.py migrate-layout --apply
+python3 .trellis/scripts/task.py migrate-layout
+python3 .trellis/scripts/task.py list --json
+python3 .trellis/scripts/task.py current --json
+```
+
+The preview reports proposed moves without editing tasks. Apply recalculates and validates the whole plan before writing. A second preview after a successful migration reports no moves. Old `archive/YYYY-MM/<task>` records with `completed` status retain their original archive month under `completed/YYYY-MM/`. Other legacy records follow their actual status. A flat completed record needs a valid `completedAt` month; missing evidence is an error, not an invitation to invent a date.
+
+The migration preserves task identities, parent and child relationships, historical prose and attachments. It rewrites machine references in task JSON, top-level task JSONL and current runtime records, including path-based runtime keys. Immutable handoff packages retain their original contents and digests. Invalid JSON, collisions, unclosed delegated resources and pending ownership transfers block the plan before task edits. Resolve the specific cause and preview again; do not change a historical task to completed merely because it was stored in `archive`.
+
+To close a legacy task without a phase workflow, explicitly initialize its route with `task.py phase init` and follow the normal review and acceptance process. Initialization may create an absent `meta` object; it rejects malformed existing metadata and grants no implementation authorization.
+
+## Interrupted moves and session continuity
+
+Moves and machine reference changes share a transaction journal under `.trellis/.runtime/`. If a move is interrupted, ordinary task commands stop until explicit recovery:
+
+```bash
+python3 .trellis/scripts/task.py migrate-layout --recover
+python3 .trellis/scripts/task.py migrate-layout
+```
+
+Recovery validates all inputs before restoring them. External changes or path conflicts stop recovery without overwriting those changes. Preserve the diagnostic and journal; do not delete the journal or manually move the directories to bypass it.
+
+An already consumed ownership transfer can move only in its current target session with a matching active pointer. If updated paths change the continuity digest, the normal workflow withholds further writes until native phase acceptance and `transfer reconcile` converge the current ownership record. Historical source and package digests remain unchanged. A migration does not reactivate historical authorization or execute pending business actions.
+
+Before considering migration complete, compare task counts and statuses, check retained completion months and parent/child links, inspect `current` and the active task's `phase show`, and verify that the final preview is empty. Release documentation describes the stable version; this page describes the beta layout.

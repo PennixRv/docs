@@ -1,0 +1,51 @@
+---
+title: '按状态组织任务目录'
+description: '0.7.1-beta.6 的任务布局与显式迁移合同'
+---
+
+从 **0.7.1-beta.6** 开始，原生任务命令会让目录与现有四种任务状态保持一致。`task.json.status` 仍是唯一状态事实；目录只是其投影，不构成另一套生命周期状态。
+
+| 状态          | 目录                                      | 原生操作                              |
+| ------------- | ----------------------------------------- | ------------------------------------- |
+| `planning`    | `.trellis/tasks/planning/<task>`          | `task.py create`                      |
+| `in_progress` | `.trellis/tasks/in_progress/<task>`       | 获得实施授权后运行 `task.py start`    |
+| `completed`   | `.trellis/tasks/completed/YYYY-MM/<task>` | 接纳收尾审查后运行 `task.py complete` |
+| `cancelled`   | `.trellis/tasks/cancelled/<task>`         | 接纳取消审查后运行 `task.py cancel`   |
+
+完成任务按实际完成月份保存。重命名保留当前状态及完成月份。完成或取消时，目录移动与当前任务指针清理处于同一事务。阶段接纳和实施授权仍遵守既有原生工作流；移动目录不会授予任何权限。父子任务身份保持不变，只有已完成的子任务才计入完成数。
+
+后续命令应使用原生入口返回的真实任务路径，其中包括状态目录和适用的月份。任务名称在全部四种状态中解析，歧义名称会被拒绝。`task.py list --json` 返回真实相对路径。上下文读取、会话查找、初始化、状态显示和平台集成都使用同一套有限层级布局。目录与状态不符、无效 JSON、重名、不安全软链接或未结束的事务会产生诊断或不完整结果，不会被误判为空项目。
+
+## 升级现有项目
+
+先在正常更新流程中审查自定义模板冲突。更新会安装脚本与工作流；**任务目录移动需要另行显式执行**。
+
+```bash
+trellis update --migrate
+python3 .trellis/scripts/task.py migrate-layout
+python3 .trellis/scripts/task.py migrate-layout --apply
+python3 .trellis/scripts/task.py migrate-layout
+python3 .trellis/scripts/task.py list --json
+python3 .trellis/scripts/task.py current --json
+```
+
+预览只报告计划，不编辑任务。应用时会重新计算并校验整个计划，再写入变更。成功迁移后再次预览应无待移动任务。旧 `archive/YYYY-MM/<task>` 中状态为 `completed` 的记录迁入 `completed/YYYY-MM/`，保留原归档月份；其他旧记录按实际状态归位。平铺的已完成任务必须具有有效的 `completedAt` 月份，证据不足时应报错，不得编造日期。
+
+迁移保留任务身份、父子关系、历史正文与附件，同步改写任务 JSON、任务顶层 JSONL 及当前运行记录中的机器引用，包括以路径生成的运行记录键。不可变交接包保持原内容与摘要。无效 JSON、目标冲突、未关闭的委派资源及待交接所有权会在编辑任务前阻止整个计划。处理明确原因后重新预览；不得因为历史任务位于 `archive` 就将其伪造为已完成。
+
+收尾尚无阶段工作流的历史任务时，应显式运行 `task.py phase init` 初始化路线，再按原生流程审查并接纳。初始化可以补建缺失的 `meta` 对象，但会拒绝已有的错误元数据，且不会授予实施权限。
+
+## 中断恢复与会话连续性
+
+目录移动与机器引用更新共用 `.trellis/.runtime/` 下的事务记录。发生中断后，普通任务命令会停止，直至显式恢复：
+
+```bash
+python3 .trellis/scripts/task.py migrate-layout --recover
+python3 .trellis/scripts/task.py migrate-layout
+```
+
+恢复会先校验全部输入，再还原内容。外部修改或路径冲突会阻止恢复，不会覆盖这些修改。应保留诊断与事务记录，不得删除记录或手动移动目录来绕过检查。
+
+已接纳的所有权交接，仅允许其当前目标会话在活动指针匹配时迁移。若路径更新改变了连续性摘要，原生工作流会暂缓后续写入，直至阶段接纳与 `transfer reconcile` 完成当前所有权收敛。历史来源摘要和交接包摘要保持不变。迁移不会重新授予历史权限，也不会执行待办业务动作。
+
+迁移验收应比较任务数量和状态，检查完成月份与父子关系，核对 `current` 及活动任务的 `phase show`，并确认最终预览为空。Release 文档描述稳定版行为，本页描述 beta 布局。
