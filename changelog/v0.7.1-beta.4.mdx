@@ -1,0 +1,16 @@
+---
+title: 'Trellis 0.7.1-beta.4'
+description: '2026-11-03'
+---
+
+## Bug Fixes
+
+Template tracking now excludes runtime state, session handoff bundles, and Python bytecode. `trellis update` also removes their accidentally recorded hash keys from existing manifests. This repairs tracking metadata without deleting runtime files or changing existing task records, and preserves the template baselines used to detect customized workflow/config files.
+
+Registry-managed spec baselines also survive that cleanup, including when a local spec has been edited. Existing runtime files and old task records are preserved.
+
+Phase transitions now invalidate affected skip decisions and recheck accepted artifacts before acceptance, completion, or cancellation. Implementation authorization binds the contract content digest, including routes that omit design. A delivery review can be reopened or routed back while the task remains unfinished.
+
+Every interactive teammate receives the research/review/verification role and result requirements, including calls without `--agent`. Source and Git write boundaries are role obligations; batch launch snapshots no longer claim host permission isolation for them. The bundled report example includes the required frozen plan and phase revisions. Teamwork guidance distinguishes `general`, Advisor, and committee from runtime commands, and explicitly documents that the public `batch` entry remains unavailable.
+
+This release includes the Teamwork capability migration, hash-protected retirement of obsolete generated assets, platform re-init protection, and host wait continuation guidance from beta.2 and beta.3. Install `0.7.1-beta.4` and run `trellis update` to apply the complete fix.
