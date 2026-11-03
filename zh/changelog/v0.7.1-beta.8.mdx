@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.8'
+description: '2026-11-03'
+---
+
+`trellis update` 现在会删除旧安装遗留的 59 份已知生成文件：`.agents/skills/` 与 `.claude/skills/` 下已被替代的 `trellis-meta` 参考文档，以及 `.claude/`、`.cursor/`、`.opencode/` 下的 `SKILL.md.backup` 副本。
+
+清理复用带明确内容哈希的 `safe-file-delete`。当前模板、修改过的文件、`update.skip` 排除项、自定义 Skill、任务记录、会话交接和回滚备份继续受到保护。当前 `trellis-meta` 参考目录为 `local-architecture`、`platform-files` 和 `customize-local`。
+
+先运行 `trellis update --dry-run` 预览，再运行 `trellis update` 应用。此次清理不需要 `--migrate`，也不移动任务。

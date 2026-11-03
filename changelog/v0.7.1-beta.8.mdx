@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.8'
+description: '2026-11-03'
+---
+
+`trellis update` now removes 59 known generated files left by older installs: superseded `trellis-meta` references under `.agents/skills/` and `.claude/skills/`, plus `SKILL.md.backup` sidecars under `.claude/`, `.cursor/`, and `.opencode/`.
+
+Cleanup uses `safe-file-delete` with explicit content hashes. Current templates, modified files, `update.skip` exclusions, custom skills, task records, session handoffs, and rollback backups remain protected. The active `trellis-meta` reference directories are `local-architecture`, `platform-files`, and `customize-local`.
+
+Run `trellis update --dry-run` to preview cleanup, then `trellis update` to apply it. This cleanup requires no `--migrate` and does not move tasks.
