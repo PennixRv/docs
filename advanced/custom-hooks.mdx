@@ -6,7 +6,7 @@ title: 'Custom Hooks'
 
 <Note>Hook support varies by platform and by event — see the per-event matrix below.</Note>
 
-- **`SessionStart` hook / extension** ships on Claude Code, Cursor, OpenCode, Gemini CLI, Qoder, CodeBuddy, Copilot, Droid, Pi Agent. Codex relies on `AGENTS.md` plus the `UserPromptSubmit` hook; Kiro's Agent Hooks are user-configured — Trellis does not install any out of the box.
+- **`SessionStart` hook / extension** ships on Claude Code, Cursor, OpenCode, Gemini CLI, Qoder, CodeBuddy, Copilot, Droid, Pi Agent. Codex uses `AGENTS.md` plus `UserPromptSubmit`. Kiro CLI uses the active Trellis agent's `agentSpawn` and `userPromptSubmit` hooks; Kiro IDE receives a `promptSubmit` hook that must be trusted and enabled. See [Multi-Platform Support](/advanced/multi-platform) for activation and the remaining runtime verification limit.
 - **`PreToolUse` / extension sub-agent context injection** ships on Claude Code, Cursor, OpenCode, CodeBuddy, Droid, Pi Agent. The other hook-capable platforms rely on a pull-based prelude inside each sub-agent instead.
 - **`UserPromptSubmit` / workflow-state nudge** ships on the same platforms as `SessionStart`, plus Codex when hooks are enabled.
 - **Kilo, Antigravity, Devin** have no hook primitive at all; behavior is delivered via workflow files + skills.

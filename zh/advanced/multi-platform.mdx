@@ -180,7 +180,7 @@ Skill 在 Qoder IDE 和 Qoder CLI 上都生效；命令只在 CLI 上生效 —�
 
 布局：
 
-- `.qoder/skills/trellis-{name}/SKILL.md`：auto-trigger 工作流 skill —— `brainstorm`、`before-dev`、`check`、`update-spec`、`break-loop`。IDE 和 CLI 都会读。
+- `.qoder/skills/trellis-{name}/SKILL.md`：包括需求发现、`before-dev`、`check`、`update-spec`、`break-loop` 及五个业务阶段 Skill。IDE 和 CLI 都会读取。替代接入入口见 [Beta Skill 职责与路由](/zh/beta/guides/skill-routing)。
 - `.qoder/commands/trellis-{name}.md`：session-boundary 命令 —— `finish-work`、`continue`，**在 Qoder CLI 里**用 `/trellis-finish-work`、`/trellis-continue` 调用。`start` 的上下文由 SessionStart hook 注入，所以没有 `trellis-start` 命令。
 - `.qoder/agents/{name}.md`：带 pull-based prelude 的 sub-agent 定义
 - `.qoder/hooks/session-start.py`：SessionStart hook，覆盖 startup / clear / compact

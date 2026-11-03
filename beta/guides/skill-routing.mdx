@@ -1,0 +1,30 @@
+---
+title: 'Skill Responsibilities and Routing'
+description: 'Request intake, exploration, design, and supporting Skills in 0.7.1-beta.9.'
+---
+
+From `0.7.1-beta.9`, `trellis-request-intake` replaces the generated `trellis-brainstorm` entry on all 22 platforms. `trellis-start` initializes a session, `trellis-continue` resumes its native task, and intake routes a new request. A change to the same goal returns to the earliest affected phase; independent work gets its own intake. Existing authorization is reused, and taskless work keeps its existing boundary.
+
+## Exploration belongs to the business phases
+
+| Responsibility                                                                                                                                   | Owner                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| Check symptoms, actual goals, constraints, assumptions, and user confirmation                                                                    | Goal Exploration and Requirements Confirmation |
+| Explore mechanisms and real alternatives, including the status quo or doing nothing when meaningful; screen by evidence and stop when sufficient | Decision Space Construction and Consolidation  |
+| Resolve material choices, connect requirements to design and verification, review and display the complete solution, accept the result           | Solution Design and Convergence                |
+| Implement and verify the accepted contract after separate implementation authorization                                                           | Task Implementation and Test Verification      |
+| Review delivery, remaining work, acceptance, and resource disposition                                                                            | Delivery Review and Closeout                   |
+
+There is no separate divergent-exploration or idea-to-closed-plan Skill. Their useful methods belong to the relevant phases, avoiding competing planning state. Acceptance and implementation authorization remain separate native records even when one explicit user response grants both.
+
+## Supporting Skills and collaboration
+
+`before-dev` and `check` read actual phase and contract references; filenames alone do not prove authorization. `break-loop` uses evidence rather than invented percentages. `update-spec` records only contracts the change actually needs, reusing existing artifacts. Spec bootstrap uses authorized tools and indexes; installing tools, rebuilding indexes, or delegating writes requires the applicable authorization.
+
+Pennix decision grill provides user choices and review methods without taking ownership of phases. Workflow routing, handoff, project update, resource cleanup, and Context Mode keep their component boundaries. Teamwork teammates report research, review, or validation and do not write product code. `general` is a collaboration mode; batch needs a verified adapter, and interactive `run`/`spawn` cannot stand in for it.
+
+The Extra collection keeps explicit-invocation policies. UI prototypes require a validated development-only variant, preserve the existing page for ordinary or invalid URLs, and keep experimental imports/rendering out of production. Architecture reports use diagrams only when needed; retrospectives discover the host's actual policy source.
+
+## Upgrade and history
+
+Preview `trellis update --dry-run`, then run `trellis update`. The migration deletes legacy Skills only when their content matches known generated hashes; customizations and unrelated Skills remain and must be reviewed. Tasks and handoff history are preserved. Historical `trellis mem extract --phase brainstorm|implement|all` values still slice conversations at task creation/start boundaries; they are not the five business phases. Unknown or inapplicable mem flags fail explicitly, including the unsupported `--task` flag.

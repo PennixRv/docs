@@ -1,0 +1,47 @@
+---
+title: '资产快照与维护'
+description: '在 0.7.1-beta.9 中核验、恢复和清理 Trellis 资产快照。'
+---
+
+本能力从 `0.7.1-beta.9` 提供。安装 beta CLI 后，先用 `trellis update --dry-run` 预览，再逐项目更新。本指南与 [Beta 任务目录治理](/zh/beta/guides/task-layout)配合；资产恢复不会迁移或回滚任务数据。
+
+## 快照范围与核验
+
+`trellis backup create` 按受管清单创建资产快照。`trellis update` 还会纳入本次计划变更，包括将创建或删除的路径。任务、spec、workspace 日志、会话与交接数据、凭据、日志、缓存、依赖和 worktree 均排除。快照以私有权限保存在 `.trellis/.backup-<时间戳>-<uuid>/`，带有 manifest；快照完整与更新成功分别记录。
+
+```bash
+trellis backup create
+trellis backup list
+trellis backup inspect <id>
+trellis backup verify <id>
+```
+
+核验覆盖项目身份、路径范围、schema、文件哈希及权限，拒绝符号链接和额外载荷文件。回执仅包含元数据，不包含载荷正文。
+
+## 审查与恢复
+
+```bash
+trellis backup restore <id>
+trellis backup restore <id> --review <digest> --yes
+```
+
+预览列出写入、删除、保持不变和冲突。执行须提供当前审查摘要；预览后内容变化须重新审查。修改过的资产保持冲突，只有显式使用 `--replace-modified` 重新预览、执行时也提供该选项，才能替换。写入前先保存回退快照；中断后可以通过同一命令续跑，中断后新增的编辑仍保持冲突。
+
+恢复混合 `AGENTS.md` 时保留受管区块外的用户内容。由于快照排除任务数据，记录中的任务布局与阶段运行时必须和当前完全一致；否则在写入前拒绝，`--replace-modified` 也不能绕过。
+
+## 保留与清理
+
+```bash
+trellis backup prune --keep 3
+trellis backup prune --keep 3 --yes
+trellis backup prune --all --include-legacy
+trellis backup prune --all --include-legacy --yes
+```
+
+日常清理至少保留三个已核验完整快照。显式 `--all --include-legacy` 还会选择已识别的旧更新快照及受管迁移 `.backup` 文件。未知或不完整对象、未解决的操作及其回退快照受保护。先预览，`--yes` 再逐项重核并删除；部分失败返回非零退出码并指出保留对象。字节合计表示文件内容大小，不表示物理磁盘块释放量。
+
+## 共享维护边界
+
+init／re-init、update、workflow 写入、uninstall、ablate、资产恢复和清理共用项目维护锁，异步操作结束后才释放。活跃、未知或被替换的锁会保留；只有正向确认原进程已退出，才允许恢复过期锁。只读预览仍可使用。
+
+uninstall 明示快照损失并阻止未解决的恢复。可恢复移除继续使用 `trellis ablate` 与顶层 `trellis restore`，其对象与资产快照恢复不同。

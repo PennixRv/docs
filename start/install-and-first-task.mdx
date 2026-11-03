@@ -155,16 +155,14 @@ your-project/
 │   │       └── journal-N.md
 │   │
 │   ├── tasks/                         # Task directory
-│   │   ├── {MM-DD-task-name}/         #   Active tasks
-│   │   │   ├── task.json              #     Task metadata
-│   │   │   ├── prd.md                 #     Requirements document
-│   │   │   ├── design.md              #     Technical design for complex tasks
-│   │   │   ├── implement.md           #     Implementation plan for complex tasks
-│   │   │   ├── implement.jsonl        #     Spec/research manifest for implementation
-│   │   │   ├── check.jsonl            #     Spec/research manifest for review
-│   │   │   └── research/              #     Durable investigation notes
-│   │   └── archive/                   #   Archived tasks
-│   │       └── {YYYY-MM}/
+│   │   └── {MM-DD-task-name}/
+│   │       ├── task.json              #   Lifecycle and phase records
+│   │       ├── prd.md                 #   Requirements
+│   │       ├── design.md              #   Design when needed
+│   │       ├── implement.md           #   Implementation contract when needed
+│   │       ├── implement.jsonl        #   Implementation context, when supported
+│   │       ├── check.jsonl            #   Review context, when supported
+│   │       └── research/              #   Durable investigation notes
 │   │
 │   └── scripts/                       # Automation scripts (Python)
 │       ├── task.py                    #   Task management
@@ -251,7 +249,7 @@ reminder telling the AI to read `trellis-start` once.
 
   </Tab>
   <Tab title="Kiro">
-  Kiro delivers Trellis content via its `.kiro/` agent / skill files. Kiro's Agent Hooks are user-configured (triggered on file save, build success, etc.); Trellis does not ship any Agent Hook wiring. Describe your task and Kiro's skill matcher enters the brainstorm flow; run `@trellis:start` when you want a full context report.
+  Kiro CLI loads Trellis through the active `trellis` agent, including its `agentSpawn` and `userPromptSubmit` hooks. Select it with `/agent swap trellis` or `kiro-cli settings chat.defaultAgent trellis`. Kiro IDE receives an enabled `promptSubmit` hook; confirm trust and activation in Agent Hooks. Describe new work to enter requirements discovery, or use `trellis-continue` to resume a task. See [Multi-Platform Support](/advanced/multi-platform) for the remaining Kiro runtime verification limit.
   </Tab>
   <Tab title="Kilo / Antigravity / Devin">
   These three platforms have workflows + skills only, no hooks and no sub-agents. Entry:
@@ -334,7 +332,8 @@ value.
 `finish-work` records the session in your workspace journal. It does not
 complete or archive the task. After Delivery Review and Closeout accepts
 the result, Trellis CLI can complete the task with `task.py complete <task>`;
-the task record remains under `.trellis/tasks/`.
+the stable task record remains under `.trellis/tasks/`. The
+[Beta task layout](/beta/guides/task-layout) adds automatic movement into status directories.
 
 ### Cross-Session Memory
 

@@ -148,16 +148,14 @@ your-project/
 │   │       └── journal-N.md
 │   │
 │   ├── tasks/                         # 任务目录
-│   │   ├── {MM-DD-task-name}/         #   活跃任务
-│   │   │   ├── task.json              #     任务元信息
-│   │   │   ├── prd.md                 #     需求文档
-│   │   │   ├── design.md              #     复杂任务的技术设计
-│   │   │   ├── implement.md           #     复杂任务的实施计划
-│   │   │   ├── implement.jsonl        #     实现阶段 spec/research manifest
-│   │   │   ├── check.jsonl            #     review 阶段 spec/research manifest
-│   │   │   └── research/              #     持久调研记录
-│   │   └── archive/                   #   归档任务
-│   │       └── {YYYY-MM}/
+│   │   └── {MM-DD-task-name}/
+│   │       ├── task.json              #   生命周期与阶段记录
+│   │       ├── prd.md                 #   需求
+│   │       ├── design.md              #   按需保存设计
+│   │       ├── implement.md           #   按需保存实施合同
+│   │       ├── implement.jsonl        #   平台支持时的实施上下文
+│   │       ├── check.jsonl            #   平台支持时的审查上下文
+│   │       └── research/              #   持久调研记录
 │   │
 │   └── scripts/                       # 自动化脚本（Python）
 │       ├── task.py                    #   任务管理
@@ -241,7 +239,7 @@ hook 会注入当前 workflow-state breadcrumb。没有 active task 时，这段
 
   </Tab>
   <Tab title="Kiro">
-  Kiro 默认通过 `.kiro/` 下的 agent / skill 文件交付 Trellis 内容。Kiro 的 Agent Hook 是用户自己配置的（文件保存触发、构建成功触发等），Trellis 不原生带任何 Agent Hook wiring。直接描述任务，Kiro 按 skill 匹配进入 brainstorm 流程；需要完整上下文报告时跑 `@trellis:start`。
+  Kiro CLI 通过当前启用的 `trellis` agent 加载 Trellis，包括 `agentSpawn` 和 `userPromptSubmit` hook。使用 `/agent swap trellis` 或 `kiro-cli settings chat.defaultAgent trellis` 选中它。Kiro IDE 会获得默认启用的 `promptSubmit` hook，须在 Agent Hooks 中确认信任与启用状态。描述新请求进入需求核对，已有任务由 `trellis-continue` 恢复。尚待真实 Kiro 运行时核验的限制见[多平台支持](/zh/advanced/multi-platform)。
   </Tab>
   <Tab title="Kilo / Antigravity / Devin">
   这三个平台只有 workflow + skill，没有 hook 和 sub-agent。入口：
@@ -303,8 +301,8 @@ Trellis CLI 记录的路线恢复当前任务；不能仅凭任务状态或产�
 ```
 
 `finish-work` 会在工作区日志中记录会话进度，不会完成或归档任务。交付审查与
-现场收尾接受结果后，可通过 `task.py complete <task>` 完成任务；任务记录仍保留在
-`.trellis/tasks/` 下。
+现场收尾接受结果后，可通过 `task.py complete <task>` 完成任务；稳定版任务记录
+仍保留在 `.trellis/tasks/`。[Beta 任务目录治理](/zh/beta/guides/task-layout)新增按状态自动移动。
 
 ### 跨会话记忆
 

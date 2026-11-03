@@ -188,7 +188,7 @@ Skills work on both the Qoder IDE and the Qoder CLI. Commands work on the CLI on
 
 Layout:
 
-- `.qoder/skills/trellis-{name}/SKILL.md`: auto-trigger workflow skills — `brainstorm`, `before-dev`, `check`, `update-spec`, `break-loop`. Read by both the IDE and the CLI.
+- `.qoder/skills/trellis-{name}/SKILL.md`: workflow skills including requirements discovery, `before-dev`, `check`, `update-spec`, `break-loop`, and the five business-phase Skills. Read by both the IDE and the CLI. The [Beta skill routing guide](/beta/guides/skill-routing) describes the replacement intake entry.
 - `.qoder/commands/trellis-{name}.md`: session-boundary commands — `finish-work`, `continue` — invoked as `/trellis-finish-work`, `/trellis-continue` **in the Qoder CLI**. The SessionStart hook already injects the "start" context, so there is no `trellis-start` command.
 - `.qoder/agents/{name}.md`: sub-agent definitions with pull-based prelude
 - `.qoder/hooks/session-start.py`: SessionStart hook, on startup / clear / compact

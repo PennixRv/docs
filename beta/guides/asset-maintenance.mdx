@@ -1,0 +1,47 @@
+---
+title: 'Asset Snapshots and Maintenance'
+description: 'Verify, restore, and clean Trellis asset snapshots in 0.7.1-beta.9.'
+---
+
+Available from `0.7.1-beta.9`. Install the beta CLI, then preview `trellis update --dry-run` before updating each project. This guide complements the [Beta task layout](/beta/guides/task-layout); asset recovery never migrates or rolls back task data.
+
+## Snapshot scope and verification
+
+`trellis backup create` snapshots registered assets. `trellis update` also includes its planned changes, including paths that will be created or removed. Tasks, specs, workspace journals, session/handoff data, credentials, logs, caches, dependencies, and worktrees are excluded. Snapshots remain private under `.trellis/.backup-<timestamp>-<uuid>/` with a manifest. Snapshot completion and update success are separate facts.
+
+```bash
+trellis backup create
+trellis backup list
+trellis backup inspect <id>
+trellis backup verify <id>
+```
+
+Verification checks project identity, path scope, schema, file hashes, and modes. It rejects symlinks and unexpected payload files. Reports contain metadata, not payload contents.
+
+## Review and restore
+
+```bash
+trellis backup restore <id>
+trellis backup restore <id> --review <digest> --yes
+```
+
+The preview lists writes, deletions, unchanged files, and conflicts. Execution requires the current review digest; changes after preview require another review. Modified assets remain conflicts unless explicitly previewed with `--replace-modified`, which also must be supplied on execution. A recovery snapshot is saved before writes. An interrupted restore can resume through the same command; edits made after interruption remain conflicts.
+
+Mixed `AGENTS.md` restoration preserves text outside its managed block. Task data is excluded, so the recorded task layout and phase runtime must exactly match the current runtime. Otherwise restoration refuses before writes, including with `--replace-modified`.
+
+## Retention and cleanup
+
+```bash
+trellis backup prune --keep 3
+trellis backup prune --keep 3 --yes
+trellis backup prune --all --include-legacy
+trellis backup prune --all --include-legacy --yes
+```
+
+Daily cleanup retains at least three verified complete snapshots. Explicit `--all --include-legacy` also selects recognized old update snapshots and managed migration `.backup` files. Unknown/incomplete objects, unresolved operations, and their recovery snapshots remain protected. Preview first; `--yes` rechecks every selected object before deletion. Partial failures produce a nonzero exit and identify the objects retained. Byte totals describe file contents, not physical disk-block reclamation.
+
+## Shared maintenance boundary
+
+Init/re-init, update, workflow writes, uninstall, ablate, asset restore, and cleanup share one project maintenance lock. The lock remains held until asynchronous work settles. A live, unknown, or replaced lock is retained; only a positively identified dead process permits stale-lock recovery. Read-only previews remain available.
+
+Uninstall reports snapshot loss and refuses unresolved recovery. Reversible removal continues to use `trellis ablate` and top-level `trellis restore`; this is separate from asset snapshot restoration.
