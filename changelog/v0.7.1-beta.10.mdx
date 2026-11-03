@@ -1,0 +1,8 @@
+---
+title: 'Trellis 0.7.1-beta.10'
+description: '2026-11-03'
+---
+
+Legacy asset backup discovery now recognizes the actual top-level platform directories saved by previous Trellis writers, including their optional version completion marker. Explicit full cleanup can select these verified old snapshots; unknown roots, invalid markers, symlinks, and active recovery remain protected.
+
+CLI version notices now go to stderr, keeping backup JSON reports parseable even before a project has been updated. This release includes the [request intake and asset maintenance changes from beta.9](/changelog/v0.7.1-beta.9). Upgrade to `0.7.1-beta.10`, preview each project update, and review backup cleanup separately.
