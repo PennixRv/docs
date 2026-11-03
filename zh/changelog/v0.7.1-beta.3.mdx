@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.3'
+description: '2026-11-03'
+---
+
+## 问题修复
+
+Teamwork 进程指导现保留宿主 wait continuation 合同：持续续接同一个活动 continuation，直至完成、超时或报错；在其返回前不执行其他宿主操作。这条有效的等待约束随旧协作资产退役一并保留到当前机制。
+
+本版包含 beta.2 的哈希保护资产清理及其平台重新初始化修复：添加平台时保留既有 workflow/config 模板哈希，使后续更新仍能识别本地修改。安装 `0.7.1-beta.3` 后运行 `trellis update` 即可刷新 Teamwork reference；已有任务记录保持原样。

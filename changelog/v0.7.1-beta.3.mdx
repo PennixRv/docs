@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.3'
+description: '2026-11-03'
+---
+
+## Bug Fixes
+
+Teamwork process guidance now preserves the host wait continuation contract: resume the same live continuation until completion, timeout, or error, and defer other host actions until it returns. This carries forward the useful wait safety rule when retiring the old collaboration assets.
+
+This release includes the hash-protected asset cleanup from beta.2 and its platform re-init fix: adding a platform preserves the existing workflow/config template hashes, so a later update still recognizes local edits. Install `0.7.1-beta.3` and run `trellis update` to refresh the Teamwork reference; existing task records remain unchanged.
