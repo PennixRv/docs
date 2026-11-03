@@ -1,0 +1,8 @@
+---
+title: 'Trellis 0.7.1-beta.11'
+description: '2026-11-04'
+---
+
+Session handoff ownership is now a one-time transfer: `consume` completes the transfer and fixes the ownership generation. Ordinary task edits, commits, phase progress, and delivery closeout no longer rewrite the handoff package or advance its generation after consumption.
+
+The consumed-target `transfer reconcile` operation has been removed. Sealed-source recovery before `claim` remains available through `--expected-continuity-digest`, and `transfer status --include-current` remains read-only. The CLI, bundled workflow, Pennix handoff adapter, tests, and migration guidance are aligned with this lifecycle.

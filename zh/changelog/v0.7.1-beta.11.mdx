@@ -1,0 +1,8 @@
+---
+title: 'Trellis 0.7.1-beta.11'
+description: '2026-11-04'
+---
+
+会话交接归属现已收敛为一次性交接：`consume` 完成交接并固定 ownership generation。消费完成后，普通任务修改、提交、阶段推进和交付收尾不再改写交接包或推进其 generation。
+
+已移除消费后目标侧的 `transfer reconcile` 操作。`claim` 前的 sealed-source 恢复仍可通过 `--expected-continuity-digest` 执行核对，`transfer status --include-current` 仍为只读操作。CLI、bundled workflow、Pennix handoff adapter、测试和迁移说明已统一到这一生命周期。
