@@ -1,0 +1,18 @@
+---
+title: 'Trellis 0.7.1-beta.1'
+description: '2026-11-03'
+---
+
+## 问题修复
+
+`trellis update` 按已知内容哈希清除退役的 Channel、subnode 角色、辅助脚本和 Skill，包括此前更新遗漏的、被 Git 忽略的 `.agents/skills/` 文件。清理覆盖 `trellis-channel`、`trellis-idea-to-closed-plan`、`trellis-research-record`，以及 `trellis-meta` 中退役的 Channel 参考文件。
+
+已不存在的退役文件不再遗留 `.trellis/` 哈希记录。`trellis update --dry-run` 在预览孤立哈希记录时也会保留哈希清单原文。
+
+当退役脚本已不存在或匹配已知内容哈希时，同一清理流程也会删除其 CPython 字节码缓存。已修改的脚本、无关缓存、符号链接和更新排除项仍受保护。
+
+从源码检出目录执行初始化时，也会过滤 Python 运行缓存，与已有的打包过滤保持一致。
+
+## 更新
+
+安装 `0.7.1-beta.1` 后运行 `trellis update`。清理使用已知内容哈希，保留本地修改过的文件；请审查命令报告的已修改退役资产。已有任务记录、阶段路线和交接历史保持原样，不需要任务迁移。

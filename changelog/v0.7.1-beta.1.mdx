@@ -1,0 +1,18 @@
+---
+title: 'Trellis 0.7.1-beta.1'
+description: '2026-11-03'
+---
+
+## Bug Fixes
+
+`trellis update` removes hash-matched retired Channel and subnode roles, helpers, and Skills, including ignored `.agents/skills/` files left behind by earlier updates. The cleanup covers `trellis-channel`, `trellis-idea-to-closed-plan`, `trellis-research-record`, and the retired Channel reference inside `trellis-meta`.
+
+Missing retired files no longer leave stale `.trellis/` hash entries. `trellis update --dry-run` also preserves the hash manifest when it previews orphan entries.
+
+The same cleanup removes CPython bytecode caches belonging to retired scripts when their source is already absent or matches a known hash. Modified scripts, unrelated caches, symbolic links, and update exclusions stay protected.
+
+Initialization from a source checkout also excludes Python runtime caches, matching the existing package build filter.
+
+## Upgrade
+
+Run `trellis update` after installing `0.7.1-beta.1`. Cleanup uses known content hashes and preserves locally modified files. Review any modified retired assets reported by the command. Existing task records, phase routes, and handoff history are preserved; task migration is not required.
