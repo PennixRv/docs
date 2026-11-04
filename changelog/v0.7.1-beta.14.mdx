@@ -1,0 +1,14 @@
+---
+title: 'Trellis 0.7.1-beta.14'
+description: '2026-11-04'
+---
+
+Teamwork now has file-backed professional roles, execution candidates, coordination defaults, and a complete foreground batch path. The six profiles—architecture, review, research, exploration, verification, and diagnosis—ship with precise role cards and 18 editable Codex/Copilot defaults. Profiles, provider/model/effort selection, and general/advisor/committee modes remain independent of Paseo worktree delegation.
+
+`teamwork config` resolves project defaults. `teamwork plan` validates before publishing schema-2 immutable plans and briefs; `teamwork batch` checks the native task, executes frozen assignments, accepts reports, and records terminal receipts. Retries and report validation belong to one coordinator. Durable capacity reservations survive uncertain exits, prevent overcommit, and block unsafe session cleanup.
+
+Codex uses app-server with model/effort negotiation and confirmed turn interruption. Copilot and DeepSeek Harness use the official ACP SDK, negotiate advertised configuration, separate role and task content blocks, and wait for cancellation confirmation. Claude retains stream-json and forwards effort. These changes preserve role-based source/Git obligations and do not introduce provider permission isolation.
+
+Native init/update now includes all six nested role cards and `.trellis/teamwork.json`. The Teamwork Skill, its references, architecture guidance, and [beta guide](/beta/guides/teamwork) describe actual executable behavior. Unmodified generated profiles update natively; customized schema-1 profiles must be explicitly converted to schema 2. Existing frozen schema-1 plans must be reconstructed from current task inputs. Task and handoff history stay intact.
+
+Verification passed CLI lint/typecheck, 2,250 CLI tests and 422 Core tests, with two and one skipped respectively. Real Linux Codex/Copilot one-shot runs and a two-assignment managed batch passed; both reports were accepted with zero retries. Claude and DSH have protocol fixtures but no live-account verification in this release.

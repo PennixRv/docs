@@ -119,6 +119,7 @@
                     "group": "Changelog",
                     "expanded": false,
                     "pages": [
+                      "changelog/v0.7.1-beta.14",
                       "changelog/v0.7.1-beta.13",
                       "changelog/v0.7.1-beta.12",
                       "changelog/v0.7.1-beta.11",
@@ -333,6 +334,7 @@
                 "pages": [
                   "beta/guides/task-layout",
                   "beta/guides/skill-routing",
+                  "beta/guides/teamwork",
                   "beta/guides/asset-maintenance"
                 ]
               },
@@ -397,6 +399,7 @@
                     "group": "Changelog",
                     "expanded": false,
                     "pages": [
+                      "changelog/v0.7.1-beta.14",
                       "changelog/v0.7.1-beta.13",
                       "changelog/v0.7.1-beta.12",
                       "changelog/v0.7.1-beta.11",
@@ -703,6 +706,7 @@
                     "group": "Changelog",
                     "expanded": false,
                     "pages": [
+                      "zh/changelog/v0.7.1-beta.14",
                       "zh/changelog/v0.7.1-beta.13",
                       "zh/changelog/v0.7.1-beta.12",
                       "zh/changelog/v0.7.1-beta.11",
@@ -917,6 +921,7 @@
                 "pages": [
                   "zh/beta/guides/task-layout",
                   "zh/beta/guides/skill-routing",
+                  "zh/beta/guides/teamwork",
                   "zh/beta/guides/asset-maintenance"
                 ]
               },
@@ -981,6 +986,7 @@
                     "group": "Changelog",
                     "expanded": false,
                     "pages": [
+                      "zh/changelog/v0.7.1-beta.14",
                       "zh/changelog/v0.7.1-beta.13",
                       "zh/changelog/v0.7.1-beta.12",
                       "zh/changelog/v0.7.1-beta.11",
@@ -1207,7 +1213,7 @@
     "links": [
       {
         "label": "Changelog",
-        "href": "/changelog/v0.7.1-beta.13"
+        "href": "/changelog/v0.7.1-beta.14"
       },
       {
         "label": "Tech Blog",

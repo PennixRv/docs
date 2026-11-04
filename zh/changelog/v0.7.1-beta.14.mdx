@@ -1,0 +1,14 @@
+---
+title: 'Trellis 0.7.1-beta.14'
+description: '2026-11-04'
+---
+
+Teamwork 现在通过文件配置专业角色、执行候选与协作默认值，并具备完整的前台 batch 执行路径。architecture、review、research、exploration、verification、diagnosis 六个 profile 均有精确角色卡，共提供 18 组可编辑的 Codex/Copilot 默认配置。profile、provider/model/effort 选择及 general/advisor/committee 模式保持正交，也与 Paseo worktree 委派独立。
+
+`teamwork config` 解析项目默认值；`teamwork plan` 在发布 schema-2 不可变 plan 与 brief 前完成验证；`teamwork batch` 核对原生任务，执行冻结委派、接受报告并记录终态回执。重试和报告验证由同一个协调器负责。持久容量保留会跨越不确定退出，防止超额派发并阻止不安全的会话清理。
+
+Codex 使用 app-server，核对模型与思考深度，并确认旧 turn 中断后再替换输入。Copilot 与 DeepSeek Harness 使用官方 ACP SDK，协商已公布配置，分别封装角色与任务内容块，并等待取消确认。Claude 保留 stream-json，并传递 effort。这些调整保留源码、Git 的角色义务，不引入 provider 权限隔离。
+
+原生 init/update 现在包含六份嵌套角色卡与 `.trellis/teamwork.json`。Teamwork Skill、引用、架构说明及 [Beta 指南](/zh/beta/guides/teamwork) 均说明实际可执行行为。未修改的生成 profile 由原生更新刷新，自定义 schema-1 profile 需要显式转换为 schema 2；已有 schema-1 冻结 plan 需要基于当前任务输入重新构造。任务与交接历史保留。
+
+验证通过 CLI lint、类型检查、2,250 项 CLI 测试和 422 项 Core 测试，分别跳过两项和一项。Linux 下真实 Codex/Copilot 单次调用及含两个委派项的受管 batch 已通过，两份报告均被接受，重试次数均为零。Claude 与 DSH 有协议夹具验证，本次未做真实账户验证。

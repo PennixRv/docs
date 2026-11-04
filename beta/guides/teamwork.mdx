@@ -1,0 +1,57 @@
+---
+title: 'Teamwork Profiles and Execution'
+description: 'Configure professional roles, execution candidates, and independent coordination modes.'
+---
+
+From `0.7.1-beta.14`, Teamwork resolves project configuration into an immutable execution plan and runs managed batches through foreground provider processes. It remains independent of Paseo workspace and worktree delegation.
+
+## Configuration and role cards
+
+| Project file                             | Responsibility                                                                                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `.trellis/agents/teammate-profiles.json` | Schema 2: default profile, professional role paths, default execution candidate, and candidate provider/model/reasoning effort/options |
+| `.trellis/agents/teammate.md`            | Common report, evidence, source, and Git obligations                                                                                   |
+| `.trellis/agents/profiles/*.md`          | Precise professional role instructions                                                                                                 |
+| `.trellis/teamwork.json`                 | Schema 1: default coordination mode and member counts                                                                                  |
+
+The six profiles are `architecture`, `review`, `research`, `exploration`, `verification`, and `diagnosis`. Research investigates external evidence; exploration maps a local source topic; diagnosis starts from an observed fault. Each profile ships with three editable execution candidates. All profiles default to `codex-sol`; alternatives use Copilot Sol plus Opus for architecture/review/diagnosis, or Sonnet for research/exploration/verification. Architecture defaults to `xhigh`; the others use `high`. Context length retains the provider default.
+
+Inspect actual project values before composing assignments:
+
+```bash
+trellis teamwork config --profile architecture --mode committee
+```
+
+Profiles and modes are independent. `general` allows 1–32 explicit assignments, `advisor` requires one, and `committee` requires two or three with distinct `lens` values describing their focus. Committee members share the same task, evidence, and acceptance contract and must not read peer reports. Configured member defaults guide composition; the constructor does not clone assignments automatically. Record a `selection_reason` for each candidate, including why alternatives are useful or unnecessary.
+
+Role cards are ordinary Trellis Markdown, combined with the common card. They do not register native provider personas or modify `AGENTS.md`/`CLAUDE.md`. Source/Git restrictions and memory/delegation obligations are instructions. Provider permission settings retain their native behavior.
+
+## Construct and execute
+
+Read the active native task and phase before preparing a schema-2 draft. The draft binds `task_id`, `phase_id`, `task_route_revision`, `input_revision`, `plan_summary`, `coordination_mode`, `batch_id`, `session_id`, `deadline`, and explicit `assignments`. Each assignment identifies its profile/candidate, selection reason, summary, scope, input, source digest, acceptance criteria, and retry budget. The bundled `trellis-teamwork` Skill documents the complete draft format and report contract.
+
+```bash
+trellis teamwork plan draft.json --task TASK_DIR --output TASK_DIR/plan.json --dry-run
+trellis teamwork plan draft.json --task TASK_DIR --output TASK_DIR/plan.json
+trellis teamwork batch TASK_DIR/plan.json --task TASK_DIR --preflight
+trellis teamwork batch TASK_DIR/plan.json --task TASK_DIR
+```
+
+The constructor validates briefs and paths before writing, freezes effective configuration and role/capability digests, and preserves existing immutable files. Plans and claims use schema 2; reports use schema 1. Old customized schema-1 profile files require explicit conversion and fail clearly until converted. Native updates refresh unmodified generated defaults.
+
+Preflight starts no provider and reports `processProbe: not_run`. Actual execution checks the provider's advertised model and reasoning effort, owns retries, validates reports, confirms process shutdown, and records a durable terminal receipt. The result is `ALL_ACCEPTED`, `SETTLED_WITH_FAILURE`, or `RECONCILIATION_REQUIRED`. Task acceptance remains the main coordinator's native phase operation.
+
+An existing terminal receipt is returned without dispatching again. Uncertain attempts require reconciliation and retain their capacity reservation, including after a coordinator crash. A stopped coordinator does not prove its provider processes stopped; unresolved reservations prevent session cleanup and capacity reuse. Do not delete them to bypass admission.
+
+## Providers and validation limits
+
+| Provider                 | Transport                                                  |
+| ------------------------ | ---------------------------------------------------------- |
+| Codex                    | Native app-server                                          |
+| Claude                   | Native stream-json                                         |
+| Copilot                  | ACP over its CLI: `copilot --no-auto-update --acp --stdio` |
+| DeepSeek Harness (`dsh`) | ACP: `dsh --profile acp`                                   |
+
+Copilot supports noninteractive CLI use; ACP is the selected structured transport. ACP v1 has user content blocks, so role instructions and task data are serialized into distinct blocks without claiming independent system priority. Codex and ACP interruption wait for the old turn's terminal response before replacement input. Resume follows each provider's advertised capability, including DSH `session/resume`.
+
+Linux verification covered real Codex/Copilot one-shot runs and a two-assignment managed batch, with both reports accepted and zero retries. Claude and DSH have protocol fixtures but were not exercised against live accounts in this release. `run` and `spawn` remain interactive session tools and do not substitute for managed batch execution.
