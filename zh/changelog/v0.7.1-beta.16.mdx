@@ -1,0 +1,5 @@
+本版收敛了 Teamwork batch 状态机中的控制与恢复缺口。主 agent 在前台等待一个 `teamwork batch` 命令；Trellis CLI 在后台负责 FIFO 准入、派发、续等、重试计数、取消和终态 receipt 对账。
+
+等待同一个 provider 进程不会消耗工作重试预算，其他活动 slot 可以继续推进。截止时间或取消会关闭 FIFO 准入并结算排队任务；无法确认进程已结束时会保留容量。带证据的 blocked 报告会被保留，且只使对应 assignment 失败；报告存储状态不确定或持久化 receipt 不一致时进入对账，并保留容量。
+
+无需迁移任务或 Teamwork 历史记录。运行 `trellis update` 刷新 bundled Teamwork Skill 和 teammate role card，并成对安装 CLI/Core `0.7.1-beta.16`。

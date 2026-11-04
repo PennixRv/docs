@@ -1,0 +1,5 @@
+This release closes gaps in the Teamwork batch state machine. The main agent waits on one foreground `teamwork batch` command while the Trellis CLI owns FIFO admission, dispatch, continuation waits, retry accounting, cancellation, and terminal receipt reconciliation.
+
+Waiting on the same provider process does not consume its work-retry budget, and other active slots continue to progress. A deadline or cancellation closes FIFO admission, settles queued assignments, and retains capacity when process termination cannot be confirmed. Evidence-backed blocked reports are preserved and fail only their assignment; uncertain report storage or inconsistent durable receipts require reconciliation without releasing capacity.
+
+No task or Teamwork history migration is required. Run `trellis update` to refresh the bundled Teamwork Skill and teammate role card, and install the matching CLI/Core `0.7.1-beta.16` pair.
