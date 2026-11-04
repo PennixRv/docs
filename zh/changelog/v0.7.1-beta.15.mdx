@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.15'
+description: '2026-11-04'
+---
+
+本版完成 [beta.14](/zh/changelog/v0.7.1-beta.14) 引入的 Teamwork 配置与执行交付，并补充恢复路径修复。已有 batch 无法读取或完成对账时，协调器保留其容量预留。读取失败不能证明旧 provider 进程已退出，也不能据此允许替代派发或会话清理。
+
+回归测试先启动结果不确定的 attempt，再使其事件存储不可读，确认恢复既不释放容量，也不再次派发，并保留原始事件证据。协调器与容量保留相关测试、lint、类型检查通过，发布门禁还会运行完整 CLI/Core 测试。
+
+统一安装使用 `0.7.1-beta.15`。beta.14 中断的发布由原有幂等 CI 补齐，既有版本和 tag 保留。六个专业 profile、18 组可编辑默认配置、正交模式、协议适配与真实 Codex/Copilot batch 证据继续见 [Teamwork 指南](/zh/beta/guides/teamwork)。Claude/DSH 仍只有协议夹具验证。

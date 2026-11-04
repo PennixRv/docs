@@ -1,0 +1,10 @@
+---
+title: 'Trellis 0.7.1-beta.15'
+description: '2026-11-04'
+---
+
+This release completes the Teamwork configuration and execution delivery introduced in [beta.14](/changelog/v0.7.1-beta.14), with an additional recovery fix. When an existing batch cannot be read or reconciled, the coordinator retains its capacity reservation. A read failure cannot prove that an earlier provider process exited and must not admit replacement work or session cleanup.
+
+A regression test starts an uncertain attempt, makes its event storage unreadable, and verifies that recovery neither releases capacity nor dispatches again. The original event evidence is preserved. Relevant coordinator/reservation tests, lint, and typecheck pass; the release gates also run the complete CLI/Core suites.
+
+Use `0.7.1-beta.15` for the coordinated CLI/Core installation. Beta.14's interrupted publication was resumed through its original idempotent CI path; existing versions and tags were preserved. The six professional profiles, 18 editable defaults, independent modes, protocol adapters, and real Codex/Copilot batch evidence remain as documented in the [Teamwork guide](/beta/guides/teamwork). Claude/DSH remain fixture-verified only.
