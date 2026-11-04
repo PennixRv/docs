@@ -1,0 +1,14 @@
+---
+title: 'Trellis 0.7.1-beta.13'
+description: '2026-11-04'
+---
+
+This second review against the approved workflow design closes phase recovery, delegated execution admission, and Teamwork lock races.
+
+An accepted implementation contract awaiting authorization can explicitly return to the design phase or an earlier affected phase. That return invalidates affected acceptance and authorization; the revised artifacts must be accepted again before implementation.
+
+Implementation readiness now requires an active implementation phase. Blocked or waiting phases cannot launch delegated execution. The controlled `delegate-start` entry also checks the parent's ownership fence and rejects completed or cancelled children before calling Paseo. These checks do not change teammate role obligations or add provider permission isolation.
+
+Both CLI and Core preserve empty or malformed lock files and treat only `ESRCH` as proof that a lock holder has exited. Permission errors cannot authorize lock theft. Stale recovery uses an exclusive recovery guard and rechecks the holder, preventing competing reapers from deleting a replacement lock. An interrupted `<lock>.recovery` guard is preserved: acquisition times out until the stopped recovery has been explicitly inspected and resolved.
+
+Use the native project update to refresh managed scripts and phase Skills. Existing tasks and handoff history retain their current state and location. Managed batch dispatch continues to require a verified host adapter.
