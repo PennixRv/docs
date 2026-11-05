@@ -1,0 +1,7 @@
+Teamwork 将默认成员数、模式并发上限和共享进程容量集中到 `.trellis/teamwork.json` schema 2。general 默认一位成员、并发上限 8；advisor 与 committee 默认三位成员、并发上限 3。共享存活进程预算默认为 8，非 batch 预留为 0。默认成员数指导计划构造，不会自动创建委派项。
+
+advisor 现在接受一到三位独立顾问；committee 保留两到三位成员及不同关注点的合同。batch 与交互式调用的准入继续计入已有 worker 和持久化 batch 容量保留，显式容量请求超过已验证上限时仍会失败。
+
+`teamwork config` 与 batch 预检输出解析后的 `capacityPolicy`，包括配置来源和诊断。schema 2 忽略旧 YAML 容量键并明确提示，避免遗留上限 1 静默覆盖新默认值。schema 1 保留兼容读取，环境覆盖明确提示，损坏的 JSON 明确失败；YAML 仍负责空闲清理。
+
+安装匹配的 CLI/Core `0.7.1-beta.19`，运行 `trellis update` 刷新默认配置、Teamwork Skill 和配置参考。自定义旧策略应先核对再迁移，不需要迁移任务历史。参见 [Beta Teamwork 指南](/zh/beta/guides/teamwork)。

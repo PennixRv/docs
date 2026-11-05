@@ -12,7 +12,7 @@ description: '配置专业角色、执行候选及与角色正交的协作模式
 | `.trellis/agents/teammate-profiles.json` | schema 2：默认 profile、专业角色路径、默认执行候选，以及候选的 provider/model/reasoning effort/options |
 | `.trellis/agents/teammate.md`            | 通用报告、证据、源码与 Git 义务                                                                        |
 | `.trellis/agents/profiles/*.md`          | 精确的专业角色指令                                                                                     |
-| `.trellis/teamwork.json`                 | schema 1：默认协作模式与成员数                                                                         |
+| `.trellis/teamwork.json`                 | schema 2：默认模式、各模式成员数与并发上限、共享存活进程预算与预留                                     |
 
 六个 profile 分别是 `architecture`、`review`、`research`、`exploration`、`verification`、`diagnosis`。research 调查外部证据，exploration 探索本地源码主题，diagnosis 从已观察到的故障出发。每个 profile 自带三个可编辑执行候选，均默认选择 `codex-sol`；architecture/review/diagnosis 的备选为 Copilot Sol 与 Opus，其余为 Copilot Sol 与 Sonnet。architecture 默认使用 `xhigh`，其余使用 `high`。上下文长度保持 provider 默认值。
 
@@ -22,7 +22,9 @@ description: '配置专业角色、执行候选及与角色正交的协作模式
 trellis teamwork config --profile architecture --mode committee
 ```
 
-profile 与 mode 正交。`general` 允许 1–32 个显式委派项，`advisor` 要求一个，`committee` 要求两到三个，并使用不同的 `lens` 表达各自关注点。委员会成员共享任务、证据和接受合同，不能读取同伴报告。配置中的默认成员数用于组织委派，构造器不会自动复制委派项。每个候选均需填写 `selection_reason`，说明选择理由，以及其他候选是否有助于本次任务。
+profile 与 mode 正交。`general` 允许 1–32 个显式委派项，`advisor` 允许一到三位独立顾问，`committee` 要求两到三个，并使用不同的 `lens` 表达各自关注点。委员会成员共享任务、证据和接受合同，不能读取同伴报告。配置中的默认成员数用于组织委派，构造器不会自动复制委派项。每个候选均需填写 `selection_reason`，说明选择理由，以及其他候选是否有助于本次任务。
+
+从 `0.7.1-beta.19` 起，general/advisor/committee 的默认成员数分别为 1/3/3，并发上限为 8/3/3；共享存活进程预算为 8，非 batch 预留为 0。成员数和同时执行数分别控制计划构造与运行准入；有效并发还受显式请求、共享资源及已验证宿主上限约束。`teamwork config` 与 batch 预检输出解析后的 `capacityPolicy`，它不是另一套配置源。schema 2 忽略旧 YAML 容量键并给出诊断；schema-1 项目迁移前保留旧配置兼容，显式环境覆盖也会显示诊断。YAML 继续管理空闲清理设置。
 
 角色卡是普通 Trellis Markdown，与通用角色卡和模式结果合同共同注入，不注册 provider 原生 persona，也不修改 `AGENTS.md`/`CLAUDE.md`。源码、Git、记忆与递归委派约束属于角色义务。工具权限自动允许，Codex 默认无沙箱、使用 `approvalPolicy: never`；这些角色边界不构成与宿主 AGENTS、Skills 或记忆的技术隔离。
 

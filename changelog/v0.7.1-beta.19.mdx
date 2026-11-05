@@ -1,0 +1,7 @@
+Teamwork now keeps member defaults, mode concurrency limits and shared process capacity in `.trellis/teamwork.json` schema 2. General defaults to one member with concurrency 8; advisor and committee default to three members with concurrency 3. The shared live-process budget defaults to 8, with no non-batch reservation. Member count guides plan construction and does not create assignments automatically.
+
+Advisor now accepts one to three independent consultations; committee retains its two-to-three-member distinct-lens contract. Batch and interactive admission continue to count existing workers and durable batch reservations. Explicit capacity requests still fail when they exceed the verified limit.
+
+`teamwork config` and batch preflight expose the resolved `capacityPolicy`, including configuration provenance and diagnostics. Schema 2 ignores old YAML capacity keys with a diagnostic, preventing a stale limit of 1 from silently overriding the new defaults. Legacy schema 1 remains readable, environment overrides are explicit, and damaged JSON fails closed. YAML still controls idle cleanup.
+
+Install the matching CLI/Core `0.7.1-beta.19` pair and run `trellis update` to refresh the default configuration, Teamwork Skill and configuration references. Review custom legacy policy before migrating; no task-history migration is required. See the [Beta Teamwork guide](/beta/guides/teamwork).
