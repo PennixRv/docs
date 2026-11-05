@@ -1,0 +1,7 @@
+本版分别完善工作流返工与原生任务恢复。`phase return --return-kind execution_rework` 可以重入实施或交付阶段，在 CLI 核验需求、已接受产物、合同摘要、路线 revision 和已声明依赖准入仍有效后保留实施授权。默认的 `contract_change` 继续使授权失效。
+
+新接受或新授权的实施合同必须包含非空的 `## 验收覆盖` 表，表头为 `接受条件 | 工作包 | Owner | 验证入口 | 交付证据 | 停止条件`。CLI 检查结构，方案 Skill 逐条核对语义覆盖；已有接受与授权在续订前保持有效。
+
+`task.py reopen <task> --reason <reason> --evidence-ref <reference>` 将已完成或已取消任务恢复到 `planning`，保留任务身份、终态事实、取消原因和恢复历史，并清理旧运行态、依赖准入和实施授权。工作流阶段独立管理：随后通过 `phase return` 回到受影响阶段，重新接受合同并取得新授权，才能由 `start` 进入 `in_progress`。
+
+成对安装 CLI/Core `0.7.1-beta.17` 后运行 `trellis update`，无需迁移任务历史。

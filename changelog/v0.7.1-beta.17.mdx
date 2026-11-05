@@ -1,0 +1,7 @@
+This release separates workflow rework from native task recovery. `phase return --return-kind execution_rework` can reopen implementation or delivery work while retaining authorization for a verified unchanged contract. Requirements, accepted artifacts, contract digests, route revision, and declared dependency admission must still be valid. The default `contract_change` continues to invalidate authorization.
+
+New implementation contracts require a nonempty `## 验收覆盖` table with the columns `接受条件`, `工作包`, `Owner`, `验证入口`, `交付证据`, and `停止条件`. The CLI checks structure; the design Skill checks semantic coverage. Existing acceptance and authorization remain valid until they are renewed.
+
+`task.py reopen <task> --reason <reason> --evidence-ref <reference>` restores a completed or cancelled task to `planning`, keeps task identity and terminal recovery history, and discards old runtime, dependency admission, and implementation authorization. Workflow phases remain separate: use `phase return`, review the affected work, and obtain new authorization before `start` may enter `in_progress`.
+
+Install the matching CLI/Core `0.7.1-beta.17` pair and run `trellis update`. No task history migration is required.
