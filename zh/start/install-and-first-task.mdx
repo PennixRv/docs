@@ -322,17 +322,17 @@ Journal 存在 `.trellis/workspace/{name}/journal-N.md`；每次 `/trellis:finis
 
 不用从零写 spec，在 init 时拉取预置的 spec 模板：
 
-### 默认 Spec 模板仓库
+### 按源码生成规范与显式来源
 
 ```bash
-# 交互式：浏览可用模板并挑一个
+# 初始化索引和通用 guides，随后使用 trellis-spec-bootstrap
 trellis init -u your-name
 
-# 非交互式：按 ID 指定模板
-trellis init -u your-name --template electron-fullstack
+# 可选：明确指定 registry 及其中的模板 ID
+trellis init -u your-name --registry gh:myorg/specs --template my-template
 ```
 
-交互选择器读取默认 Spec 模板仓库 [mindfold-ai/marketplace](https://github.com/mindfold-ai/marketplace) 中的模板。你可以选择一个模板，也可以从空 spec 开始。这些模板只提供项目 Spec 起点；Trellis CLI 的默认工作流由 CLI 自身提供。
+从 `0.7.2-beta.0` 起，init 不再隐式访问 Marketplace Spec 来源。内置索引和通用 guides 是分析引导，不是已经核实的项目规则；通过 `trellis-spec-bootstrap` 按实际源码形成适用的 package/layer 规范，遵守项目语言并保留自定义规范，不生成无关技术主题。已有显式 `registry.spec` 仍由用户管理，本次不会静默改写其来源。
 
 ### 自定义 Registry（`--registry`）
 

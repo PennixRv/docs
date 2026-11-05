@@ -18,3 +18,10 @@
 - 按本任务 PRD 的本轮增量授权，在既有分支更新 Beta 中英文 Teamwork 指南，新增 beta.18 双语 changelog 并接入导航；稳定版和历史 changelog 保持原版本内容。本轮包含提交、推送和父仓发布，覆盖旧轮次的不推送限制。
 - 指南说明输入生命周期、参考资料投影、Codex developer 与 ACP user 通道差异、自动允许且无沙箱的实际策略，以及共同机器结果、schema 2 内容、历史格式和主代理语义接受边界。
 - `pnpm lint` 通过：677 文件 markdownlint 零错误、ESLint 和共享导航通过；五个产品文档文件 Prettier 通过。源码官方发布检查确认 beta.18 双语 changelog 已接入。未运行 Mintlify 页面渲染。
+
+## 0.7.2-beta.0 fork 审查收敛同步
+
+- 依据两级主任务的已授权修复合同，更新 Beta 双语 Teamwork、带版本限定的初始化说明、双语 changelog 和导航。
+- 本 checkout 的 `.trellis` 只有历史任务与 workspace 文档，没有 workflow.md 或原生 task CLI；继续使用本任务既有 PRD/execution 记录，不伪造阶段状态或自动初始化项目。
+- 新文档明确等待护栏只覆盖宿主提供的工具 Hook；没有把它描述为模型绝对挂起，也没有把 Claude/DSH fixture 当作真实账号验收。
+- 本轮 `pnpm lint` 通过，九个变更文档/导航/任务文件 Prettier 通过；发布检查确认双语 changelog 和四处导航入口。未运行 Mintlify 页面渲染。本轮依既有明确授权提交并推送当前分支，再由 Trellis 固定 gitlink。

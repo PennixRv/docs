@@ -53,6 +53,14 @@ schema-2 内容报告包含 `schema_version: 2`、`status`、`answer`、非空 `
 
 已有终态回执会直接返回，不再次派发。不确定的 attempt 需要对账并保留容量，即使协调器已退出也不例外。协调器停止不代表其 provider 进程已停止；未解决的容量保留会阻止会话清理及容量复用，不能通过删除保留文件绕过准入。
 
+## 0.7.2-beta.0 的恢复与证据保留
+
+每次尝试的 report/worklog 保留到显式原生清理。`batch --json` 同时提供全尝试索引和每项最终报告；容量按实际成员与其他批次的持久预留计算，终态读取不重新申请容量。
+
+协调器失联后，先运行 `teamwork reconcile PLAN --task TASK_DIR` 预览，再在退出证据充分时使用 `--execute --reason TEXT` 核销。协调器停止本身不能证明 provider 已退出；已接受项保持接受。需要重试时，通过 `teamwork retry PLAN --task TASK_DIR --output NEW_PLAN --batch NEW_ID --assignments FAILED_IDS --deadline ISO_TIME --approval-ref APPROVAL` 为明确授权的失败项构造关联轮次，保留冻结输入与原计划身份，不改写原终态。证据清理先用 `cleanup-artifacts PLAN --task TASK_DIR` 预览，核对后以 `--confirm DIGEST` 确认同一清单。
+
+调度和监控由 CLI 控制。宿主提前返回时，主代理静默续接原句柄，不重复播报、查询状态或新开批次。Codex 安装 CLI 等待投影和宿主支持范围内的 PreToolUse 护栏；它不能阻止模型唤醒、普通发言或宿主未提供 Hook 的工具，这些仍受 Skill 义务约束。失联现场保留护栏，直到原生核销证明结算完成。
+
 ## Provider 与验证边界
 
 | Provider                  | 传输                                                      |

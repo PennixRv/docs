@@ -25,3 +25,5 @@
 ## 2026-11-05 增量授权范围
 
 当前根任务和 Trellis owner 的 `teamwork-input-result-remediation.md` 承接用户最新授权：同步 Beta 中英文 Teamwork 的输入分层、schema-2 内容报告、统一机器回执及自动允许权限语义，新增下一 beta 中英文发布说明与导航，并按既有发布逻辑提交推送当前分支。只增补新发布说明，不重写历史 changelog 或稳定版行为。该授权替代上文旧轮次的提交/推送排除；本仓没有原生任务运行时，不创建手写 task.json。
+
+本轮继续承接两级主任务已接受并获实施授权的 `fork-review-remediation.md`：同步原批次核销、失败子集重试、全尝试保留与清理、实际容量、等待护栏边界，并新增 `0.7.2-beta.0` 双语发布说明和导航。初始化指南按版本限定说明隐式 Marketplace Spec 退休及源码 bootstrap，不把新 beta 行为追溯为旧 stable 已有功能。

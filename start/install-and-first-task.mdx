@@ -353,20 +353,22 @@ Journals live under `.trellis/workspace/{name}/journal-N.md`; every `/trellis:fi
 
 Instead of writing specs from scratch, pull pre-built spec templates during init.
 
-### Default Spec Template Registry
+### Source-backed specs and explicit registries
 
 ```bash
-# Interactive: browse and pick from available templates
+# Initialize indexes and general guides, then use trellis-spec-bootstrap
 trellis init -u your-name
 
-# Non-interactive: specify a template by ID
-trellis init -u your-name --template electron-fullstack
+# Optional: explicitly choose a registry and its template ID
+trellis init -u your-name --registry gh:myorg/specs --template my-template
 ```
 
-The interactive picker reads the default spec template registry at
-[mindfold-ai/marketplace](https://github.com/mindfold-ai/marketplace). Choose a
-template or start with blank specs. These templates provide project spec
-starting points; Trellis CLI supplies the default workflow separately.
+From `0.7.2-beta.0`, init does not contact an implicit Marketplace spec registry.
+Bundled indexes and thinking guides are analysis scaffolding, not verified
+project rules. Use `trellis-spec-bootstrap` to derive applicable package/layer
+specs from real source, following the project's language and preserving custom
+specs. Omit irrelevant technologies. Existing explicit `registry.spec` sources
+remain user-managed and are not silently rewritten by this change.
 
 ### Custom Registry (`--registry`)
 

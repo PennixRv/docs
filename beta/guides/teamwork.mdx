@@ -53,6 +53,31 @@ Preflight starts no provider and reports `processProbe: not_run`. Actual executi
 
 An existing terminal receipt is returned without dispatching again. Uncertain attempts require reconciliation and retain their capacity reservation, including after a coordinator crash. A stopped coordinator does not prove its provider processes stopped; unresolved reservations prevent session cleanup and capacity reuse. Do not delete them to bypass admission.
 
+## Recovery and retained evidence in 0.7.2-beta.0
+
+Every attempt's report and worklog remains until explicit native cleanup.
+`batch --json` includes all attempt indices as well as the final report per
+assignment. Capacity counts the actual assignments and other batches' durable
+reservations. A settled receipt can be read without acquiring capacity again.
+
+After coordinator loss, preview `teamwork reconcile PLAN --task TASK_DIR`.
+Execution with `--execute --reason TEXT` requires associated process-exit
+evidence; a dead coordinator alone does not prove provider termination.
+Accepted assignments stay accepted. For explicitly approved failed work only,
+use `teamwork retry PLAN --task TASK_DIR --output NEW_PLAN --batch NEW_ID
+--assignments FAILED_IDS --deadline ISO_TIME --approval-ref APPROVAL`.
+The new plan retains frozen inputs and parent lineage; it leaves the original
+terminal result unchanged. Use `cleanup-artifacts PLAN --task TASK_DIR` to
+preview retained evidence deletion and repeat with `--confirm DIGEST` only
+after reviewing that exact preview.
+
+The CLI owns scheduling and monitoring. If the host yields, silently continue
+the original host handle without progress chatter, status polling or another
+batch. Codex receives a CLI wait projection and PreToolUse guard for supported
+tool events. This does not prevent model wake-ups, ordinary model messages or
+tools outside host hook coverage; those remain Skill obligations. A lost
+coordinator keeps the guard until native reconciliation proves settlement.
+
 ## Providers and validation limits
 
 | Provider                 | Transport                                                  |
