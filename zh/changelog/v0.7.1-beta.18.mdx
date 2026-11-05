@@ -1,0 +1,9 @@
+Teamwork 现在分开提供角色初始化、模式结果规则、任务输入和参考资料。ACP 使用纯文本内容块，确认一轮完成后保留完整角色；Codex 使用原生 developer 指令入口。参考清单支持内联、必读全文和按需文件，新 batch 在派发前后核对冻结的参考摘要。
+
+代理调用通过 `run --json`、`batch --json` 或 `wait --json --from WORKER` 获取统一的 `trellis_result` 信封。新版内容报告采用 schema 2，包含回答、证据、限制、未解决项及偏离。执行结束、报告结构校验、运行处置和主代理语义接受分别记录。历史冻结的 schema-1 报告继续可读并标记为 legacy。batch 结果附校验后的正文、报告路径和 SHA-256；持续会话结果绑定输入序号及轮次。
+
+单次调用在启动前校验输入；supervisor 错误和终止会及时结束等待并保留真实原因。空回复或非法报告明确失败，失败回收保留诊断。batch 保存 provider 最终回复与错误，失败结果保留 attempt 身份和原因。FIFO、重试、取消及进程控制继续由 CLI 负责。
+
+工具权限自动允许。Codex 默认无沙箱，使用 `approvalPolicy: never`；源码、Git、记忆及委派边界通过提示词提醒，不宣称技术隔离。静态适配器能力合同与真实后端探测明确区分。
+
+安装匹配的 CLI/Core `0.7.1-beta.18`，运行 `trellis update` 刷新角色卡和 Teamwork Skill。默认人工输出继续保留，代理应选择机器视图；不需要迁移任务历史。更新后的合同与验证边界见 [Beta Teamwork 指南](/zh/beta/guides/teamwork)。

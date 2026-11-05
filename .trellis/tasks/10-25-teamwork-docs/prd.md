@@ -21,3 +21,7 @@
 ## 明确排除
 
 不修改 Trellis 产品源码、Skill、Marketplace、历史 changelog 或站点构建配置；不创建分支、不切换 checkout、不提交或推送。
+
+## 2026-11-05 增量授权范围
+
+当前根任务和 Trellis owner 的 `teamwork-input-result-remediation.md` 承接用户最新授权：同步 Beta 中英文 Teamwork 的输入分层、schema-2 内容报告、统一机器回执及自动允许权限语义，新增下一 beta 中英文发布说明与导航，并按既有发布逻辑提交推送当前分支。只增补新发布说明，不重写历史 changelog 或稳定版行为。该授权替代上文旧轮次的提交/推送排除；本仓没有原生任务运行时，不创建手写 task.json。

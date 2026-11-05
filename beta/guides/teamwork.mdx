@@ -24,7 +24,7 @@ trellis teamwork config --profile architecture --mode committee
 
 Profiles and modes are independent. `general` allows 1–32 explicit assignments, `advisor` requires one, and `committee` requires two or three with distinct `lens` values describing their focus. Committee members share the same task, evidence, and acceptance contract and must not read peer reports. Configured member defaults guide composition; the constructor does not clone assignments automatically. Record a `selection_reason` for each candidate, including why alternatives are useful or unnecessary.
 
-Role cards are ordinary Trellis Markdown, combined with the common card. They do not register native provider personas or modify `AGENTS.md`/`CLAUDE.md`. Source/Git restrictions and memory/delegation obligations are instructions. Provider permission settings retain their native behavior.
+Role cards are ordinary Trellis Markdown, combined with the common card and a mode-specific result contract. They do not register native provider personas or modify `AGENTS.md`/`CLAUDE.md`. Source/Git restrictions and memory/delegation obligations are instructions. Tool permissions are automatically allowed; Codex defaults to no sandbox with `approvalPolicy: never`. This is a role boundary, not technical isolation from host AGENTS, Skills or memory.
 
 ## Construct and execute
 
@@ -34,10 +34,18 @@ Read the active native task and phase before preparing a schema-2 draft. The dra
 trellis teamwork plan draft.json --task TASK_DIR --output TASK_DIR/plan.json --dry-run
 trellis teamwork plan draft.json --task TASK_DIR --output TASK_DIR/plan.json
 trellis teamwork batch TASK_DIR/plan.json --task TASK_DIR --preflight
-trellis teamwork batch TASK_DIR/plan.json --task TASK_DIR
+trellis teamwork batch TASK_DIR/plan.json --task TASK_DIR --json
 ```
 
-The constructor validates briefs and paths before writing, freezes effective configuration and role/capability digests, and preserves existing immutable files. Plans and claims use schema 2; reports use schema 1. Old customized schema-1 profile files require explicit conversion and fail clearly until converted. Native updates refresh unmodified generated defaults.
+The constructor validates briefs and paths before writing, freezes effective configuration and role/capability digests, and preserves existing immutable files. Plans and claims use schema 2; new launches use content report schema 2. Historical frozen launches retain their schema-1 report contract. Old customized schema-1 profile files require explicit conversion and fail clearly until converted. Native updates refresh unmodified generated defaults.
+
+## Inputs and final results
+
+Role rules and the mode result contract are initialization instructions. Tasks, acceptance criteria, artifact identity and reference data are separate task input. Context manifest entries support `delivery: inline` (default), `required` (read the entire referenced file first), or `on-demand`. References include source digests; new batch execution checks their bytes before dispatch and after completion. This does not prove that a model read every byte.
+
+Agent callers use `run --json`, `batch --json`, or `wait SESSION --as main --from WORKER --json`. Each returns one `trellis_result` envelope with execution facts, associated reports, structural validation and disposition; `semanticValidation: not_run` leaves content acceptance to the main agent. Default run text and default wait events remain operator/compatibility views. Batch results include validated report content, artifact paths and SHA-256; persistent wait binds the reply to its input sequence and turn and leaves the worker running.
+
+Schema-2 content reports contain `status`, `answer`, nonempty `evidence` and arrays `limitations`, `unresolved`, `deviations`, alongside `schema_version: 2`. Interactive replies return this JSON directly. Managed reports also copy the supplied assignment identity into their exact report path. A provider `done`, a model's `complete`, or `ALL_ACCEPTED` does not accept a native task result. Invalid or empty reports fail explicitly; historical reports are marked `legacy` rather than synthesized as new valid answers.
 
 Preflight starts no provider and reports `processProbe: not_run`. Actual execution checks the provider's advertised model and reasoning effort, owns retries, validates reports, confirms process shutdown, and records a durable terminal receipt. The result is `ALL_ACCEPTED`, `SETTLED_WITH_FAILURE`, or `RECONCILIATION_REQUIRED`. Task acceptance remains the main coordinator's native phase operation.
 
@@ -52,6 +60,6 @@ An existing terminal receipt is returned without dispatching again. Uncertain at
 | Copilot                  | ACP over its CLI: `copilot --no-auto-update --acp --stdio` |
 | DeepSeek Harness (`dsh`) | ACP: `dsh --profile acp`                                   |
 
-Copilot supports noninteractive CLI use; ACP is the selected structured transport. ACP v1 has user content blocks, so role instructions and task data are serialized into distinct blocks without claiming independent system priority. Codex and ACP interruption wait for the old turn's terminal response before replacement input. Resume follows each provider's advertised capability, including DSH `session/resume`.
+Copilot supports noninteractive CLI use; ACP is the selected structured transport. ACP v1 has user content blocks, so role instructions and task data use distinct plain-text blocks without claiming independent system priority. ACP retains full role instructions after a confirmed turn rather than repeating them on every follow-up; recovery reestablishes them. Codex and ACP interruption wait for the old turn's terminal response before replacement input. Resume follows each provider's advertised capability, including DSH `session/resume`. Capability snapshots marked `adapter-contract` describe static code contracts, not successful live backend probes.
 
 Linux verification covered real Codex/Copilot one-shot runs and a two-assignment managed batch, with both reports accepted and zero retries. Claude and DSH have protocol fixtures but were not exercised against live accounts in this release. `run` and `spawn` remain interactive session tools and do not substitute for managed batch execution.

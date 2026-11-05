@@ -1,0 +1,9 @@
+Teamwork now separates role initialization, mode-specific result rules, task input and reference data. ACP sends plain content blocks and retains full role instructions after a confirmed turn; Codex uses its native developer instruction channel. Reference manifests support inline, required full reading and on-demand files, with frozen reference digests checked before and after new batch attempts.
+
+Agent callers use `run --json`, `batch --json` or `wait --json --from WORKER` for a common `trellis_result` envelope. New content reports use schema 2 with answer, evidence, limitations, unresolved items and deviations. Execution completion, report validation, runtime disposition and main-agent semantic acceptance remain separate. Historical frozen schema-1 reports remain readable and are marked legacy. Batch results expose validated content, report paths and SHA-256; persistent results bind replies to input and turn identities.
+
+One-shot input is checked before launch. Supervisor errors and kills terminate waits with their actual cause, empty or invalid replies fail, and failure cleanup preserves diagnostics. Batch diagnostics now retain provider final messages and errors; failed results retain attempt identity and reason. FIFO scheduling, retries, cancellation and process control remain CLI-owned.
+
+Tools are automatically allowed. Codex defaults to no sandbox and `approvalPolicy: never`; source, Git, memory and delegation boundaries are prompt obligations rather than technical isolation. Static adapter capability contracts are explicitly distinguished from live backend probes.
+
+Install the matching CLI/Core `0.7.1-beta.18` pair and run `trellis update` to refresh role cards and the Teamwork Skill. Default human output stays available; agents must select the machine view. No task-history migration is required. See the [Beta Teamwork guide](/beta/guides/teamwork) for the updated contracts and validation limits.

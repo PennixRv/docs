@@ -12,3 +12,9 @@
 - CLI help smoke 确认文档使用的 `teamwork run`、`create`、`post`、`forum`、`thread` 和 `batch` 命令及选项存在。未执行宿主运行时批次验收；当前宿主能力 gate 仍未通过，批次保持 fail-closed。
 - docs-site 仍在 `codex/chinese-user-templates`，未创建或切换分支，未提交或推送。下一步转到既有 Marketplace `main` owner 步骤；根任务最终记录全站 formatter 的既有失败项。
 - 后续用户明确要求提交相关内容并保持 Git 树干净；本次按该指示提交 docs-site 变更及父级 gitlink，不推送、不切换分支，也不接入正式工作流。
+
+## 2026-11-05：beta.18 输入与结果合同同步
+
+- 按本任务 PRD 的本轮增量授权，在既有分支更新 Beta 中英文 Teamwork 指南，新增 beta.18 双语 changelog 并接入导航；稳定版和历史 changelog 保持原版本内容。本轮包含提交、推送和父仓发布，覆盖旧轮次的不推送限制。
+- 指南说明输入生命周期、参考资料投影、Codex developer 与 ACP user 通道差异、自动允许且无沙箱的实际策略，以及共同机器结果、schema 2 内容、历史格式和主代理语义接受边界。
+- `pnpm lint` 通过：677 文件 markdownlint 零错误、ESLint 和共享导航通过；五个产品文档文件 Prettier 通过。源码官方发布检查确认 beta.18 双语 changelog 已接入。未运行 Mintlify 页面渲染。
