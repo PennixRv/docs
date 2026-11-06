@@ -1,0 +1,16 @@
+---
+title: 'v0.7.2-beta.1'
+description: 'Teamwork results require coordinator review; task lifecycle and backup recovery are stricter.'
+---
+
+This beta completes the second-round fork review corrections while keeping the `beta` npm channel.
+
+- Separate teammate report submission from coordinator acceptance. The CLI drains the full FIFO batch, then the main agent records an evidence-bound review decision for each report.
+- Preserve queue, claim, report, worklog and disposition evidence after settlement; cleanup remains an explicit reviewed operation.
+- Keep provider diagnostics outside task artifacts, redact retained stderr, and isolate member-level provider failures from uncertain batch state.
+- Tighten task lifecycle metadata, terminal-task start handling, return/skip revision records and implementation-route completion checks.
+- Recover safe project asset paths through in-project symlinks while continuing to reject paths that resolve outside the project.
+- Fix release staging detection so excluded or pre-staged task and docs changes cannot be mistaken for the release commit.
+
+Update project assets with the native `trellis update` command after installing
+this beta. Review customized-file conflicts explicitly.
