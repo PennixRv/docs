@@ -1,0 +1,14 @@
+---
+title: 'v0.7.2-beta.3'
+description: 'Taskless workflow routing now requires explicit task creation approval when needed.'
+---
+
+This beta clarifies when Trellis should handle a bounded request directly and when it should create a task.
+
+- Allow bounded, immediately verifiable work to follow the taskless route when it has a single owner, controlled risk, explicit action authorization, and no persistent governance need.
+- Require exact target, recovery or loss boundary, and stop-condition checks for bounded irreversible actions.
+- Ask the user before creating a task when the agent infers that persistent task tracking is needed and the user did not explicitly request task creation.
+- Keep task creation authorization separate from implementation, release, installation, and delivery authorization.
+
+Update project assets with the native trellis update command after installing
+this beta. Review customized-file conflicts explicitly.
