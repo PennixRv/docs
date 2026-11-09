@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.8'
+description: 'Keep the controller available during native delegation waits.'
+---
+
+`delegate-wait` now holds layout and task locks only while validating before and after the native wait. The controller can inspect other packages or interrupt the waiting node without waiting for its turn to finish.
+
+After the wait, the controller rechecks current authorization, binding, attempt and native resource mappings. Replaced or retired targets cannot return stale observations as the current result. Regression coverage uses another process to acquire both controller locks during the wait and verifies rejection after an attempt changes.
+
+Upgrade CLI and run native `trellis update` for `task.py` and the delegation module. The adapter protocol and stable role remain compatible.
