@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.7'
+description: '修复 daemon PATH 差异导致的委派 MCP 缺失。'
+---
+
+主控在创建 agent 前，将必需 CodeGraph 解析为绝对可执行入口。adapter 核验并将该入口传给本树 bound MCP，使以较窄 PATH 启动的 daemon 能使用已准入安装。必需工具缺失仍阻断准备和执行。
+
+agent 创建幂等键纳入实际请求指纹：相同请求保持原键；经明确原生证据证明未创建后，修正的请求不再与旧拒绝请求冲突。未知创建仍须对账，不自动重试。
+
+同步升级 CLI 与可选 adapter，再通过原生 `trellis update` 更新控制资产。已有工作树、报告和源码提交继续保全。

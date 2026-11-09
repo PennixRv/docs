@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.7'
+description: 'Resolve delegated MCP executables across daemon PATH differences.'
+---
+
+The controller now resolves the required CodeGraph executable to an absolute entry before agent creation. The adapter validates that entry and passes it to the bound MCP server, so a daemon started with a narrower PATH can use the admitted installation. Missing required tools still block preparation and execution.
+
+Agent creation idempotency keys include the actual request fingerprint. Identical requests retain their key; a corrected request after explicit native proof that no agent was created no longer conflicts with an earlier rejected request. Unknown creation still requires reconciliation and is never retried automatically.
+
+Upgrade CLI and the optional adapter together, then run native `trellis update` for controller assets. Existing worktrees, reports and source commits remain preserved.
