@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.6'
+description: 'Fix native workspace agent creation and complete reconciliation visibility.'
+---
+
+The real-daemon acceptance run exposed an invalid visibility option on existing-workspace agent creation. The adapter now leaves visibility on workspace creation and includes background and archived agents in reconciliation inspection.
+
+When native validation proves that agent creation was rejected before creating an agent, the controller can explicitly recover the preserved workspace using controller-owned evidence and a complete resource inspection. A matching native attempt agent must instead be mapped by its exact ID. Unknown creation is never automatically retried.
+
+Upgrade CLI and the optional adapter together, then run native `trellis update` to refresh the controller and collaboration method. Existing source worktrees and attempt bindings remain preserved.

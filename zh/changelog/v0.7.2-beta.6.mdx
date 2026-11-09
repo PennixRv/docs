@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.6'
+description: '修复原生工作树节点创建与完整资源对账。'
+---
+
+真实 daemon 验收发现：在已有 workspace 中创建 agent 时重复传入 background 会被原生接口拒绝。适配器现仅在创建 workspace 时设置可见性，并在对账检查中包含后台和已归档 agent。
+
+原生验证已证明 agent 在创建前被拒绝时，主控可凭自身证据和完整资源检查，显式恢复已保留的 workspace。发现相同 attempt 的原生 agent 时必须映射准确 ID；结果未知时不自动重试创建。
+
+同步升级 CLI 和可选适配器，再运行原生 `trellis update` 更新控制脚本与协作方法。保留既有源码工作树及绑定，不手改运行记录。
