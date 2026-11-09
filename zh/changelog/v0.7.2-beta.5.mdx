@@ -1,0 +1,13 @@
+---
+title: 'v0.7.2-beta.5'
+description: '通过同机 Paseo 独立工作树完成已授权的完整结果包。'
+---
+
+本版本加入完整结果包的工作树委派。Trellis 维护任务权威、准备和实施许可、恢复与接受；Paseo 维护原生 workspace 和 agent。Teamwork 继续负责只读证据协作。
+
+- 准备前冻结确切目标、owner 分支、base、固定角色、模型设置和能力要求。目标可为独立仓库，也可没有 Trellis 资产。
+- 固定角色与每次执行上下文、每 turn 操作消息分离。节点沿宿主原生规则加载用户和项目 AGENTS，不建立第二套主控流程。
+- 创建和发送之前持久化 intent。结果不明时核验准确原生资源并显式恢复，不重放未知创建或发送。
+- owner 审查并 merge/FF 到目标分支后才核销。idle 或取消不证明后台 writer 已停；源码、候选和工作树保持保全。
+
+独立可选包 `@pennixrv/trellis-paseo-adapter` 使用公开 Paseo SDK，要求 Node >=22。基础 CLI/core 不依赖该包，继续支持 Node >=18.17。适配包通过登记的 Lifecycle owner 安装，脚本、角色、Hook 和 `trellis-worktree-delegation` 通过原生 `trellis update` 更新。新委派必须明确目标、设置与能力要求；旧运行记录应先保全并核销，再进入新协议。
