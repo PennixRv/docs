@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.9'
+description: 'Connect optional auxiliary methods to native task phases without adding workflow gates.'
+---
+
+The bundled workflow, request intake, session start and continuation entries now select host-declared auxiliary Skills according to the current business problem. A clear match goes directly to its method; unclear combinations or responsibilities may use an available workflow router. No optional Skill collection is required.
+
+The five phase Skills return method evidence to the current phase. They preserve Trellis ownership of phase state, acceptance and implementation authorization, reuse settled decisions during recovery, and avoid preloading every method. Closeout does not automatically trigger retrospectives, knowledge writes, cleanup or formal handoff.
+
+Upgrade the CLI and use native `trellis update` to receive the generated workflow and Skills. Pennix collection content and global user rules remain separately managed by their native owners. CLI, core and the optional Paseo adapter share this release version; their runtime protocols are unchanged.
