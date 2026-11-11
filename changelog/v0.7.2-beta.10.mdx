@@ -1,0 +1,14 @@
+---
+title: 'v0.7.2-beta.10'
+description: 'Freeze delegated inputs and align collaboration roles and provider validation.'
+---
+
+ACP progress remains observable, while text preceding a new tool call no longer contaminates the terminal structured report. The adapter does not extract arbitrary JSON fragments from an invalid answer.
+
+Trellis Teamwork names its workers Trellis teammates. Paseo-based-parallelism names its workers Paseo delegated-agents. Teammates receive bounded read-only assignments and report missing inputs or blocked tools to the main agent. Delegated-agents start from an approved implementation package; the main agent retains planning, acceptance and integration responsibility.
+
+Delegation binding format 2 freezes setup, role and node-method contents alongside the existing contract. Each attempt uses immutable snapshots, and the node rejects changed live inputs or snapshots. Incomplete older bindings cannot silently continue. Retired attempts reject execution and follow-up before contacting the adapter. Revoked implementation authority still permits identity-checked inspection, interruption and retained reconciliation, without granting new execution authority.
+
+Interactive Teamwork and managed batches now reject unsupported provider options through the same support table. Help text reflects the actual sandbox default; a role's read-only obligation does not claim technical isolation. Existing Codex and ACP message channels preserve long roles without truncation.
+
+Upgrade the CLI and run native `trellis update` to receive generated assets. Settle any old attempt through its owner before rebinding. Native commands, Skill identifiers and runtime protocol names remain unchanged. Shared Pennix Skills and Copilot MCP integration are released and deployed through their own owners.

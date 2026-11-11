@@ -1,0 +1,14 @@
+---
+title: 'v0.7.2-beta.10'
+description: '冻结委派输入，统一协作角色与宿主选项校验。'
+---
+
+Trellis Teamwork（Trellis 团队协作）的执行者统一称为 Trellis teammates（Trellis 团队成员）；Paseo-based-parallelism（Paseo 并行协作）的执行者称为 Paseo delegated-agents（Paseo 委派 Agent）。团队成员执行明确的只读工作包，向主 Agent 报告缺项或工具阻断；委派 Agent 从已批准的实施工作包开始，方案、接受与集成仍由主 Agent 负责。
+
+委派绑定格式 2 在既有合同之外冻结准备、角色及节点方法的内容，每个 attempt 使用不可变快照。当前输入或快照发生变化时节点拒绝继续；不完整的旧绑定不能静默续跑。退休后的执行与追补在调用 adapter 前拒绝。实施授权失效后仍允许核验身份的查看、中断及保留现场处置，不恢复实施权限。
+
+交互式 Teamwork 与受管 batch 现在共用 provider options 支持集合，未实现的选项在启动前拒绝。帮助文本与实际 sandbox 默认值一致，角色只读义务不代表技术隔离。既有 Codex 与 ACP 消息通道完整保留长角色，不截断内容。
+
+ACP 通道保留完整的进度事件，但工具调用前的进度文字不再拼入最终结构化报告；不会通过截取任意 JSON 片段掩盖不合规答复。
+
+升级 CLI 后通过原生 `trellis update` 更新生成资产；已有旧 attempt 先由 owner 处置，再重新绑定。原生命令、Skill 标识及运行时协议名称保持兼容。共享 Pennix Skills 与 Copilot MCP 接入由各自 owner 发布和部署。
