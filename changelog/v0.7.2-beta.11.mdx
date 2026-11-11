@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.11'
+description: 'Use project-neutral specs and preserve shared AGENTS content through native lifecycle operations.'
+---
+
+New projects start from a project-neutral spec index instead of inferred frontend/backend directories. Projects add topics from actual codebase evidence. Existing layouts and task package bindings remain supported; reinitialization does not rename or remove their specs. Spec consumers discover the root index and respect package scope.
+
+The project AGENTS template explains its entry-point role and links workflow, specs, Skills and collaboration responsibilities. Ordinary initialization safely appends a missing TRELLIS block after validating the existing file. A legal existing block stays unchanged unless replacement is explicitly selected; `--skip-existing` preserves its explicit skip behavior. Forced replacement changes only the TRELLIS block, while other generated assets retain their own overwrite rules.
+
+Update, uninstall, managed removal and asset restore share stricter block and path checks. Manual text, other owners' blocks and whitespace outside the owned range are preserved. Ambiguous markers and unsafe paths are rejected. Restore retains a conflict when later foreign content makes deleting or restoring an old whole file unsafe. Native hashes may still conservatively report conflicts; this does not introduce a global transaction or a lock against arbitrary external writers.
+
+Upgrade the CLI and use native `trellis update` for existing managed projects. New project initialization still requires explicit project scope and authorization. Shared Pennix Skills provide the cross-owner orchestration method through their own release and deployment owner; project integration does not implicitly authorize index creation.
