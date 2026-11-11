@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.13'
+description: '彻底移除旧原生子代理执行路径，统一主会话与现行协作职责。'
+---
+
+移除宿主原生子代理的角色模板、上下文 Hook、Codex mode 配置与虚拟状态、Pi 子执行器及 OpenCode 旧角色物化器。主会话上下文、普通 check Skill、可选 JSONL、Kiro 主入口与现行 Teamwork/Paseo 角色保留。
+
+升级 CLI 后对已管理项目运行原生 `trellis update`。旧受管资产先核验归属和指纹，再纳入原生备份与清理；用户修改、未知归属、跳过规则或不安全路径会阻断更新。无关用户配置保留。初始化、工作流激活及原生恢复入口拒绝重新启用退休执行资产。
+
+协作仅由主会话依当前合同选择 `trellis teamwork` 或 `paseo-based-parallelism`；历史记录、可用工具和恢复摘要不扩大授权。

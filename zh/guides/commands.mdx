@@ -7,7 +7,7 @@ description: '把常用工作流做成命令'
 
 Slash Commands是快捷方式。不用解释你想做什么，打 `/command`，AI 就知道该怎么做。
 
-Trellis 只保留少量会话边界命令。大部分工作流动作现在由 auto-trigger skill 或 sub-agent 完成。项目自己的显式入口仍然可以做成自定义命令。
+Trellis 只保留少量会话边界命令。大部分工作流动作现在由 阶段和支持 Skill 完成。项目自己的显式入口仍然可以做成自定义命令。
 
 ## 内置命令
 
@@ -37,8 +37,6 @@ Trellis 只保留少量会话边界命令。大部分工作流动作现在由 au
 | `trellis-session-insight` | 回顾相关的既有决策或会话证据。           |
 | `trellis-spec-bootstrap`  | 需要时根据当前代码库起草或更新项目规范。 |
 | `trellis-meta`            | 了解或定制 Trellis 项目资产。            |
-
-`trellis-research`、`trellis-implement` 和 `trellis-check` 是子代理定义，不是 Skill。
 
 阶段 Skill 分别提供流程和图示。Trellis CLI 独立记录所选业务阶段路线与任务生命周期状态。收尾时通过 `task.py complete` 或 `task.py cancel` 更新任务状态；`finish-work` 仅记录会话进度。详见[工作流如何运行](/zh/start/how-it-works)。
 

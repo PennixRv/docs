@@ -62,18 +62,18 @@ Trellis treats AI coding as a workflow and knowledge-management problem, not a s
 
 ## Feature to module map
 
-| Feature                            | Primary module          | Local files to inspect                                                                                                         |
-| ---------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Workflow phases and routing        | Workflow module         | `.trellis/workflow.md`                                                                                                         |
-| Per-turn next-action injection     | Workflow-state module   | `[workflow-state:STATUS]` blocks, `inject-workflow-state.py` or equivalent plugin                                              |
-| Task creation and lifecycle        | Task store module       | `.trellis/tasks/<task>/task.json`, `task.py`, `task_store.py`, `task_workflow.py`                                              |
-| Session-scoped current task        | Active-task runtime     | `.trellis/.runtime/sessions/<session-key>.json`, `.trellis/scripts/common/active_task.py`                                      |
-| Planning artifact/spec injection   | Context-loading module  | `prd.md`, `design.md`, `implement.md`, `implement.jsonl`, `check.jsonl`, `inject-subagent-context.py`, platform agent preludes |
-| Research / implement / check roles | Agent and skill module  | Platform `agents/`, `skills/`, prompts, workflows                                                                              |
-| Team convention memory             | Spec module             | `.trellis/spec/**/index.md`, guideline files                                                                                   |
-| Developer memory                   | Workspace module        | `.trellis/workspace/<developer>/journal-*.md`                                                                                  |
-| Platform support                   | Platform adapter module | `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kiro/`, `.gemini/`, `.qoder/`, `.github/`, `.pi/`, and related settings     |
-| Delivery closeout and session log  | Closeout module         | Delivery Review and Closeout Skill, `task.py complete`, `/trellis:finish-work`, `add_session.py`                               |
+| Feature                            | Primary module          | Local files to inspect                                                                                                     |
+| ---------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Workflow phases and routing        | Workflow module         | `.trellis/workflow.md`                                                                                                     |
+| Per-turn next-action injection     | Workflow-state module   | `[workflow-state:STATUS]` blocks, `inject-workflow-state.py` or equivalent plugin                                          |
+| Task creation and lifecycle        | Task store module       | `.trellis/tasks/<task>/task.json`, `task.py`, `task_store.py`, `task_workflow.py`                                          |
+| Session-scoped current task        | Active-task runtime     | `.trellis/.runtime/sessions/<session-key>.json`, `.trellis/scripts/common/active_task.py`                                  |
+| Planning artifact/spec injection   | Context-loading module  | `prd.md`, `design.md`, `implement.md`, `implement.jsonl`, `check.jsonl`, main-session readerss                             |
+| Research / implement / check roles | Agent and skill module  | Platform `agents/`, `skills/`, prompts, workflows                                                                          |
+| Team convention memory             | Spec module             | `.trellis/spec/**/index.md`, guideline files                                                                               |
+| Developer memory                   | Workspace module        | `.trellis/workspace/<developer>/journal-*.md`                                                                              |
+| Platform support                   | Platform adapter module | `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kiro/`, `.gemini/`, `.qoder/`, `.github/`, `.pi/`, and related settings |
+| Delivery closeout and session log  | Closeout module         | Delivery Review and Closeout Skill, `task.py complete`, `/trellis:finish-work`, `add_session.py`                           |
 
 ## Workflow module
 
@@ -167,11 +167,11 @@ That file points one AI session or window at one task. Different windows can wor
 
 Trellis loads context through three paths:
 
-| Context type               | Source                                                                                  | Used by                                                   |
-| -------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Startup context            | `.trellis/scripts/get_context.py`                                                       | Main session startup report.                              |
-| Per-turn workflow state    | `.trellis/workflow.md` blocks                                                           | Main session next-action guidance.                        |
-| Task artifact/spec context | `prd.md`, `design.md`, `implement.md`, `implement.jsonl`, `check.jsonl`, research files | Research, implement, check roles, and inline skill flows. |
+| Context type               | Source                                                                                  | Used by                                                    |
+| -------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Startup context            | `.trellis/scripts/get_context.py`                                                       | Main session startup report.                               |
+| Per-turn workflow state    | `.trellis/workflow.md` blocks                                                           | Main session next-action guidance.                         |
+| Task artifact/spec context | `prd.md`, `design.md`, `implement.md`, `implement.jsonl`, `check.jsonl`, research files | Main-session Skills and explicitly assigned work packages. |
 
 JSONL rows are plain file references:
 
@@ -187,35 +187,7 @@ read during implementation and review, not pre-registered in JSONL.
 
 ## Platform adapter module
 
-Trellis uses each platform's available primitives. The generated project files are the source of truth for an actual repository, but the default capability groups are:
-
-| Group                         | Platforms                                           | Startup context                                                         | Per-turn workflow-state                                                              | Implementation/check context                                                                 |
-| ----------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Hook + hook-push sub-agent    | Claude Code, Cursor, OpenCode, CodeBuddy, Droid, Pi | Hook, plugin, or extension                                              | Hook or equivalent                                                                   | Hook injects JSONL entries, `prd.md`, `design.md` if present, and `implement.md` if present. |
-| Hook + pull-prelude sub-agent | Gemini CLI, Qoder, Copilot                          | Hook                                                                    | Hook                                                                                 | Sub-agent reads JSONL entries and task artifacts itself on startup.                          |
-| Codex                         | Codex                                               | `AGENTS.md`; `UserPromptSubmit` can inject a no-task bootstrap reminder | Optional hook when enabled (0.129+ also requires `/hooks` review)                    | Inline mode reads artifacts through skills; sub-agent mode uses pull-based preludes.         |
-| Kiro                          | Kiro                                                | `.kiro/agents/` and Skills                                              | CLI agent hooks and an IDE `promptSubmit` hook; activation/trust depends on the host | Agent/skill files read Trellis context.                                                      |
-| Main-session workflow/skill   | Kilo, Antigravity, Devin                            | Manual workflow or skill entry                                          | No Trellis per-turn hook by default                                                  | Main session reads specs and task files inline.                                              |
-
-If the local settings file disagrees with this table, follow the local settings file. Trellis projects are intentionally customizable.
-
-## Agent and skill module
-
-Trellis ships three sub-agent roles when the platform supports sub-agents:
-
-| Sub-agent           | Role                                                                              | Primary context                                                                        |
-| ------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `trellis-research`  | Investigate code, docs, APIs, and alternatives; write findings under `research/`. | Research prompt plus task/repo context as needed.                                      |
-| `trellis-implement` | Write the change against the planning artifacts and relevant specs.               | `implement.jsonl`, `prd.md`, optional `design.md`, optional `implement.md`.            |
-| `trellis-check`     | Review, run checks, and self-fix findings.                                        | `check.jsonl`, `prd.md`, optional `design.md`, optional `implement.md`, changed files. |
-
-Phase Skills guide Goal Exploration and Requirements Confirmation, Decision Space Construction and Consolidation, Solution Design and Convergence, Task Implementation and Test Verification, and Delivery Review and Closeout. Support Skills provide spec bootstrapping, session insight, teamwork, and Trellis customization. On platforms without sub-agents, phase work stays in the main session; a separate sub-agent is not required.
-
-Removed 0.4 mechanisms:
-
-- `dispatch`, `plan`, and `debug` sub-agents were replaced by skill routing.
-- The SubagentStop-based Ralph Loop was replaced by `trellis-check` owning its retry loop.
-- Trellis no longer ships its own `/parallel` worktree orchestrator; use the platform's native worktree support.
+Adapters provide main-session context, phase breadcrumbs, shell identity and Skills/commands. The main session owns planning, authorization and acceptance. Collaboration uses read-only teammates through `trellis teamwork`, or delegated implementation through `paseo-based-parallelism`. Roles live in `.trellis/agents/`; Kiro also retains its main entry. The ordinary check Skill and optional context manifests do not create a native subagent route.
 
 ## LLM wiki modules
 

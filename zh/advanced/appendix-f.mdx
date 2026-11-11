@@ -2,6 +2,10 @@
 title: '附录 F：FAQ'
 ---
 
+## 当前版本说明
+
+本文旧版迁移示例仅用于解释历史。当前版本移除了原生三角色与子代理上下文执行路径；请按[协作角色](/zh/advanced/custom-agents)及原生更新流程操作。
+
 ## 附录 F：FAQ
 
 ## 入门与升级
@@ -118,11 +122,11 @@ trellis update --migrate                  # 2. 把项目同步到 CLI 当前版�
 
 ### Q11: command / skill / sub-agent 有什么区别？
 
-| 原语      | 触发者               | 典型用途                                                             |
-| --------- | -------------------- | -------------------------------------------------------------------- |
-| Command   | 用户（`/trellis:*`） | 会话边界（start、finish-work、continue）                             |
-| Skill     | 平台自动匹配         | 阶段指引，以及 spec bootstrap、会话记忆、Teamwork 和定制等可复用能力 |
-| Sub-agent | 主会话 spawn         | 隔离角色（implement、check、research）                               |
+| 原语    | 触发者               | 典型用途                                                             |
+| ------- | -------------------- | -------------------------------------------------------------------- |
+| Command | 用户（`/trellis:*`） | 会话边界（start、finish-work、continue）                             |
+| Skill   | 平台自动匹配         | 阶段指引，以及 spec bootstrap、会话记忆、Teamwork 和定制等可复用能力 |
+| 协作    | 主会话合同           | 只读 Teamwork 或已授权 Paseo 工作树                                  |
 
 选型指南见 Advanced 下的定制章节（自定义命令 / Agent / Hook / Skill）。
 
@@ -145,7 +149,6 @@ Devin）开新会话时，手动加载 Trellis orientation。有启动 hook、ex
 - **`workflow.md` 写清楚流程规则**：Phase 定义、skill 路由、每轮 workflow-state 提醒都在 `.trellis/workflow.md` 里。Fork 工作流 = 改一个 markdown 文件，不用动 Python、不用改 hook（见[自定义工作流](./custom-workflow)）。
 - **每轮 workflow-state 面包屑**：新增 `inject-workflow-state.py` hook，每条用户消息触发一次，按当前任务 status 注入 `<workflow-state>` 块，帮 AI 稳定走完 Plan → Execute → Finish 三阶段。
 - **3 个 sub-agent 取代 6 个**：`trellis-research` / `trellis-implement` / `trellis-check`；`dispatch` / `plan` / `debug` 移除；Ralph Loop 和它的 SubagentStop hook 也移除（check sub-agent 自带重试循环）。
-- **8 个平台升级为 agent-capable**：Cursor / OpenCode / Gemini CLI / Qoder / CodeBuddy / Copilot / Droid / Pi Agent 都拿到了 sub-agent + hook 或 extension 等价机制；`.trellis/` 核心跨所有平台保持一致。
 - **Multi-Agent Pipeline、`/parallel`、`worktree.yaml` 移除**：现代 agent CLI 的原生 worktree 支持已经替代它。
 - **强制迁移 gate**：破坏性版本必须加 `--migrate`，没加会 exit 并打印说明，不再静默留下半迁移状态。
 
@@ -157,17 +160,11 @@ Devin）开新会话时，手动加载 Trellis orientation。有启动 hook、ex
 
 当前工作流中，`/trellis:finish-work` 只记录会话进度。任务完成是在交付审查与现场收尾阶段接受结果后，通过 Trellis CLI 单独执行的操作。
 
-### Q15: sub-agent 不是很耗 token 吗？这套架构是不是更费？
+### Q15: 协作是否默认启动其他会话？
 
-sub-agent 是给主 agent 当工具用的：每次调用是一段隔离的子任务，跑完就把结论返回主 agent。主 agent 自己的上下文窗口因此能保持干净，反而比"主 agent 一路从规划写到验证、上下文越滚越长"更省 token。代价是单个 sub-agent 跑实现 / 检查时本身有自己的小上下文，但隔离换来的清晰度比那点开销更值得。
-
-如果整个会话本身就很短（小修小改），sub-agent 的隔离收益不明显，让主 agent 一把过即可，不用 dispatch。
-
-## 平台与多工具
+不会。主会话按当前合同选择只读 trellis teammates 或实施阶段的 paseo delegated-agent。成本、并行度和证据需要由明确工作包约束，不能声称隔离天然更省 token。
 
 ### Q16: Cursor 用户能拿到和 Claude Code 一样的自动化吗？
-
-可以。Cursor 现在有 Trellis hooks、skills 和 sub-agents。SessionStart 会在对话开始注入 workflow，`UserPromptSubmit` 会追加 workflow-state 面包屑，sub-agent 上下文注入会在 `trellis-implement` / `trellis-check` 运行前把正确的 JSONL 内容传进去。
 
 ### Q17: 切换 AI 编码工具时要重配吗？
 
@@ -193,7 +190,7 @@ Trellis 通过任务上下文和 spec 索引定位相关约定，不要求每轮
 
 ### Q20: 同时跑多个 task 时文件会不会互相污染？
 
-每个 task 有独立目录 `.trellis/tasks/<MM-DD-slug>/`，里面 `prd.md` / `research/` / `implement.jsonl` / `check.jsonl` 各自隔离。sub-agent 只读当前 active task 的 jsonl，所以跨 task 的 spec 注入自动按任务范围分隔。开发者级 journal 在 `.trellis/workspace/<name>/`，也是隔离的。
+每个 task 有独立目录 `.trellis/tasks/<MM-DD-slug>/`，里面 `prd.md` / `research/` / `implement.jsonl` / `check.jsonl` 各自隔离。reader 只读当前 active task 选定的上下文，所以跨 task 的 spec 注入自动按任务范围分隔。开发者级 journal 在 `.trellis/workspace/<name>/`，也是隔离的。
 
 **不会自动隔离的**：task A 的 `research/` 里如果留了死路结论或错误实现，下次重新进入 task A 时 AI 会重新读到。习惯做法：研究失败的文档在文件顶部标 `## DEPRECATED`，不要留模糊的内容。
 
@@ -310,7 +307,7 @@ trellis init --registry git@github.com:your-org/trellis-spec-template.git
 
 ### Q35: 怎么把 Trellis 改成符合我们团队习惯的样子？
 
-用 `trellis-meta` skill。它专门为二开 Trellis 而做：删 / 加 phase（比如本地嫌 check 慢直接去掉，或者加 PRD 准入门禁、系统测试门禁）、改 skill 触发条件、改 sub-agent prompt、定制 workflow-state 文案，全部通过 skill 引导你修改 `.trellis/workflow.md` 和相关模板。
+用 `trellis-meta` skill。它专门为二开 Trellis 而做：删 / 加 phase（比如本地嫌 check 慢直接去掉，或者加 PRD 准入门禁、系统测试门禁）、改 skill 触发条件、改当前协作角色、定制 workflow-state 文案，全部通过 skill 引导你修改 `.trellis/workflow.md` 和相关模板。
 
 安装：
 

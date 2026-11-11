@@ -12,14 +12,14 @@ title: 'Appendix A: Key File Paths Quick Reference'
 
 ### Core files
 
-| File                                            | Description                           | Read on                           |
-| ----------------------------------------------- | ------------------------------------- | --------------------------------- |
-| `.trellis/workflow.md`                          | Development workflow contract         | Every session start               |
-| `.trellis/config.yaml`                          | Packages, update.skip, task hooks     | Init and updates                  |
-| `.trellis/.version`                             | Current Trellis version               | Updates                           |
-| `.trellis/.template-hashes.json`                | Template file hashes                  | Updates                           |
-| `.trellis/.developer`                           | Developer identity                    | Every session                     |
-| `.trellis/.runtime/sessions/<session-key>.json` | Active task for one AI session/window | Continue, hooks, sub-agent launch |
+| File                                            | Description                           | Read on                         |
+| ----------------------------------------------- | ------------------------------------- | ------------------------------- |
+| `.trellis/workflow.md`                          | Development workflow contract         | Every session start             |
+| `.trellis/config.yaml`                          | Packages, update.skip, task hooks     | Init and updates                |
+| `.trellis/.version`                             | Current Trellis version               | Updates                         |
+| `.trellis/.template-hashes.json`                | Template file hashes                  | Updates                         |
+| `.trellis/.developer`                           | Developer identity                    | Every session                   |
+| `.trellis/.runtime/sessions/<session-key>.json` | Active task for one AI session/window | Continue and main-session Hooks |
 
 ### Shipped commands (Claude Code)
 
@@ -29,14 +29,6 @@ title: 'Appendix A: Key File Paths Quick Reference'
 | `.claude/commands/trellis/continue.md`    | `/trellis:continue`    |
 
 On platforms where SessionStart is automatic, `start` is not installed as a user-facing command. Agent-less platforms still ship a manual start workflow.
-
-### Shipped sub-agents (Claude Code)
-
-| File                                  | Sub-agent           | Role                         |
-| ------------------------------------- | ------------------- | ---------------------------- |
-| `.claude/agents/trellis-implement.md` | `trellis-implement` | Writes code, no `git commit` |
-| `.claude/agents/trellis-check.md`     | `trellis-check`     | Verify + self-fix            |
-| `.claude/agents/trellis-research.md`  | `trellis-research`  | Read-only codebase search    |
 
 ### Shipped skills (Claude Code)
 
@@ -54,11 +46,10 @@ On platforms where SessionStart is automatic, `start` is not installed as a user
 
 ### Hook scripts (Claude Code)
 
-| File                                       | Trigger           | Function                  |
-| ------------------------------------------ | ----------------- | ------------------------- |
-| `.claude/hooks/session-start.py`           | SessionStart      | Auto-inject context       |
-| `.claude/hooks/inject-workflow-state.py`   | UserPromptSubmit  | Workflow-state breadcrumb |
-| `.claude/hooks/inject-subagent-context.py` | PreToolUse (Task) | Spec injection engine     |
+| File                                     | Trigger          | Function                  |
+| ---------------------------------------- | ---------------- | ------------------------- |
+| `.claude/hooks/session-start.py`         | SessionStart     | Auto-inject context       |
+| `.claude/hooks/inject-workflow-state.py` | UserPromptSubmit | Workflow-state breadcrumb |
 
 ### Other platforms
 

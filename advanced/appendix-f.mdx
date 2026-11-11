@@ -2,6 +2,10 @@
 title: 'Appendix F: FAQ'
 ---
 
+## Current-version boundary
+
+Older migration examples below explain history. Current releases remove the native three-role dispatch and subagent context executors. Follow [current collaboration roles](/advanced/custom-agents) and native project updates.
+
 ## Appendix F: FAQ
 
 ## Getting started & upgrading
@@ -121,11 +125,11 @@ Write enough to make a project convention clear and usable. Keep examples tied t
 
 ### Q11: What's the difference between a command, a skill, and a sub-agent?
 
-| Primitive | Triggered by          | Typical use                                                                                          |
-| --------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| Command   | User (`/trellis:*`)   | Session boundaries (start, finish-work, continue)                                                    |
-| Skill     | Platform (auto-match) | Phase guidance and capabilities such as spec bootstrap, session insight, teamwork, and customization |
-| Sub-agent | Main session (spawn)  | Isolated roles (implement, check, research)                                                          |
+| Primitive     | Triggered by          | Typical use                                                                                          |
+| ------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| Command       | User (`/trellis:*`)   | Session boundaries (start, finish-work, continue)                                                    |
+| Skill         | Platform (auto-match) | Phase guidance and capabilities such as spec bootstrap, session insight, teamwork, and customization |
+| Collaboration | Main-session contract | Read-only Teamwork or authorized Paseo worktrees                                                     |
 
 See chapters 9–12 for guidance on picking the right primitive.
 
@@ -151,7 +155,6 @@ The headline changes:
 - **`workflow.md` holds the workflow rules**: Phase definitions, skill routing, and per-turn workflow-state reminders all live in `.trellis/workflow.md`. Fork the workflow by editing one markdown file — no Python or hook changes needed (see chapter 8).
 - **Per-turn workflow-state breadcrumbs**: a new `inject-workflow-state.py` hook fires on every user message and injects a `<workflow-state>` block driven by the current task's status, keeping the AI aligned with the Plan → Execute → Finish phases.
 - **Three sub-agents replaced six**: `trellis-research` / `trellis-implement` / `trellis-check`. `dispatch` / `plan` / `debug` were removed; Ralph Loop and its SubagentStop hook were removed (the check sub-agent owns its retry loop now).
-- **Eight platforms upgraded to agent-capable**: Cursor / OpenCode / Gemini CLI / Qoder / CodeBuddy / Copilot / Droid / Pi Agent all got sub-agents and hooks or extension-backed equivalents; `.trellis/` core is unchanged across every platform.
 - **Multi-Agent Pipeline, `/parallel`, `worktree.yaml` removed**: native worktree support in modern agent CLIs replaces them.
 - **Forced migration gate**: breaking releases require `trellis update --migrate` and exit with instructions instead of silently leaving half-migrated files.
 
@@ -163,17 +166,11 @@ Absorbed into `/trellis:finish-work` in 0.5.0 — same journal-writing behavior,
 
 In the current workflow, `/trellis:finish-work` records session progress only. Task completion is a separate Trellis CLI operation after Delivery Review and Closeout accepts the result.
 
-### Q15: Aren't sub-agents expensive in tokens? Is this architecture more wasteful?
+### Q15: Does collaboration automatically start other sessions?
 
-Sub-agents are tools the main agent calls: each invocation is an isolated subtask that runs and returns its conclusion. Because the main agent's context window stays clean, the overall session uses LESS token, not more, compared to "main agent does everything end-to-end and its context grows monotonically." The trade-off is that each sub-agent has its own small context for implementation or review, but the clarity from isolation outweighs that overhead.
-
-For very short sessions (small fixes), the isolation benefit is small — let the main agent handle it directly without dispatch.
-
-## Platforms & multi-tool
+No. The main session chooses read-only trellis teammates or a paseo delegated-agent during authorized implementation. Explicit work packages bound cost, concurrency and evidence; isolation alone does not establish token savings.
 
 ### Q16: Can Cursor users get the same automation as Claude Code?
-
-Yes. Cursor now ships Trellis hooks, skills, and sub-agents. SessionStart injects the workflow at conversation start, `UserPromptSubmit` adds workflow-state breadcrumbs, and sub-agent context injection passes the right JSONL content into `trellis-implement` / `trellis-check` before they run.
 
 ### Q17: Do I need to reconfigure when I switch between AI coding tools?
 
@@ -199,7 +196,7 @@ Tell the AI which accepted requirement or outcome needs to change. Revisit the a
 
 ### Q20: When I run multiple tasks in parallel, can their files contaminate each other?
 
-Each task has its own directory under `.trellis/tasks/<MM-DD-slug>/` with its own `prd.md`, `research/`, `implement.jsonl`, `check.jsonl`. Sub-agents only read the JSONL listed for the active task, so cross-task spec injection is scoped automatically. Per-developer journals live under `.trellis/workspace/<name>/`, also isolated.
+Each task has its own directory under `.trellis/tasks/<MM-DD-slug>/` with its own `prd.md`, `research/`, `implement.jsonl`, `check.jsonl`. Readers use only context selected for the active task, so cross-task spec injection is scoped automatically. Per-developer journals live under `.trellis/workspace/<name>/`, also isolated.
 
 What's NOT isolated: dead-end exploration notes left inside one task's `research/` will mislead a future re-read of that same task. Recommended habit: when a research file turns out to be wrong, mark it `## DEPRECATED` at the top instead of leaving it ambiguous.
 
@@ -316,7 +313,7 @@ If you want one specific **skill** from another tool (not its whole workflow), s
 
 ### Q35: How do I customize Trellis to match my team's habits?
 
-Use the `trellis-meta` skill. It's purpose-built for forking Trellis: remove or add phases (e.g., drop the check phase if it's slow locally, or add a PRD admission gate / system-test gate), change skill trigger conditions, edit sub-agent prompts, customize workflow-state text — all driven by the skill, which guides you through edits to `.trellis/workflow.md` and related templates.
+Use the `trellis-meta` skill. It's purpose-built for forking Trellis: remove or add phases (e.g., drop the check phase if it's slow locally, or add a PRD admission gate / system-test gate), change skill trigger conditions, edit current collaboration roles, customize workflow-state text — all driven by the skill, which guides you through edits to `.trellis/workflow.md` and related templates.
 
 Install:
 

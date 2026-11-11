@@ -118,7 +118,7 @@ The route is task-specific. `continue` can resume it, while the task record keep
 
 The five phase Skills are `trellis-goal-exploration-and-requirements`, `trellis-decision-space-construction-and-merging`, `trellis-solution-design-and-convergence`, `trellis-task-implementation`, and `trellis-delivery-review-and-closeout`. Each Skill contains its own phase flow and diagram. Use supporting Skills, Trellis Teamwork, Paseo, and host tools when their responsibilities fit the task; the route does not require every component on every task. See [How the Trellis Workflow Works](/start/how-it-works) and [Architecture Overview](/advanced/architecture).
 
-Supporting Skills include `trellis-teamwork`, `trellis-session-insight`, `trellis-spec-bootstrap`, and `trellis-meta`. Use them when their responsibilities fit the task; none owns the task's phase state. The `trellis-research`, `trellis-implement`, and `trellis-check` entries are sub-agent definitions, not Skills.
+Supporting Skills include `trellis-teamwork`, `trellis-session-insight`, `trellis-spec-bootstrap`, and `trellis-meta`. Use them when their responsibilities fit the task; none owns the task's phase state. The ordinary `trellis-check` Skill verifies the current change; collaboration roles are managed separately.
 
 ---
 
@@ -148,15 +148,12 @@ TASK_DIR=$(./.trellis/scripts/task.py create "Add user login" \
 
 # Created directory: .trellis/tasks/02-27-user-login/
 # Created files: task.json, prd.md
-# May also create implement.jsonl + check.jsonl on sub-agent-capable platforms
 ```
 
 #### 2.2.2 Context Configuration
 
 ```bash
-# implement.jsonl + check.jsonl are seeded by `task.py create` on
-# sub-agent-capable platforms. Each file starts with one self-describing
-# `{"_example": "..."}` line you can leave in place or delete.
+# Context manifests are optional; add-context creates them on first use.
 
 # Curate entries — either edit the jsonl in your editor, or use add-context:
 ./.trellis/scripts/task.py add-context "$TASK_DIR" implement \
@@ -183,7 +180,7 @@ TASK_DIR=$(./.trellis/scripts/task.py create "Add user login" \
 <Note>
   `task.py add-context` only writes to `implement.jsonl` / `check.jsonl`. Research findings belong
   in `{TASK_DIR}/research/*.md`; add those files to the implement/check manifests only when a later
-  sub-agent must read them before working.
+  reader must read them before working.
 </Note>
 
 #### 2.2.3 Task Control
@@ -314,16 +311,9 @@ The selected business phase and its status are stored under `meta.task_workflow`
 
 ### 2.4 JSONL Context Configuration in Practice
 
-#### 2.4.1 Seeded on Create, AI Curates During Context Preparation
+#### 2.4.1 Lazy context manifests
 
-On sub-agent-capable platforms, `task.py create` writes a **single seed line** into each jsonl:
-
-```jsonl
-# implement.jsonl (right after task.py create)
-{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line when done."}
-```
-
-This line is a fill-in hint for the AI. It has no `file` field, so every downstream consumer (hook, prelude, validate, list-context) skips it; the AI reads it, understands the format, then replaces it with real entries when task context is prepared.
+`task.py create` does not seed context manifests. The first `add-context` creates the selected JSONL. Existing manifests remain ordinary data; hint rows without a `file` field are not file references.
 
 **Example curated `implement.jsonl` after AI review** (`dev_type=backend` monorepo):
 
@@ -337,11 +327,11 @@ This line is a fill-in hint for the AI. It has no `file` field, so every downstr
 **What belongs in the jsonl**:
 
 - **Spec files** (`.trellis/spec/<pkg>/<layer>/index.md` + specific guideline files) that apply to this task's domain
-- **Research files** (`{TASK_DIR}/research/*.md`) the sub-agent needs to consult
+- **Research files** (`{TASK_DIR}/research/*.md`) the reader needs to consult
 
 **What does NOT belong**:
 
-- Code files (`src/**`, `packages/**/*.ts`, etc.) — those are read by the sub-agent during implementation, not pre-registered here
+- Code files (`src/**`, `packages/**/*.ts`, etc.) — those are read by the reader during implementation, not pre-registered here
 - Files you're about to modify — same reason
 
 When JSONL context is not used, the main session or a relevant Skill can read the applicable project specs directly.
@@ -454,7 +444,7 @@ The hook writes the Linear issue identifier back to `task.json` under `meta.line
 
 #### 3.1.1 Default layout from `trellis init`
 
-`trellis init` writes a skeleton with `frontend/` + `backend/` + `guides/`, all filled with **empty placeholder templates** marked "(To be filled by the team)". The templates are not ready to inject into sub-agents as-is.
+`trellis init` writes a skeleton with `frontend/` + `backend/` + `guides/`, all filled with **empty placeholder templates** marked "(To be filled by the team)". The templates are not ready to inject into readers as-is.
 
 ```
 .trellis/spec/
@@ -666,7 +656,7 @@ An **over-specified spec** — mechanical rules with no reasoning, stifles judgm
 - All files must be less than 200 lines
 ```
 
-The bar: specific, actionable, with a code example, with a stated _why_, and — for code-specs — with enough signature / contract detail that a sub-agent can act on it without asking follow-up questions.
+The bar: specific, actionable, with a code example, with a stated _why_, and — for code-specs — with enough signature / contract detail that a reader can act on it without asking follow-up questions.
 
 ### 3.4 Bootstrap Guided Initial Fill
 

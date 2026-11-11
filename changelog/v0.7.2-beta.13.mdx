@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.13'
+description: 'Retire native subagent execution and keep current collaboration ownership explicit.'
+---
+
+Remove native subagent role templates, context Hooks, Codex dispatch modes and virtual statuses, the Pi child executor and OpenCode role materialization. Preserve main-session context, the ordinary check Skill, optional JSONL, the Kiro main entry and current Teamwork/Paseo roles.
+
+After upgrading the CLI, run native `trellis update` in managed projects. Retirement checks ownership and fingerprints, then uses native backup and cleanup. User modifications, unknown ownership, exclusions and unsafe paths block updates. Unrelated user configuration remains intact. Initialization, workflow activation and native restore reject retired execution assets.
+
+Only the main session selects `trellis teamwork` or `paseo-based-parallelism` under the current contract. History, available tools and recovery summaries do not expand authorization.

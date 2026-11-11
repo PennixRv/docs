@@ -117,7 +117,7 @@ AI 做的任务分类：
 
 五个阶段 Skill 分别是 `trellis-goal-exploration-and-requirements`、`trellis-decision-space-construction-and-merging`、`trellis-solution-design-and-convergence`、`trellis-task-implementation` 和 `trellis-delivery-review-and-closeout`。每个 Skill 都包含本阶段的流程和图示。支持 Skill、Trellis Teamwork、Paseo 和宿主工具按各自职责参与；任务路线不要求每个任务都调用所有组件。路线和组件职责见[工作流如何运行](/zh/start/how-it-works)与[架构概览](/zh/advanced/architecture)。
 
-支持性 Skill 包括 `trellis-teamwork`、`trellis-session-insight`、`trellis-spec-bootstrap` 和 `trellis-meta`。任务需要时再按职责使用；这些 Skill 都不管理任务阶段状态。`trellis-research`、`trellis-implement` 和 `trellis-check` 是子代理定义，不是 Skill。
+支持性 Skill 包括 `trellis-teamwork`、`trellis-session-insight`、`trellis-spec-bootstrap` 和 `trellis-meta`。任务需要时再按职责使用；这些 Skill 都不管理任务阶段状态。普通 `trellis-check` Skill 检查当前改动；协作角色由各自机制管理。
 
 ---
 
@@ -153,14 +153,12 @@ TASK_DIR=$(./.trellis/scripts/task.py create "新增用户登录" \
 
 # 创建的目录：.trellis/tasks/02-27-user-login/
 # 创建的文件：task.json、prd.md
-# sub-agent 平台上还可能创建 implement.jsonl + check.jsonl
 ```
 
 #### 2.2.2 上下文配置
 
 ```bash
-# sub-agent 平台上 implement.jsonl + check.jsonl 会在 task.py create 时
-# seed 好——每个文件起手一行自描述 {"_example": "..."}，可保留也可删除。
+# 上下文清单可选；add-context 在首次使用时创建对应文件。
 
 # curate 条目：在编辑器里改 jsonl，或用 add-context：
 ./.trellis/scripts/task.py add-context "$TASK_DIR" implement \
@@ -187,7 +185,7 @@ TASK_DIR=$(./.trellis/scripts/task.py create "新增用户登录" \
 
 <Note>
   `task.py add-context` 只写 `implement.jsonl` / `check.jsonl`。调研发现放在 `{TASK_DIR}
-  /research/*.md`；只有后续 sub-agent 工作前必须读取时，才把这些文件加入 implement/check manifest。
+  /research/*.md`；只有后续 reader 工作前必须读取时，才把这些文件加入 implement/check manifest。
 </Note>
 
 #### 2.2.3 任务控制
@@ -318,18 +316,9 @@ task.py cancel   →  提供原因和证据引用后设为 "cancelled"
 
 ### 2.4 JSONL 上下文配置实战
 
-#### 2.4.1 创建时生成初始条目，按需整理上下文
+#### 2.4.1 按需创建与整理
 
-在 sub-agent 平台上，`task.py create` 会在两个 jsonl 里各写**一行 seed**：
-
-```jsonl
-# task.py create 刚跑完的 implement.jsonl
-{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line when done."}
-```
-
-这一行是给 AI 看的填写说明。它没有 `file` 字段，所有下游消费方（hook / prelude / validate / list-context）都会跳过；准备任务上下文时，AI 会将其替换为真实条目。
-
-**AI curate 之后的 implement.jsonl 样例**（monorepo `dev_type=backend`）：
+`task.py create` 不创建空上下文清单；首次 `add-context` 按需创建所选 JSONL。已有清单保留为普通数据，没有 `file` 字段的提示行不构成文件引用。
 
 ```jsonl
 {"file": ".trellis/spec/guides/index.md", "reason": "跨包思维指引"}
@@ -341,7 +330,7 @@ task.py cancel   →  提供原因和证据引用后设为 "cancelled"
 **jsonl 该放什么**：
 
 - **Spec 文件**（`.trellis/spec/<pkg>/<layer>/index.md` + 具体 guideline 文件）：和任务相关的规范
-- **Research 文件**（`{TASK_DIR}/research/*.md`）：sub-agent 要参考的调研产出
+- **Research 文件**（`{TASK_DIR}/research/*.md`）：reader 要参考的调研产出
 
 **不该放什么**：
 
@@ -455,7 +444,7 @@ Hook 把 Linear issue id 写回 `task.json` 的 `meta.linear_issue`（如 `"ENG-
 
 #### 3.1.1 `trellis init` 默认结构
 
-`trellis init` 会写一个骨架：`frontend/` + `backend/` + `guides/`，里面全是**空占位模板**（标注 "(To be filled by the team)"）。这些模板原样注入 sub-agent 是没用的。
+`trellis init` 会写一个骨架：`frontend/` + `backend/` + `guides/`，里面全是**空占位模板**（标注 "(To be filled by the team)"）。这些模板原样注入 reader 是没用的。
 
 ```
 .trellis/spec/
@@ -667,7 +656,7 @@ await Promise.all(users.map((user) => prisma.user.create({ data: user })));
 - All files must be less than 200 lines
 ```
 
-底线：具体、可操作、带代码示例、说清 _why_；对 code-spec 而言，还要有足够的签名 / 契约细节让 sub-agent 不用追问就能照做。
+底线：具体、可操作、带代码示例、说清 _why_；对 code-spec 而言，还要有足够的签名 / 契约细节让 reader 不用追问就能照做。
 
 ### 3.4 Bootstrap 引导首次填充
 

@@ -11,14 +11,14 @@ title: '附录 A：关键文件路径速查'
 
 ### 核心文件
 
-| 文件                                            | 说明                             | 读取时机                       |
-| ----------------------------------------------- | -------------------------------- | ------------------------------ |
-| `.trellis/workflow.md`                          | 开发工作流契约                   | 每次会话开始                   |
-| `.trellis/config.yaml`                          | packages、update.skip、任务 hook | init 和 update                 |
-| `.trellis/.version`                             | 当前 Trellis 版本                | update                         |
-| `.trellis/.template-hashes.json`                | 模板文件 hash                    | update                         |
-| `.trellis/.developer`                           | 开发者身份                       | 每次会话                       |
-| `.trellis/.runtime/sessions/<session-key>.json` | 单个 AI 会话/窗口的 active task  | continue、hook、sub-agent 启动 |
+| 文件                                            | 说明                             | 读取时机               |
+| ----------------------------------------------- | -------------------------------- | ---------------------- |
+| `.trellis/workflow.md`                          | 开发工作流契约                   | 每次会话开始           |
+| `.trellis/config.yaml`                          | packages、update.skip、任务 hook | init 和 update         |
+| `.trellis/.version`                             | 当前 Trellis 版本                | update                 |
+| `.trellis/.template-hashes.json`                | 模板文件 hash                    | update                 |
+| `.trellis/.developer`                           | 开发者身份                       | 每次会话               |
+| `.trellis/.runtime/sessions/<session-key>.json` | 单个 AI 会话/窗口的 active task  | continue 和主会话 Hook |
 
 ### 原生命令（Claude Code）
 
@@ -28,14 +28,6 @@ title: '附录 A：关键文件路径速查'
 | `.claude/commands/trellis/continue.md`    | `/trellis:continue`    |
 
 在 SessionStart 自动注入的平台上，`start` 不作为用户可见命令安装。agent-less 平台仍然保留手动 start workflow。
-
-### 原生 sub-agent（Claude Code）
-
-| 文件                                  | Sub-agent           | 角色                    |
-| ------------------------------------- | ------------------- | ----------------------- |
-| `.claude/agents/trellis-implement.md` | `trellis-implement` | 写代码，不 `git commit` |
-| `.claude/agents/trellis-check.md`     | `trellis-check`     | 验证 + 自修复           |
-| `.claude/agents/trellis-research.md`  | `trellis-research`  | 只读代码搜索            |
 
 ### 原生 Skill（Claude Code）
 
@@ -53,11 +45,10 @@ title: '附录 A：关键文件路径速查'
 
 ### Hook 脚本（Claude Code）
 
-| 文件                                       | 触发               | 作用             |
-| ------------------------------------------ | ------------------ | ---------------- |
-| `.claude/hooks/session-start.py`           | SessionStart       | 自动注入上下文   |
-| `.claude/hooks/inject-workflow-state.py`   | UserPromptSubmit   | 工作流状态面包屑 |
-| `.claude/hooks/inject-subagent-context.py` | PreToolUse（Task） | 规范注入引擎     |
+| 文件                                     | 触发             | 作用             |
+| ---------------------------------------- | ---------------- | ---------------- |
+| `.claude/hooks/session-start.py`         | SessionStart     | 自动注入上下文   |
+| `.claude/hooks/inject-workflow-state.py` | UserPromptSubmit | 工作流状态面包屑 |
 
 ### 其他平台
 

@@ -7,7 +7,7 @@ description: 'Common workflows as commands'
 
 Slash commands are shortcuts. Instead of explaining what you want, you type `/command` and the AI knows the workflow.
 
-Trellis ships a small command surface for session boundaries. Most workflow actions are now auto-trigger skills or sub-agents. You can add your own commands for project-specific entry points.
+Trellis ships a small command surface for session boundaries. Most workflow actions are now phase and support Skills. You can add your own commands for project-specific entry points.
 
 ## Built-in commands
 
@@ -37,8 +37,6 @@ Trellis ships a small command surface for session boundaries. Most workflow acti
 | `trellis-session-insight` | Recall relevant prior decisions or conversation evidence.     |
 | `trellis-spec-bootstrap`  | Draft or refresh specs from the current codebase when useful. |
 | `trellis-meta`            | Understand or customize Trellis project assets.               |
-
-The `trellis-research`, `trellis-implement`, and `trellis-check` entries are sub-agent definitions, not Skills.
 
 The phase Skills provide separate procedures and diagrams. Trellis CLI records the selected business-phase route independently from task lifecycle status. `task.py complete` and `task.py cancel` update task lifecycle during closeout; `finish-work` only records session progress. See [How the Trellis Workflow Works](/start/how-it-works).
 
