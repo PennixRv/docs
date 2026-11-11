@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.17'
+description: 'Keep mixed user configuration outside full-file template ownership after native execution retirement.'
+---
+
+Retain the complete removal of native subagent execution introduced in beta.16. Fix the ownership baseline used when retiring old configuration fields, Hooks and generated advice: the receipt records the current template, not the cleaned file containing user additions.
+
+A matching receipt for mixed configuration cannot authorize replacing unrelated MCP settings, package mappings or custom Hooks. Native update treats differing mixed content as a user modification; `--skip-all` preserves it and corrects the template baseline. Regression tests run cleanup and subsequent updates against the same project and verify those fields remain intact.
+
+Beta.16 was published and installed for acceptance. Repeated-update review exposed this ownership risk before a subsequent write; the acceptance projects retained their user data. Upgrade to beta.17 before further native updates.
