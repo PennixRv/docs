@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.12'
+description: 'Recover managed Teamwork observation when the original host wait handle is unavailable.'
+---
+
+`trellis teamwork reconcile PLAN --task TASK_DIR --wait 30` observes the original frozen batch without its host continuation handle. The observation budget accepts integers from 1 to 60 seconds. It does not dispatch providers, create attempts, extend the batch deadline, release capacity or accept reports. A pending result permits another bounded observation; a verified settled result includes the durable receipt and ordinary batch report/artifact view.
+
+Foreground wait projections include plan/task/deadline locators. The Codex guard supplies a recovery command and checks its arguments, frozen identity and paths. Existing continuation tools remain supported. Older projections require explicit original plan/task inputs; missing or unsafe identities are not reconstructed. Other hosts can use the native CLI without a claim of equivalent hook enforcement.
+
+After verifying that the original reservation owner has exited, reconciliation preview can describe a nonterminal batch without writing events. Explicit `--execute --reason TEXT` bridges into the existing recovery state before settlement. Provider-exit proof remains mandatory; unknown termination retains leases and capacity. A terminal transition without its durable receipt remains pending for observers.
+
+Upgrade the CLI, then refresh affected managed projects with native `trellis update` so their Teamwork Skill and guard match the installed version. This release adds no background scheduler and does not change host context-compression behavior.

@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.12'
+description: '原宿主等待句柄不可用时，通过原生入口恢复受管 Teamwork 批次观察。'
+---
+
+`trellis teamwork reconcile PLAN --task TASK_DIR --wait 30` 无需原宿主续接句柄即可观察同一冻结批次，单次观察预算为 1–60 秒的整数。观察不派发 provider、不创建 attempt、不延长原期限、不释放容量，也不接受报告。返回 pending 后可再次有界观察；经持久事实校验的 settled 结果包含原回执和普通 batch 报告／artifact 视图。
+
+前台等待投影补充 plan、task 和 deadline 定位信息。Codex 护栏提供恢复命令，并核对参数、冻结身份和路径，继续支持原生续接工具。旧投影需要显式提供原 plan／task；缺失或不安全的身份不自动重建。其他宿主可使用原生 CLI，但不因此声称具备同等钩子保护。
+
+确认原 reservation owner 已退出后，reconciliation 预览可以描述非终态批次而不写事件；显式 `--execute --reason TEXT` 先衔接既有恢复状态，再执行结算。provider 退出证明仍是必要条件，退出未知时保留租约和容量。只有终态转换而尚无持久回执时，观察继续返回 pending。
+
+升级 CLI 后，通过原生 `trellis update` 刷新受影响的已管理项目，使 Teamwork Skill 和护栏与安装版本一致。本次不增加后台调度器，也不改变宿主的上下文压缩行为。

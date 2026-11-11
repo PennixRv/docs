@@ -78,6 +78,12 @@ tool events. This does not prevent model wake-ups, ordinary model messages or
 tools outside host hook coverage; those remain Skill obligations. A lost
 coordinator keeps the guard until native reconciliation proves settlement.
 
+## Recovering an unavailable foreground handle
+
+From `0.7.2-beta.12`, use `trellis teamwork reconcile PLAN --task TASK_DIR --wait 30` when the original batch handle is unavailable. A 1–60 second observation budget does not extend execution. The read-only result binds the same session, batch, plan hash and deadline: `pending` allows another observation; `settled` includes the verified receipt and batch result; `reconciliation_required` or `blocked` identifies the recovery/proof still needed. Reports remain subject to main-agent review.
+
+Observation does not redispatch, acquire execution capacity, write events or clear the guard. If the host yields the observation, continue its own handle; if that handle is lost too, repeat observation. Original handle continuation remains the normal path. The guard supplies safe plan/task locators when available; older records require explicit original inputs. A verified absent reservation owner permits a read-only reconciliation preview from RUNNING, while explicit execute performs the recovery transition and still requires provider-exit proof. `--wait` is mutually exclusive with disposition options.
+
 ## Providers and validation limits
 
 | Provider                 | Transport                                                  |

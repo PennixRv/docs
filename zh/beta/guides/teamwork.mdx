@@ -61,6 +61,12 @@ schema-2 内容报告包含 `schema_version: 2`、`status`、`answer`、非空 `
 
 调度和监控由 CLI 控制。宿主提前返回时，主代理静默续接原句柄，不重复播报、查询状态或新开批次。Codex 安装 CLI 等待投影和宿主支持范围内的 PreToolUse 护栏；它不能阻止模型唤醒、普通发言或宿主未提供 Hook 的工具，这些仍受 Skill 义务约束。失联现场保留护栏，直到原生核销证明结算完成。
 
+## 原前台等待句柄不可用时恢复观察
+
+从 `0.7.2-beta.12` 起，原 batch 句柄不可用时使用 `trellis teamwork reconcile PLAN --task TASK_DIR --wait 30`。单次观察预算为 1–60 秒，不延长执行；只读结果绑定同一 session、batch、planHash 和 deadline。`pending` 允许再次观察，`settled` 包含经校验的持久回执和 batch 结果，`reconciliation_required` 或 `blocked` 说明仍需恢复或补足的证明。报告仍由主 Agent 审查。
+
+观察不重复派发、不申请执行容量、不写事件，也不清除护栏。宿主让观察调用提前返回时，续接该观察自己的句柄；该句柄再次丢失时可重新观察。正常路径仍优先续接原句柄。护栏在定位信息可用时提供安全的 plan／task 路径，旧记录需要显式提供原输入。确认原 reservation owner 已不存在后，可从 RUNNING 只读预览 reconciliation；只有显式 execute 才执行恢复转换，且仍要求 provider 退出证明。`--wait` 与处置选项互斥。
+
 ## Provider 与验证边界
 
 | Provider                  | 传输                                                      |
