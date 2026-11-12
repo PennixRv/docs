@@ -5,7 +5,7 @@ description: 'Converge task runtime and Teamwork cleanup around native lifecycle
 
 Task, phase, ownership and session-pointer writes now share a fixed layout lock. Empty pointers leave no session projection; update checks use one version-aware marker. Terminal delegation inspection reads historical evidence without contacting a provider. Native update preserves custom ignore rules while appending protection for private handoff and attempt diagnostics.
 
-`task.py runtime preview` identifies only obsolete markers, known empty projections and retired protocol locks. `runtime cleanup --confirm <digest>` rechecks exact identities. Fixed lock anchors, ownership records, unknown fields and unresolved recovery remain protected. An incomplete process scan does not authorize removing old locks.
+`task.py runtime [<task>]` previews only obsolete markers, known empty projections and retired protocol locks. The same command with `--confirm <digest>` rechecks exact identities before cleanup. Fixed lock anchors, ownership records, unknown fields and unresolved recovery remain protected. An incomplete process scan does not authorize removing old locks.
 
 Teamwork `rm` defaults to preview and requires its exact `--confirm` digest; `prune --yes` also requires confirmation. `create --force` cannot overwrite nonempty sessions. `run` uses the same cleanup guards. Attempt stderr lives beside its attempt artifacts. Cleanup protects accepted evidence, semantic references and retained attempt dependencies, preserving uncertain processes and reporting individual failures.
 
