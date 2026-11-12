@@ -48,23 +48,19 @@ throw new AppError('USER_NOT_FOUND', '用户不存在', 404);
 
 ## 规范结构
 
-把规范放在 `.trellis/spec/`。按领域组织：
+把规范放在 `.trellis/spec/`，从中性总索引开始，按实际项目添加有依据的主题：
 
 ```
 .trellis/spec/
-├── frontend/
-│   ├── index.md        # 前端主要规范
-│   ├── components.md   # 组件模式
-│   └── state.md        # 状态管理
-├── backend/
-│   ├── index.md        # 后端主要规范
-│   ├── api.md          # API 设计
-│   └── database.md     # 数据库规范
+├── index.md            # 项目导航
+├── <actual-topic>.md   # 有源码依据的约定
 └── guides/
     └── index.md        # 通用思维指南
 ```
 
 每个文件夹里的 `index.md` 是入口。保持专注——细节放其他文件里链接过去。
+
+已配置的包可以有自己的索引和主题。已有 frontend/backend 层符合工程时继续保留，但它们不是必需默认值。用 `trellis-spec-bootstrap` 刷新旧模板时，保留混在占位骨架中的真实规则，删除空主题前核对活动引用，并保留归档证据。仅生成索引不能证明规范质量。
 
 ## 写能落地的规则
 

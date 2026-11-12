@@ -86,9 +86,13 @@ trellis update    # 2. 在每个项目里：把 .trellis/ 和平台文件同步�
 | **往已有项目加新平台**   | `trellis init --cursor`（或不带参数走交互式，会列出未配置平台） | 在现有 `.trellis/` 上铺新平台配置目录；不产生 task                                                  |
 | **新开发者加入已有项目** | `trellis init -u their-name`                                    | 生成 joiner 引导 task `00-join-<slug>`，引导读 workflow + spec；准备开始时在当前 AI 会话里 start 它 |
 | **同一开发者换机器**     | 同上                                                            | 也会创建 joiner task，因为 `.developer` 是单 checkout 配置，不会提交到 Git                          |
-| **同一人同机器 re-init** | `trellis init -u your-name`                                     | no-op —— `.trellis/` 与 `.developer` 都在，啥都不做                                                 |
+| **同一人同机器 re-init** | `trellis init -u your-name`                                     | 保留已有设置，补缺失的本地 spec 总索引，不新增任务                                                  |
 
 `--force` / `--skip-existing` 只影响 **有冲突的文件**怎么处理（强制覆盖 / 跳过），不改变 init 的分派逻辑本身。
+
+从 `0.7.2-beta.18` 起，普通既有项目 init 只补缺失的本地 `.trellis/spec/index.md`。已有索引即使使用 `--force` 也保持；普通重入不恢复已删主题、指南或包映射。显式或持久远程来源沿原 owner，无法识别的声明会停止本地准备。再次默认 init 也会补回主动删除的总索引，因为没有删除意图记录。普通 update 和会话启动不执行这项补齐。
+
+中性索引只提供导航，不代表项目规则已验证。需要建立或刷新真实约定时，在当前任务与授权范围内使用实际可用的 `trellis-spec-bootstrap`，分别报告文件准备和源码验证结果。
 
 <Note>
   **判据信号**：`.trellis/.developer` 是 gitignored 的 per-checkout 身份文件（天然不进 git），所以新克隆的 checkout 永远没有它 —— 这是判断"新开发者"的干净信号。`.trellis/workspace/<name>/` 进 git，不能作为判据。

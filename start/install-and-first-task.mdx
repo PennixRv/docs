@@ -89,9 +89,13 @@ See [Commands §1.2](/start/everyday-use#1-2-commands) for the full `upgrade` / 
 | **Add a new platform to an existing project** | `trellis init --cursor` (or no-arg interactive — it lists unconfigured platforms) | Writes the new platform's config dir on top of the existing `.trellis/`; no task generated                                              |
 | **New developer joining an existing project** | `trellis init -u their-name`                                                      | Generates the joiner onboarding task `00-join-<slug>` and guides reading workflow + spec; start it in the current AI session when ready |
 | **Same developer on a new machine**           | Same as above                                                                     | Also generates a joiner task because `.developer` is per-checkout and isn't committed.                                                  |
-| **Same dev, same machine, re-run init**       | `trellis init -u your-name`                                                       | No-op — both `.trellis/` and `.developer` already exist                                                                                 |
+| **Same dev, same machine, re-run init**       | `trellis init -u your-name`                                                       | Preserves existing setup and repairs a missing local spec root index; no extra task                                                     |
 
 `--force` / `--skip-existing` only affect **how file conflicts are resolved** (overwrite vs skip); they don't change the dispatch logic itself.
+
+From `0.7.2-beta.18`, ordinary existing-project init repairs only a missing local `.trellis/spec/index.md`. Existing indexes are preserved even with `--force`; deleted topics, guides and package mappings are not recreated by ordinary reentry. Explicit or persisted remote spec sources retain their owner; unrecognized declarations stop local preparation. Repeating default init also recreates an intentionally deleted root index, because deletion intent is not stored. Ordinary update and session startup do not perform this repair.
+
+The neutral index is navigation, not verified project rules. Use the available `trellis-spec-bootstrap` under the current task and authorization to establish or refresh real conventions. Report file preparation and source-backed verification separately.
 
 <Note>
   **Dispatch signal**: `.trellis/.developer` is a gitignored per-checkout identity file (by design, never committed), so a fresh clone never has one — this is the clean signal for "new developer on this checkout". `.trellis/workspace/<name>/` is committed and cannot serve this role.

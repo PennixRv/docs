@@ -1,0 +1,10 @@
+---
+title: 'v0.7.2-beta.18'
+description: 'Repair missing generic spec navigation on existing-project init while preserving project conventions.'
+---
+
+Ordinary existing-project `trellis init` now repairs a missing local `.trellis/spec/index.md`, including projects that already have tasks. It preserves existing indexes, package mappings and task records without recreating deleted topics or guides. Explicit and persisted external sources retain their owner; unsupported source declarations stop local preparation.
+
+New local spec files use protected paths and publication without replacement. Existing content, including a concurrent writer's file, is preserved even under force. Bundled `trellis-spec-bootstrap` separates navigation preparation from source-backed content review and covers mixed real rules, old placeholders and historical references.
+
+Use native update for generated methods. When missing root navigation should be prepared, explicitly rerun ordinary init and review content under the current task and authorization. Ordinary update and session startup do not migrate specs. Repeating default init also recreates an intentionally deleted root index; no deletion intent is stored.

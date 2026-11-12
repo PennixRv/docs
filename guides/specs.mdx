@@ -48,23 +48,19 @@ The difference: the good spec includes the exact file path, the exact format, an
 
 ## Spec structure
 
-Put specs in `.trellis/spec/`. Organize by domain:
+Put specs in `.trellis/spec/`. Start with a neutral root index and add topics supported by the actual project:
 
 ```
 .trellis/spec/
-├── frontend/
-│   ├── index.md        # Main frontend conventions
-│   ├── components.md   # Component patterns
-│   └── state.md        # State management
-├── backend/
-│   ├── index.md        # Main backend conventions
-│   ├── api.md          # API design
-│   └── database.md     # Database conventions
+├── index.md            # Project navigation
+├── <actual-topic>.md   # Source-backed conventions
 └── guides/
     └── index.md        # General thinking guides
 ```
 
 The `index.md` in each folder is the entry point. Keep it focused - link to other files for details.
+
+Configured packages may have their own indexes and topics. Existing frontend/backend layers remain valid when they fit the project; they are not required defaults. Use `trellis-spec-bootstrap` to refresh old templates: preserve real rules mixed into placeholder sections, check active references before removing empty topics, and retain archived evidence. A generated index alone does not prove spec quality.
 
 ## Writing rules that stick
 
