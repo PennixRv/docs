@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.19'
+description: '按原生生命周期与证据归属收敛 Task 运行态和 Teamwork 清理。'
+---
+
+Task、阶段、所有权和会话指针写入共用固定布局锁；空指针不再留下会话投影，更新检查使用单个版本感知 marker。终态委派直接读取历史证据，不访问 provider。原生 update 保留自定义忽略规则，追加对私有交接包和 attempt 诊断的保护。
+
+`task.py runtime preview` 只识别旧 marker、已知空投影及退役协议锁；`runtime cleanup --confirm <digest>` 复查精确身份。固定锁锚点、所有权、未知字段与未决恢复继续保留。进程扫描不完整时不移除旧锁。
+
+Teamwork `rm` 默认预览并要求精确 `--confirm` 摘要，`prune --yes` 同样需要摘要。`create --force` 不能覆盖非空 session，`run` 复用相同清理保护。attempt stderr 与本次产物放在同一目录。清理保留已接受证据、语义引用及保留 attempt 的依赖，逐项报告失败；进程退出不确定时保持现场。
+
+生成资产通过原生 `trellis update` 更新，既有私有历史保持。删除前重新审阅预览并明确批准具体对象；年龄本身不能证明资产无用。
