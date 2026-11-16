@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.20'
+description: 'Keep Teamwork roles read-only and expose native worker and session history to status consumers.'
+---
+
+Teamwork now places the canonical teammate contract before supplementary role cards, including generic `--agent` launches. Teammates provide read-only evidence, and the report instructions describe the existing schema without relaxing its validator. Host-required current-task recovery context is distinguished from historical conversation retrieval.
+
+The Paseo adapter verifies the actual daemon identity and version before business requests. The supported daemon versions are 0.15.3 and 0.15.4; the SDK version is reported separately, and unknown daemon versions are refused.
+
+Native Teamwork exposes owner-filtered sessions, worker status and historical sessions for consumers such as CCH. Interactive and managed batches persist their actual provider session bindings. Project and global scopes remain separate, and batch provider selection does not inherit an unrelated interactive teammate's provider. Existing session relations are preserved when first migrated.
+
+Generated project assets continue through `trellis update`. Repeated retired configuration comments are removed consistently, while custom content, private history and uncertain cleanup objects remain protected. CLI, Core and the Paseo adapter use the same beta version.

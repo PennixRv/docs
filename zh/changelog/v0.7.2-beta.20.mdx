@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.20'
+description: '保持 Teamwork 角色只读，并向状态消费者提供原生工作状态与会话历史。'
+---
+
+Teamwork 在补充角色卡之前加载共同 teammate 合同，通用 `--agent` 启动也遵守相同只读边界。报告提示明确现有 schema 的字段要求，不放宽校验器；宿主要求的当前任务恢复上下文与历史对话检索分别说明。
+
+Paseo adapter 在业务请求前核验实际 daemon 身份和版本，支持 daemon 0.15.3、0.15.4；SDK 版本单独报告，未知 daemon 版本明确拒绝。
+
+原生 Teamwork 提供按 owner 过滤的 sessions、workers 状态和历史会话，供 CCH 等消费者使用。交互式与托管批次保存真实 provider 会话绑定，项目与全局范围分别查询；批次的 provider 选择不继承无关交互式同名 teammate 的 provider。首次迁移保留已有会话关系。
+
+项目生成资产继续通过 `trellis update` 更新，重复的退役配置注释统一清理；手工内容、私有历史和无法证明可清理的对象保持。CLI、Core 和 Paseo adapter 使用同一 beta 版本。
