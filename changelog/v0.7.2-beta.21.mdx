@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.21'
+description: 'Check Paseo operation capabilities, page resource inspections, and preserve historical Teamwork evidence.'
+---
+
+The optional Paseo adapter now checks the connected local daemon identity, required public SDK methods and response contracts. Daemon versions are informational; the adapter no longer rejects a new version solely because it is absent from a tested-version list. Missing capabilities and unverified identities still fail.
+
+`inspect` and `resource-preview` accept `page_size` and `cursor`, returning `page_info.next_cursor` and `page_info.complete`. Exact `agent_id` inspection avoids unrelated history. Native worktree controllers consume every page before writer and absence decisions. The 1,000-agent limit is removed; the 256 KiB response boundary, malformed-page checks and cursor-loop rejection remain. Existing unpaged calls require complete results or return an explicit limit error.
+
+Historical Teamwork plan reads, settled-result reads and reconciliation previews verify original frozen plan and brief integrity without rebuilding old instructions with the current renderer. New execution and retries still require the current instruction contract. Existing plans, failed reports and durable outcomes are preserved.
+
+Update CLI, Core and the optional adapter together through Lifecycle. Refresh generated worktree-delegation controllers with `trellis update`; project updates remain separate from system package installation.

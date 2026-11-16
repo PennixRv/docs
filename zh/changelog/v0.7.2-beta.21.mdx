@@ -1,0 +1,12 @@
+---
+title: 'v0.7.2-beta.21'
+description: '按实际能力核验 Paseo，分页检查资源，并保留 Teamwork 历史证据的可读性。'
+---
+
+可选 Paseo adapter 现在核验已连接的本地 daemon 身份、所需公开 SDK 方法和返回合同。daemon 版本作为事实报告，不再仅因新版本未列入已测名单而拒绝；缺少能力或身份不可核验时仍失败。
+
+`inspect` 和 `resource-preview` 接受 `page_size`、`cursor`，返回 `page_info.next_cursor`、`page_info.complete`。指定精确 `agent_id` 时不读取无关历史。原生工作树控制端消费全部分页后才判断 writer 或资源缺失。移除 1,000 个 agent 的数量限制，保留 256 KiB 响应界限、坏页检查和游标循环拒绝。既有不分页调用仍要求完整结果，超限时明确失败。
+
+历史 Teamwork 计划读取、已结束结果读取和 reconcile 预览核对原冻结计划与 brief 的完整性，不用当前 renderer 重建旧指令。新执行与重试仍须满足当前指令合同。既有计划、失败报告和持久结果保留。
+
+通过 Lifecycle 同时更新 CLI、Core 和可选 adapter，再用 `trellis update` 刷新项目工作树控制端。项目资产更新仍与系统包安装分别执行。
