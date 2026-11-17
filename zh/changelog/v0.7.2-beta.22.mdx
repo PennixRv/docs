@@ -1,0 +1,18 @@
+---
+title: 'v0.7.2-beta.22'
+description: '精简项目指令入口，并为规范建立选择已批准且实际可用的分析工具。'
+---
+
+## 增强
+
+### 项目指令入口
+
+原生 `AGENTS.md` 块使用更短的入口，保留会话启动与继续、workflow 和 Task CLI 的职责、规范导航及无 Hook 回退。详细导航由既有 Skill 和 `.trellis/workflow.md` 承担，不新增 Skill。
+
+### 规范建立
+
+`trellis-spec-bootstrap` 选择已批准且实际可用的分析工具，或直接核对当前源码与测试。参考资料不再默认推荐 GitNexus，也不再提供其安装和索引配方。工具缺失不授权下载软件包、配置 MCP 或创建索引。
+
+## 升级
+
+同时更新 CLI、Core 和可选 Paseo adapter。在已初始化项目中运行 `trellis update`，逐文件审阅本地修改冲突，保留手工正文、其他指令 owner 和本地配置。本次更新不会自动删除用户项目中不受 Trellis 管理的第三方指令。

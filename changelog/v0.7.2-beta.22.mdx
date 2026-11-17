@@ -1,0 +1,18 @@
+---
+title: 'v0.7.2-beta.22'
+description: 'Shorten project instructions and select approved available tools for spec bootstrapping.'
+---
+
+## Enhancements
+
+### Project instruction entry
+
+The native `AGENTS.md` block keeps session startup/resume, workflow and Task CLI ownership, spec navigation and no-hook fallback in a shorter entry. Detailed navigation stays in existing skills and `.trellis/workflow.md`; no new skill is required.
+
+### Spec bootstrapping
+
+`trellis-spec-bootstrap` selects approved available analysis tools or current source and tests. Its references no longer recommend GitNexus by default or provide its installation and indexing recipes. Missing tooling does not authorize package downloads, MCP configuration or index creation.
+
+## Upgrade
+
+Update CLI, Core and the optional Paseo adapter together. Run `trellis update` in initialized projects and review modified-file conflicts individually. Keep manual text, other instruction owners and local configuration. This update does not remove unmanaged third-party instructions from user projects.

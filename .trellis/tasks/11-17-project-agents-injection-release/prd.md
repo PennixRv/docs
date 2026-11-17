@@ -1,0 +1,7 @@
+# beta.22 项目指令精简发行说明
+
+本目录记录文档工作包，不模拟任务运行状态。所属原生任务为Trellis的project-agents-injection-optimization，根实施合同artifact_revision为ecccfe4f58d254f719eb74eeeace9fb89d0db8be9a775a4a98f90a5ada8b4eca，用户已明确批准“批准并推进到完全收敛”。docs-site没有任务脚本，不为本次文档修改初始化项目或手写状态文件。
+
+范围为beta.22中英changelog、现有两语言发行说明导航及navbar链接。准确说明短AGENTS入口、已批准工具的选择与setup授权边界，以及原生更新对其他owner和定制的保护。Trellis开发仓库的显式GitNexus退出不描述为对所有用户项目的自动第三方清理。
+
+验收为双语事实一致、MDX及JSON有效、导航与版本检查通过；沿既定main分支提交推送后由Trellis固定gitlink。公开发行、双端更新、原生索引清理及根验收由父任务负责。
