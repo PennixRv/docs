@@ -1,0 +1,20 @@
+---
+title: 'v0.7.2-beta.23'
+description: 'Initialize Codex trust and CodeGraph through an explicitly selected project policy.'
+---
+
+## Project initialization
+
+On supported Linux filesystem projects, `trellis init --codex` can read an explicitly enabled Pennix Lifecycle policy and complete verified Trellis Hook trust, local CodeGraph integration, and the initial index. Repeated initialization checks the existing state and uses native synchronization or recovery where needed. The default remains unselected; `--yes` and `--force` do not authorize these operations.
+
+Use `--trust-codex` or `--no-trust-codex` and `--codegraph` or `--no-codegraph` for explicit overrides. Codex trust is written through its native configuration service. Modified managed scripts, unknown configuration, and explicit distrust or disabled Hooks stop the affected setup. CodeGraph retains its own project writers and indexing behavior; initialization never installs Git sync hooks.
+
+## Readiness
+
+Initialization reports assets, trust and index readiness separately. A new host session is required to load a newly configured MCP server and start live synchronization. An index containing only workflow helpers does not establish application-source coverage. Keep the native bootstrap or onboarding task to develop project guidelines from actual source.
+
+Developer initialization now passes paths and names as process arguments, including project directories containing quotes.
+
+## Upgrade
+
+Update CLI, Core and the optional Paseo adapter together. Automatic setup requires the corresponding Lifecycle policy query and CodeGraph project-boundary capabilities; missing components are reported rather than installed. Existing projects retain their configuration and data. This release does not initialize arbitrary directories or batch-rebuild existing project indexes.

@@ -1,0 +1,20 @@
+---
+title: 'v0.7.2-beta.23'
+description: '按明确选择的项目策略完成 Codex 信任与 CodeGraph 初始化。'
+---
+
+## 项目初始化
+
+在受支持的 Linux 文件系统项目中，`trellis init --codex` 可读取已明确开启的 Pennix Lifecycle 策略，完成已核验 Trellis Hook 的信任、CodeGraph local 接入及首次索引。重复初始化核对原生状态，按需同步或恢复。默认不启用自动化，`--yes` 和 `--force` 本身不授予这些操作权限。
+
+可用 `--trust-codex`／`--no-trust-codex` 和 `--codegraph`／`--no-codegraph` 显式覆盖策略。Codex 信任通过其原生配置服务写入；受管脚本修改、未知配置、明确不信任或禁用 Hook 会阻断受影响接入。项目配置和索引仍由 CodeGraph 原生 owner 维护，初始化不安装 Git 同步 Hook。
+
+## 就绪核验
+
+资产、信任和索引分别报告。新配置的 MCP 及持续同步需要新宿主会话实际加载；只包含工作流脚本的索引不代表业务源码已覆盖。保留原生 bootstrap／onboarding 任务，后续依据真实源码建立项目规范。
+
+开发者初始化改用进程参数传递路径和名称，支持项目目录中含引号的情况。
+
+## 升级
+
+同时更新 CLI、Core 和可选 Paseo adapter。自动接入依赖 Lifecycle 策略查询及 CodeGraph 项目边界能力；缺少组件会明确报告，不隐式安装。已有项目配置和数据保留，不自动初始化任意目录或批量重建既有项目索引。
